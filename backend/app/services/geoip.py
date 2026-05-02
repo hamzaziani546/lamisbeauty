@@ -54,7 +54,14 @@ def check_ip(ip: str) -> GeoCheckResult:
         return GeoCheckResult(allowed=True, reason="enforcement disabled")
 
     if ip in ("127.0.0.1", "::1", "unknown"):
-        return GeoCheckResult(allowed=True, reason="localhost")
+        if settings.APP_ENV == "production":
+            logger.warning(
+                "GeoIP check received local/unknown IP %s in production — "
+                "likely misconfigured reverse proxy (missing X-Forwarded-For). Blocking.",
+                ip,
+            )
+            return GeoCheckResult(allowed=False, reason="no real client IP in production")
+        return GeoCheckResult(allowed=True, reason="localhost (non-production)")
 
     # Try local database first, fall back to web service
     reader = _get_reader()

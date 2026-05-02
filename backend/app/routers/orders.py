@@ -22,7 +22,16 @@ def _get_client_ip(request: Request) -> str:
     forwarded = request.headers.get("x-forwarded-for")
     if forwarded:
         return forwarded.split(",")[0].strip()
-    return request.client.host if request.client else "unknown"
+    real_ip = request.headers.get("x-real-ip")
+    if real_ip:
+        return real_ip.strip()
+    host = request.client.host if request.client else "unknown"
+    if host in ("127.0.0.1", "::1"):
+        logger.warning(
+            "Client IP is %s — reverse proxy may not be forwarding X-Forwarded-For",
+            host,
+        )
+    return host
 
 
 def _normalize_phone(phone: str) -> str:

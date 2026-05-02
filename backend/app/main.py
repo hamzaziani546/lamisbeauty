@@ -1,6 +1,7 @@
 import logging
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config import settings
 from app.routers import health, orders
@@ -18,6 +19,7 @@ app = FastAPI(
     redoc_url=None,
 )
 
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
