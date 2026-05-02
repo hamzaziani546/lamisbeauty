@@ -91,7 +91,7 @@ def check_ip(ip: str) -> GeoCheckResult:
             return GeoCheckResult(allowed=False, reason="geo check unavailable")
 
         try:
-            response = client.insights(ip)
+            response = client.city(ip)
             country_code = response.country.iso_code
             is_vpn = getattr(response.traits, "is_anonymous_vpn", False) or False
             is_proxy = getattr(response.traits, "is_anonymous_proxy", False) or False
