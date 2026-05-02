@@ -1,0 +1,6 @@
+event_name,frontend_event,meta_event,tiktok_event,snapchat_event,capi_required,event_id_strategy,notes
+page_view,PageView,PageView,PageView,PAGE_VIEW,no,frontend generated,Deferred browser pixel after interactive
+view_content,ViewContent,ViewContent,ViewContent,VIEW_CONTENT,no,frontend generated,Fire on product page view
+add_to_cart,AddToCart,AddToCart,AddToCart,ADD_CART,optional,frontend generated,Fire when selected offer is added
+initiate_checkout,InitiateCheckout,InitiateCheckout,InitiateCheckout,START_CHECKOUT,optional,frontend generated,Fire when checkout popup opens
+purchase,Purchase,Purchase,CompletePayment,PURCHASE,yes,backend order_number,Must match browser event_id and server event_id for deduplication

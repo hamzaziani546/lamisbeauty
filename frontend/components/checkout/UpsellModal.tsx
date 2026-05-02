@@ -1,0 +1,111 @@
+"use client";
+
+import { useEffect, useState, useRef } from "react";
+import type { Product } from "@/config/products";
+import { OFFER_UPSELL_PRICE } from "@/config/products";
+import { Button } from "@/components/ui/Button";
+import { Clock } from "lucide-react";
+
+const UPSELL_SECONDS = 12;
+
+interface UpsellModalProps {
+  product: Product;
+  onAccept: () => void;
+  onDecline: () => void;
+}
+
+export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) {
+  const [seconds, setSeconds] = useState(UPSELL_SECONDS);
+  const declineRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    declineRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    if (seconds <= 0) return;
+    const t = setTimeout(() => setSeconds((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+  }, [seconds]);
+
+  const progress = ((UPSELL_SECONDS - seconds) / UPSELL_SECONDS) * 100;
+
+  return (
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="عرض خاص لمرة واحدة"
+      dir="rtl"
+      className="text-right"
+    >
+      {/* Countdown bar */}
+      <div className="h-1.5 bg-[#E8DAD6] rounded-full mb-5 overflow-hidden">
+        <div
+          className="h-full bg-[#8F3F55] transition-all duration-1000 ease-linear"
+          style={{ width: `${progress}%` }}
+          aria-hidden
+        />
+      </div>
+
+      {/* Timer */}
+      <div className="flex items-center gap-1.5 text-[#6F6262] text-sm mb-4">
+        <Clock size={14} aria-hidden />
+        <span>
+          يظهر هذا العرض لمدة{" "}
+          <strong className="text-[#8F3F55]">{seconds}</strong> ثانية فقط
+        </span>
+      </div>
+
+      <h2 className="text-xl font-bold text-[#251F20] mb-2">
+        عرض خاص يظهر لك مرة واحدة
+      </h2>
+
+      <p className="text-[#6F6262] mb-4">
+        بما أنك ثبتي طلبك، تقدري تضيفي هذا المنتج لروتينك اليوم بسعر 99 ريال.
+      </p>
+
+      {/* Product card */}
+      <div className="bg-[#FFF8F1] border border-[#E8DAD6] rounded-2xl p-4 mb-5">
+        <div className="flex items-center gap-3">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#F7E8E6] to-[#FFF8F1] flex items-center justify-center text-2xl shrink-0">
+            ✨
+          </div>
+          <div>
+            <p className="font-bold text-[#251F20] text-sm leading-snug">
+              {product.shortNameAr}
+            </p>
+            <p className="text-xs text-[#6F6262] mt-1 line-clamp-2">
+              {product.subheadline}
+            </p>
+            <div className="flex items-center gap-2 mt-2">
+              <span className="text-[#8F3F55] font-bold text-lg">
+                {OFFER_UPSELL_PRICE} ريال
+              </span>
+              <span className="text-[#6F6262] text-sm line-through">
+                {product.offers[0].priceSar} ريال
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={onAccept}
+        >
+          أضيفيه لطلبي بـ {OFFER_UPSELL_PRICE} ريال
+        </Button>
+        <button
+          ref={declineRef}
+          onClick={onDecline}
+          className="w-full text-center text-sm text-[#6F6262] hover:text-[#251F20] py-2 transition-colors"
+        >
+          لا شكراً، كملي طلبي
+        </button>
+      </div>
+    </div>
+  );
+}
