@@ -1,6 +1,8 @@
 import logging
+import time
 from typing import Optional
 
+import httpx
 import geoip2.webservice
 import geoip2.database
 import geoip2.errors
@@ -10,6 +12,9 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 ALLOWED_COUNTRY_CODES = {"SA"}
+
+_PROXYCHECK_CACHE: dict[str, tuple[float, dict]] = {}
+_PROXYCHECK_CACHE_TTL = 3600
 
 
 def _get_client() -> Optional[geoip2.webservice.Client]:
@@ -46,6 +51,45 @@ class GeoCheckResult:
         self.is_vpn = is_vpn
         self.is_proxy = is_proxy
         self.reason = reason
+
+
+def _check_proxycheck(ip: str) -> Optional[dict]:
+    """Query proxycheck.io for VPN/proxy/Tor info. Returns dict or None on error."""
+    if not settings.PROXYCHECK_API_KEY:
+        return None
+
+    cached = _PROXYCHECK_CACHE.get(ip)
+    if cached and (time.time() - cached[0]) < _PROXYCHECK_CACHE_TTL:
+        return cached[1]
+
+    try:
+        url = f"https://proxycheck.io/v2/{ip}"
+        params = {
+            "key": settings.PROXYCHECK_API_KEY,
+            "vpn": "1",
+            "risk": "1",
+        }
+        with httpx.Client(timeout=5.0) as client:
+            resp = client.get(url, params=params)
+            resp.raise_for_status()
+            data = resp.json()
+
+        if data.get("status") != "ok":
+            logger.warning("proxycheck.io returned non-ok status: %s", data.get("status"))
+            return None
+
+        ip_data = data.get(ip, {})
+        result = {
+            "is_proxy": ip_data.get("proxy") == "yes",
+            "type": ip_data.get("type", ""),
+            "risk": int(ip_data.get("risk", 0) or 0),
+            "country_code": ip_data.get("isocode"),
+        }
+        _PROXYCHECK_CACHE[ip] = (time.time(), result)
+        return result
+    except Exception as exc:
+        logger.error("proxycheck.io error: %s", exc)
+        return None
 
 
 def check_ip(ip: str) -> GeoCheckResult:
@@ -110,7 +154,7 @@ def check_ip(ip: str) -> GeoCheckResult:
             country_code=country_code,
             is_vpn=is_vpn,
             is_proxy=is_proxy,
-            reason="VPN or proxy detected",
+            reason="VPN or proxy detected (MaxMind)",
         )
 
     if country_code not in ALLOWED_COUNTRY_CODES:
@@ -119,6 +163,26 @@ def check_ip(ip: str) -> GeoCheckResult:
             country_code=country_code,
             reason=f"country {country_code} not allowed",
         )
+
+    if settings.PROXYCHECK_API_KEY:
+        pc = _check_proxycheck(ip)
+        if pc is None:
+            if settings.PROXYCHECK_BLOCK_ON_ERROR:
+                return GeoCheckResult(
+                    allowed=False,
+                    country_code=country_code,
+                    reason="proxycheck.io unavailable, blocking",
+                )
+            logger.warning("proxycheck.io unavailable for %s, allowing", ip)
+        else:
+            if pc["is_proxy"] or pc["risk"] >= settings.PROXYCHECK_RISK_THRESHOLD:
+                return GeoCheckResult(
+                    allowed=False,
+                    country_code=country_code,
+                    is_vpn=pc["type"].upper() == "VPN",
+                    is_proxy=pc["is_proxy"],
+                    reason=f"proxycheck.io: type={pc['type']} risk={pc['risk']}",
+                )
 
     return GeoCheckResult(
         allowed=True,

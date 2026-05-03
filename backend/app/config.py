@@ -36,6 +36,10 @@ class Settings(BaseSettings):
     GEOIP_ENFORCE: bool = True
     GEOIP_WHITELISTED_PHONES: str = "0527837429"
 
+    PROXYCHECK_API_KEY: Optional[str] = None
+    PROXYCHECK_RISK_THRESHOLD: int = 66
+    PROXYCHECK_BLOCK_ON_ERROR: bool = False
+
     CORS_ORIGINS: str = "https://lamisbeauty.site"
 
     @property
