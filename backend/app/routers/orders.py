@@ -72,10 +72,11 @@ async def create_order(
                 geo_result.reason,
                 payload.customer.phone,
             )
-            raise HTTPException(
-                status_code=403,
-                detail="عذراً، الخدمة متاحة فقط داخل المملكة العربية السعودية",
-            )
+            if geo_result.is_vpn or geo_result.is_proxy or "proxycheck" in geo_result.reason:
+                detail = "يرجى إيقاف VPN لإتمام الطلب"
+            else:
+                detail = "عذراً، الخدمة متاحة فقط داخل المملكة العربية السعودية"
+            raise HTTPException(status_code=403, detail=detail)
 
     try:
         order = order_service.create_order(
