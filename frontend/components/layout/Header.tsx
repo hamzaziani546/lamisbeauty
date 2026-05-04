@@ -27,16 +27,16 @@ export function Header() {
   const [announcementIndex, setAnnouncementIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
 
-  if (pathname?.startsWith("/admin")) return null;
-  
   useEffect(() => setMounted(true), []);
-  
+
   useEffect(() => {
     const interval = setInterval(() => {
       setAnnouncementIndex((prev) => (prev + 1) % ANNOUNCEMENTS.length);
     }, 4000);
     return () => clearInterval(interval);
   }, []);
+
+  if (pathname?.startsWith("/admin")) return null;
 
   const count = mounted ? itemCount() : 0;
   

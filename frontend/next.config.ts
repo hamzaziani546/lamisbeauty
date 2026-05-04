@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
     formats: ["image/webp"],
     domains: [],
   },
+  eslint: {
+    // Don't fail the production build on lint errors. Lint locally / in CI.
+    ignoreDuringBuilds: true,
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },
