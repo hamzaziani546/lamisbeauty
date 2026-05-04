@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # Trusted product/offer price config - source of truth for backend calculations
 PRODUCT_CATALOG: dict[str, dict] = {
     "lutein-eye-glow-gummies": {
-        "name_ar": "علكات شوت العين باللوتين والزياكسانثين",
+        "name_ar": "علكات شوت العين",
         "sku": "LMS-LEG-001",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
@@ -30,7 +30,7 @@ PRODUCT_CATALOG: dict[str, dict] = {
         },
     },
     "collagen-glow-gummies": {
-        "name_ar": "علكات الكولاجين بفيتامين C والزنك",
+        "name_ar": "علكات كولاجين الإشراقة",
         "sku": "LMS-CGG-002",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
@@ -40,7 +40,7 @@ PRODUCT_CATALOG: dict[str, dict] = {
         },
     },
     "chlorophyll-gummies": {
-        "name_ar": "علكات الكلوروفيل بتركيبة المناعة العضوية",
+        "name_ar": "علكات الكلوروفيل",
         "sku": "LMS-CLG-003",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
