@@ -6,6 +6,7 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from app.config import settings
 from app.database import engine, _is_sqlite
 from app.routers import health, orders, admin, track
+from app.schema_admin import ensure_admin_dashboard_schema
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,6 +39,11 @@ if _is_sqlite:
     from app.database import Base
     import app.models  # noqa: F401 — ensure models are registered
     Base.metadata.create_all(bind=engine)
+
+
+@app.on_event("startup")
+def _ensure_admin_dashboard_schema() -> None:
+    ensure_admin_dashboard_schema()
 
 app.include_router(health.router)
 app.include_router(orders.router)

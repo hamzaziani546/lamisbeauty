@@ -2,7 +2,7 @@
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "http://localhost:8000";
+  "https://api.lamisbeauty.site";
 
 const TOKEN_KEY = "lamis_admin_token";
 const USER_KEY = "lamis_admin_user";

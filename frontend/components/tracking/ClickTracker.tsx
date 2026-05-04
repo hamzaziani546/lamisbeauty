@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "http://localhost:8000";
+  "https://api.lamisbeauty.site";
 
 const VISITOR_KEY = "lamis_visitor_id";
 const SESSION_SENT_KEY = "lamis_click_sent";
