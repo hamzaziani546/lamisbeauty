@@ -21,9 +21,14 @@ app = FastAPI(
 )
 
 app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
+# Accept exact origins from CORS_ORIGINS plus a regex covering any
+# lamisbeauty.site subdomain and localhost. This avoids 400s on
+# preflight whenever the site is opened from www., a staging host,
+# or a developer machine.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
+    allow_origin_regex=r"^https?://(?:[a-z0-9-]+\.)?lamisbeauty\.site$|^http://(?:localhost|127\.0\.0\.1)(?::\d+)?$",
     allow_credentials=True,
     allow_methods=["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
