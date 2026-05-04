@@ -42,6 +42,11 @@ class Settings(BaseSettings):
 
     CORS_ORIGINS: str = "https://lamisbeauty.site"
 
+    ADMIN_USERNAME: str = "admin"
+    ADMIN_PASSWORD: str = "change-me-please"
+    ADMIN_JWT_SECRET: str = "change-me-too-very-long-random-string"
+    ADMIN_TOKEN_EXPIRE_HOURS: int = 24
+
     @property
     def cors_origins_list(self) -> list[str]:
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]

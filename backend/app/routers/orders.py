@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime, timezone
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
@@ -60,10 +61,12 @@ async def create_order(
 ):
     client_ip = _get_client_ip(request)
     user_agent = request.headers.get("user-agent", "")
+    country_code: Optional[str] = None
 
     # GeoIP fraud check — skip for whitelisted phone numbers
     if not _is_phone_whitelisted(payload.customer.phone):
         geo_result = check_ip(client_ip)
+        country_code = geo_result.country_code
         if not geo_result.allowed:
             logger.warning(
                 "Order blocked | ip=%s country=%s vpn=%s proxy=%s reason=%s phone=%s",
@@ -89,6 +92,10 @@ async def create_order(
         )
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc))
+
+    if hasattr(order, "country_code"):
+        order.country_code = country_code or "SA"
+        db.commit()
 
     items_for_tracking = [
         {

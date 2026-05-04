@@ -5,7 +5,7 @@ from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config import settings
 from app.database import engine, _is_sqlite
-from app.routers import health, orders
+from app.routers import health, orders, admin, track
 
 logging.basicConfig(
     level=logging.INFO,
@@ -36,3 +36,5 @@ if _is_sqlite:
 
 app.include_router(health.router)
 app.include_router(orders.router)
+app.include_router(track.router)
+app.include_router(admin.router)
