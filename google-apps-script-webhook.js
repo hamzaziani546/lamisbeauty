@@ -8,22 +8,15 @@
  * 1. Open your Google Sheet ("orders Lamis store").
  * 2. Extensions → Apps Script.
  * 3. Paste this file → Save.
- * 4. Set Script Property WEBHOOK_SECRET (⚙ Project Settings → Script Properties)
- *    to the same value as backend GOOGLE_SHEETS_WEBHOOK_SECRET.
- * 5. Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone.
- * 6. Copy the Web App URL into backend env var GOOGLE_SHEETS_WEBHOOK_URL.
+ * 4. Deploy → New deployment → Web app → Execute as: Me → Who has access: Anyone.
+ * 5. Copy the Web App URL into backend env var GOOGLE_SHEETS_WEBHOOK_URL.
  */
 
 var SHEET_NAME = 'Sheet1';
 
 function doPost(e) {
   try {
-    var secret = PropertiesService.getScriptProperties().getProperty('WEBHOOK_SECRET');
     var payload = JSON.parse(e.postData.contents || '{}');
-
-    if (secret && payload.webhook_secret !== secret) {
-      return _jsonResponse({ ok: false, error: 'unauthorized' }, 401);
-    }
 
     var ss = SpreadsheetApp.getActiveSpreadsheet();
     var sheet = ss.getSheetByName(SHEET_NAME);
