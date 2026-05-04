@@ -10,19 +10,19 @@ const config: Config = {
     extend: {
       colors: {
         rose: {
-          deep: "#8F3F55",
-          blush: "#F7E8E6",
+          deep: "#0B6B5C",
+          blush: "#E8F0ED",
         },
         cream: {
-          warm: "#FFF8F1",
+          warm: "#F7FAF9",
         },
         brand: {
-          brown: "#6E4B3A",
-          sage: "#7B9277",
+          brown: "#084A3E",
+          sage: "#2D8B6F",
           gold: "#C9A45C",
-          ink: "#251F20",
-          "soft-text": "#6F6262",
-          border: "#E8DAD6",
+          ink: "#1A2332",
+          "soft-text": "#5A6A72",
+          border: "#D5E0DC",
         },
       },
       fontFamily: {

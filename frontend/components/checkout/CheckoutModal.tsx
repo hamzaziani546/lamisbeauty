@@ -144,10 +144,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50"
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
         onClick={step === "form" ? onClose : undefined}
         aria-hidden
       />
@@ -158,14 +158,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         aria-modal="true"
         aria-label={step === "upsell" ? "عرض خاص" : "إتمام الطلب"}
         dir="rtl"
-        className="relative w-full sm:max-w-md bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[95dvh] overflow-y-auto"
+        className="relative w-full sm:max-w-md bg-white rounded-3xl shadow-2xl my-auto max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto modal-pop"
       >
         {step !== "submitting" && step !== "upsell" && (
           <button
             ref={closeRef}
             onClick={onClose}
             aria-label="إغلاق"
-            className="absolute top-4 left-4 p-2 rounded-full hover:bg-[#F7E8E6] transition-colors z-10"
+            className="absolute top-4 left-4 p-2 rounded-full hover:bg-[#E8F0ED] transition-colors z-10"
           >
             <X size={18} aria-hidden />
           </button>
@@ -174,35 +174,35 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         <div className="p-6">
           {step === "form" && (
             <>
-              <h2 className="text-xl font-bold text-[#251F20] mb-1 text-right">
+              <h2 className="text-xl font-bold text-[#1A2332] mb-1 text-right">
                 ثبتي طلبك والدفع عند الاستلام
               </h2>
-              <p className="text-sm text-[#6F6262] mb-4 text-right">
+              <p className="text-sm text-[#5A6A72] mb-4 text-right">
                 العروض متاحة لفترة محدودة حسب توفر الكمية.
               </p>
 
               {/* Order summary */}
-              <div className="bg-[#FFF8F1] rounded-2xl p-4 mb-4 text-right">
-                <p className="text-sm font-bold text-[#251F20] mb-2">
+              <div className="bg-[#F7FAF9] rounded-2xl p-4 mb-4 text-right">
+                <p className="text-sm font-bold text-[#1A2332] mb-2">
                   ملخص الطلب
                 </p>
                 {items.map((item) => (
                   <div
                     key={`${item.productId}-${item.offerId}`}
-                    className="flex justify-between text-sm text-[#6F6262] mb-1"
+                    className="flex justify-between text-sm text-[#5A6A72] mb-1"
                   >
                     <span>{formatSarShort(item.priceSar)}</span>
                     <span className="text-right">{item.titleAr}</span>
                   </div>
                 ))}
-                <div className="border-t border-[#E8DAD6] mt-2 pt-2 flex justify-between font-bold text-[#251F20]">
-                  <span className="text-[#8F3F55]">{formatSarShort(total)}</span>
+                <div className="border-t border-[#D5E0DC] mt-2 pt-2 flex justify-between font-bold text-[#1A2332]">
+                  <span className="text-[#0B6B5C]">{formatSarShort(total)}</span>
                   <span>المجموع</span>
                 </div>
               </div>
 
               {/* Trust */}
-              <div className="flex items-center gap-2 text-sm text-[#7B9277] mb-5 justify-end">
+              <div className="flex items-center gap-2 text-sm text-[#2D8B6F] mb-5 justify-end">
                 <Shield size={14} aria-hidden />
                 <span>الدفع عند الاستلام · شحن سعودي</span>
               </div>
@@ -221,7 +221,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <div>
                   <label
                     htmlFor="checkout-name"
-                    className="block text-sm font-medium text-[#251F20] mb-1"
+                    className="block text-sm font-medium text-[#1A2332] mb-1"
                   >
                     الاسم الكامل
                   </label>
@@ -232,7 +232,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     placeholder="اسمك الكريم"
                     dir="rtl"
                     {...register("name")}
-                    className="w-full border border-[#E8DAD6] rounded-xl px-4 py-3 text-right text-[#251F20] placeholder:text-[#6F6262]/60 focus:outline-none focus:border-[#8F3F55] focus:ring-1 focus:ring-[#8F3F55] transition"
+                    className="w-full border border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/60 focus:outline-none focus:border-[#0B6B5C] focus:ring-1 focus:ring-[#0B6B5C] transition"
                   />
                   {errors.name && (
                     <p className="text-red-500 text-xs mt-1" role="alert">
@@ -244,7 +244,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 <div>
                   <label
                     htmlFor="checkout-phone"
-                    className="block text-sm font-medium text-[#251F20] mb-1"
+                    className="block text-sm font-medium text-[#1A2332] mb-1"
                   >
                     رقم الجوال السعودي
                   </label>
@@ -255,7 +255,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                     placeholder="05xxxxxxxx"
                     dir="ltr"
                     {...register("phone")}
-                    className="w-full border border-[#E8DAD6] rounded-xl px-4 py-3 text-right text-[#251F20] placeholder:text-[#6F6262]/60 focus:outline-none focus:border-[#8F3F55] focus:ring-1 focus:ring-[#8F3F55] transition"
+                    className="w-full border border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/60 focus:outline-none focus:border-[#0B6B5C] focus:ring-1 focus:ring-[#0B6B5C] transition"
                   />
                   {errors.phone && (
                     <p className="text-red-500 text-xs mt-1" role="alert">
@@ -274,13 +274,13 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   ثبتي طلبي الآن
                 </Button>
 
-                <p className="text-xs text-center text-[#6F6262]">
+                <p className="text-xs text-center text-[#5A6A72]">
                   بالمتابعة توافقين على{" "}
-                  <a href="/terms" className="underline hover:text-[#8F3F55]">
+                  <a href="/terms" className="underline hover:text-[#0B6B5C]">
                     الشروط والأحكام
                   </a>{" "}
                   و
-                  <a href="/privacy" className="underline hover:text-[#8F3F55]">
+                  <a href="/privacy" className="underline hover:text-[#0B6B5C]">
                     سياسة الخصوصية
                   </a>
                 </p>
@@ -298,9 +298,9 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
           {step === "submitting" && (
             <div className="py-16 text-center">
-              <div className="w-12 h-12 border-4 border-[#8F3F55] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="font-bold text-[#251F20]">جاري تأكيد طلبك...</p>
-              <p className="text-sm text-[#6F6262] mt-1">
+              <div className="w-12 h-12 border-4 border-[#0B6B5C] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="font-bold text-[#1A2332]">جاري تأكيد طلبك...</p>
+              <p className="text-sm text-[#5A6A72] mt-1">
                 لحظة واحدة من فضلك
               </p>
             </div>

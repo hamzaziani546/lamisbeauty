@@ -3,12 +3,13 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StoreProvider } from "@/components/layout/StoreProvider";
+import { ClickTracker } from "@/components/tracking/ClickTracker";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: {
-    default: "لاميس للجمال | Lamis Beauty",
-    template: "%s | لاميس للجمال",
+    default: "لاميس | مكملات جمال بمعايير صيدلانية",
+    template: "%s | لاميس",
   },
   description: siteConfig.metaDescription,
   metadataBase: new URL(siteConfig.url),
@@ -16,14 +17,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ar_SA",
     url: siteConfig.url,
-    siteName: "لاميس للجمال",
-    title: "لاميس للجمال | Lamis Beauty",
+    siteName: "لاميس",
+    title: "لاميس | مكملات جمال بمعايير صيدلانية",
     description: siteConfig.metaDescription,
     images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "لاميس للجمال | Lamis Beauty",
+    title: "لاميس | مكملات جمال بمعايير صيدلانية",
     description: siteConfig.metaDescription,
   },
   robots: { index: true, follow: true },
@@ -43,6 +44,7 @@ export default function RootLayout({
       </head>
       <body>
         <StoreProvider>
+          <ClickTracker />
           <Header />
           <main>{children}</main>
           <Footer />

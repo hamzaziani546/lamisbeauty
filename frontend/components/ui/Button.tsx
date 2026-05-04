@@ -19,13 +19,13 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          "inline-flex items-center justify-center font-semibold rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#8F3F55] focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed",
+          "inline-flex items-center justify-center font-semibold rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0B6B5C] focus-visible:ring-offset-2 disabled:opacity-60 disabled:cursor-not-allowed",
           {
-            "bg-[#8F3F55] text-white hover:bg-[#7a3549] active:scale-95":
+            "bg-[#0B6B5C] text-white hover:bg-[#095A4C] active:scale-95":
               variant === "primary",
-            "bg-[#FFF8F1] text-[#8F3F55] border-2 border-[#8F3F55] hover:bg-[#F7E8E6]":
+            "bg-[#F7FAF9] text-[#0B6B5C] border-2 border-[#0B6B5C] hover:bg-[#E8F0ED]":
               variant === "secondary",
-            "text-[#8F3F55] hover:bg-[#F7E8E6]": variant === "ghost",
+            "text-[#0B6B5C] hover:bg-[#E8F0ED]": variant === "ghost",
           },
           {
             "px-4 py-2 text-sm": size === "sm",

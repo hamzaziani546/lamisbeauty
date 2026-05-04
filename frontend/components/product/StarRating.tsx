@@ -17,14 +17,14 @@ export function StarRating({
             className={
               i < Math.round(rating)
                 ? "fill-[#C9A45C] text-[#C9A45C]"
-                : "text-[#E8DAD6]"
+                : "text-[#D5E0DC]"
             }
             aria-hidden
           />
         ))}
       </div>
       {count !== undefined && (
-        <span className="text-sm text-[#6F6262]">({count} تقييم)</span>
+        <span className="text-sm text-[#5A6A72]">({count} تقييم)</span>
       )}
     </div>
   );

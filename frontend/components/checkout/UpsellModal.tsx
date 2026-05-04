@@ -39,49 +39,49 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
       className="text-right"
     >
       {/* Countdown bar */}
-      <div className="h-1.5 bg-[#E8DAD6] rounded-full mb-5 overflow-hidden">
+      <div className="h-1.5 bg-[#D5E0DC] rounded-full mb-5 overflow-hidden">
         <div
-          className="h-full bg-[#8F3F55] transition-all duration-1000 ease-linear"
+          className="h-full bg-[#0B6B5C] transition-all duration-1000 ease-linear"
           style={{ width: `${progress}%` }}
           aria-hidden
         />
       </div>
 
       {/* Timer */}
-      <div className="flex items-center gap-1.5 text-[#6F6262] text-sm mb-4">
+      <div className="flex items-center gap-1.5 text-[#5A6A72] text-sm mb-4">
         <Clock size={14} aria-hidden />
         <span>
           يظهر هذا العرض لمدة{" "}
-          <strong className="text-[#8F3F55]">{seconds}</strong> ثانية فقط
+          <strong className="text-[#0B6B5C]">{seconds}</strong> ثانية فقط
         </span>
       </div>
 
-      <h2 className="text-xl font-bold text-[#251F20] mb-2">
+      <h2 className="text-xl font-bold text-[#1A2332] mb-2">
         عرض خاص يظهر لك مرة واحدة
       </h2>
 
-      <p className="text-[#6F6262] mb-4">
+      <p className="text-[#5A6A72] mb-4">
         بما أنك ثبتي طلبك، تقدري تضيفي هذا المنتج لروتينك اليوم بسعر 99 ريال.
       </p>
 
       {/* Product card */}
-      <div className="bg-[#FFF8F1] border border-[#E8DAD6] rounded-2xl p-4 mb-5">
+      <div className="bg-[#F7FAF9] border border-[#D5E0DC] rounded-2xl p-4 mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#F7E8E6] to-[#FFF8F1] flex items-center justify-center text-2xl shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#E8F0ED] to-[#F7FAF9] flex items-center justify-center text-2xl shrink-0">
             ✨
           </div>
           <div>
-            <p className="font-bold text-[#251F20] text-sm leading-snug">
+            <p className="font-bold text-[#1A2332] text-sm leading-snug">
               {product.shortNameAr}
             </p>
-            <p className="text-xs text-[#6F6262] mt-1 line-clamp-2">
+            <p className="text-xs text-[#5A6A72] mt-1 line-clamp-2">
               {product.subheadline}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-[#8F3F55] font-bold text-lg">
+              <span className="text-[#0B6B5C] font-bold text-lg">
                 {OFFER_UPSELL_PRICE} ريال
               </span>
-              <span className="text-[#6F6262] text-sm line-through">
+              <span className="text-[#5A6A72] text-sm line-through">
                 {product.offers[0].priceSar} ريال
               </span>
             </div>
@@ -101,7 +101,7 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
         <button
           ref={declineRef}
           onClick={onDecline}
-          className="w-full text-center text-sm text-[#6F6262] hover:text-[#251F20] py-2 transition-colors"
+          className="w-full text-center text-sm text-[#5A6A72] hover:text-[#1A2332] py-2 transition-colors"
         >
           لا شكراً، كملي طلبي
         </button>

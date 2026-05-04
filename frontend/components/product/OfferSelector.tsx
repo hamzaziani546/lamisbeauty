@@ -15,7 +15,7 @@ export function OfferSelector({
   onSelect,
 }: OfferSelectorProps) {
   return (
-    <div className="grid grid-cols-1 gap-4" dir="rtl">
+    <div className="grid grid-cols-1 gap-3" dir="rtl">
       {offers.map((offer) => {
         const isSelected = selected === offer.id;
         const isBest = offer.id === "three";
@@ -27,61 +27,60 @@ export function OfferSelector({
             type="button"
             onClick={() => onSelect(offer.id)}
             aria-pressed={isSelected}
-            className={`relative flex items-center justify-between w-full rounded-2xl border-2 p-5 text-right transition-all ${
+            className={`relative flex items-center justify-between w-full rounded-2xl border-2 px-4 py-3.5 text-right transition-all ${
               isSelected
-                ? "border-[#8F3F55] bg-[#FFF8F1] shadow-md transform scale-[1.02]"
-                : "border-[#E8DAD6] bg-white hover:border-[#8F3F55]/40 hover:shadow-sm"
-            }`}
+                ? "border-[#0B6B5C] bg-[#F7FAF9] shadow-md"
+                : "border-[#D5E0DC] bg-white hover:border-[#0B6B5C]/40"
+            } ${isBest ? "ring-2 ring-[#C9A45C]/30" : ""}`}
           >
             {isBest && (
-              <span className="absolute -top-3 right-4 bg-[#8F3F55] text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-sm">
-                <Sparkles size={12} />
-                {offer.badgeAr || "الأكثر طلباً"}
+              <span className="absolute -top-2.5 right-4 bg-[#C9A45C] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm whitespace-nowrap">
+                <Sparkles size={10} />
+                الأكثر مبيعاً
               </span>
             )}
-            
             {isMiddle && (
-              <span className="absolute -top-3 right-4 bg-[#7B9277] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
-                {offer.badgeAr || "خيار ممتاز"}
+              <span className="absolute -top-2.5 right-4 bg-[#2D8B6F] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm whitespace-nowrap">
+                وفّري {offer.savingsSar} ر.س
               </span>
             )}
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 min-w-0">
               <div
-                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${
                   isSelected
-                    ? "border-[#8F3F55] bg-[#8F3F55]"
-                    : "border-[#E8DAD6] bg-white"
+                    ? "border-[#0B6B5C] bg-[#0B6B5C]"
+                    : "border-[#D5E0DC] bg-white"
                 }`}
               >
-                {isSelected && <Check size={14} className="text-white" aria-hidden />}
+                {isSelected && <Check size={12} className="text-white" aria-hidden />}
               </div>
-              <div>
-                <p className={`font-bold text-lg ${isSelected ? "text-[#8F3F55]" : "text-[#251F20]"}`}>
+              <div className="text-right min-w-0">
+                <p
+                  className={`font-bold text-base leading-tight ${
+                    isSelected ? "text-[#0B6B5C]" : "text-[#1A2332]"
+                  }`}
+                >
                   {offer.labelAr}
                 </p>
-                {offer.reasonAr && !isBest && (
-                  <p className="text-sm text-[#6F6262] mt-1 font-medium">
-                    {offer.reasonAr}
-                  </p>
-                )}
-                {isBest && (
-                  <p className="text-sm text-[#7B9277] font-bold mt-1 bg-[#7B9277]/10 inline-block px-2 py-0.5 rounded-md">
-                    أفضل قيمة للاستمرار
-                  </p>
-                )}
+                <p className="text-[12px] text-[#5A6A72] mt-0.5 leading-tight">
+                  {offer.durationAr}
+                </p>
               </div>
             </div>
 
-            <div className="text-left">
-              <p className={`font-bold text-xl ${isSelected ? "text-[#8F3F55]" : "text-[#251F20]"}`}>
-                {offer.priceSar} ريال
+            <div className="text-left shrink-0">
+              <p
+                className={`font-bold text-xl leading-none ${
+                  isSelected ? "text-[#0B6B5C]" : "text-[#1A2332]"
+                }`}
+              >
+                {offer.priceSar}
+                <span className="text-[11px] font-medium mr-0.5">ر.س</span>
               </p>
-              {offer.id === "three" && (
-                <p className="text-xs text-[#7B9277] font-bold mt-1">
-                  {Math.round(offer.priceSar / offer.quantity)} ريال / للحبة
-                </p>
-              )}
+              <p className="text-[10px] text-[#2D8B6F] font-bold mt-1 whitespace-nowrap">
+                ≈ {offer.perDaySar} ر.س/اليوم
+              </p>
             </div>
           </button>
         );

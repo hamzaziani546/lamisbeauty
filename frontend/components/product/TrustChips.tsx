@@ -17,9 +17,9 @@ export function TrustChips({ compact = false }: { compact?: boolean }) {
       {chips.map(({ icon: Icon, text }) => (
         <div
           key={text}
-          className="flex items-center gap-1.5 bg-white border border-[#E8DAD6] text-[#8F3F55] rounded-full px-3.5 py-1.5 text-xs font-bold shadow-sm hover:border-[#8F3F55]/30 transition-colors"
+          className="flex items-center gap-1.5 bg-white border border-[#D5E0DC] text-[#0B6B5C] rounded-full px-3.5 py-1.5 text-xs font-bold shadow-sm hover:border-[#0B6B5C]/30 transition-colors"
         >
-          <Icon size={14} className="shrink-0 text-[#7B9277]" aria-hidden />
+          <Icon size={14} className="shrink-0 text-[#2D8B6F]" aria-hidden />
           <span>{text}</span>
         </div>
       ))}

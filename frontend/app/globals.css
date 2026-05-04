@@ -13,8 +13,8 @@ html {
 }
 
 body {
-  background-color: #fff8f1;
-  color: #251f20;
+  background-color: #f7faf9;
+  color: #1a2332;
   font-family: var(--font-tajawal), sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -24,16 +24,16 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f7e8e6;
+  background: #e8f0ed;
 }
 ::-webkit-scrollbar-thumb {
-  background: #8f3f55;
+  background: #0b6b5c;
   border-radius: 3px;
 }
 
 /* Focus visible */
 :focus-visible {
-  outline: 2px solid #8f3f55;
+  outline: 2px solid #0b6b5c;
   outline-offset: 2px;
 }
 
@@ -56,5 +56,27 @@ body {
   .container-padded {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+}
+
+/* Modal pop-in animation (centered modals) */
+@keyframes modal-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-pop {
+  animation: modal-pop 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-pop {
+    animation: none;
   }
 }

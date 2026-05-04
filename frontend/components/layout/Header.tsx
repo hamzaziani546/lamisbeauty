@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, ShieldCheck, Truck, Gift } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { useState, useEffect } from "react";
@@ -20,10 +21,13 @@ const ANNOUNCEMENTS = [
 ];
 
 export function Header() {
+  const pathname = usePathname();
   const { itemCount, openCart } = useCartStore();
   const [menuOpen, setMenuOpen] = useState(false);
   const [announcementIndex, setAnnouncementIndex] = useState(0);
   const [mounted, setMounted] = useState(false);
+
+  if (pathname?.startsWith("/admin")) return null;
   
   useEffect(() => setMounted(true), []);
   
@@ -43,7 +47,7 @@ export function Header() {
   return (
     <>
       {/* Announcement Bar */}
-      <div className="bg-[#8F3F55] text-white text-xs sm:text-sm font-bold py-2.5 px-4 text-center flex items-center justify-center gap-2 overflow-hidden relative">
+      <div className="bg-[#0B6B5C] text-white text-xs sm:text-sm font-bold py-2.5 px-4 text-center flex items-center justify-center gap-2 overflow-hidden relative">
         <div 
           key={mounted ? announcementIndex : 'initial'}
           className="flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-500"
@@ -54,7 +58,7 @@ export function Header() {
       </div>
 
       <header
-        className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#E8DAD6] shadow-sm"
+        className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#D5E0DC] shadow-sm"
         dir="rtl"
       >
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -62,10 +66,10 @@ export function Header() {
           <Link
             href="/"
             className="flex items-center gap-2.5 shrink-0 group"
-            aria-label="لاميس للجمال - الرئيسية"
+            aria-label="لاميس - الرئيسية"
           >
             <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#8F3F55] flex items-center justify-center shrink-0 group-hover:bg-[#7a3549] transition-colors shadow-sm"
+              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0B6B5C] flex items-center justify-center shrink-0 group-hover:bg-[#095A4C] transition-colors shadow-sm"
               aria-hidden
             >
               <span className="text-white font-bold text-lg sm:text-xl leading-none">
@@ -73,10 +77,10 @@ export function Header() {
               </span>
             </div>
             <div>
-              <p className="font-bold text-[#251F20] text-base sm:text-lg leading-tight group-hover:text-[#8F3F55] transition-colors">
-                لاميس للجمال
+              <p className="font-bold text-[#1A2332] text-base sm:text-lg leading-tight group-hover:text-[#0B6B5C] transition-colors">
+                لاميس
               </p>
-              <p className="text-[#6F6262] text-xs leading-tight">Lamis Beauty</p>
+              <p className="text-[#5A6A72] text-xs leading-tight">مكملات جمال بمعايير صيدلانية</p>
             </div>
           </Link>
 
@@ -86,7 +90,7 @@ export function Header() {
               <Link
                 key={href}
                 href={href}
-                className="text-[#251F20] hover:text-[#8F3F55] font-bold transition-colors text-[15px]"
+                className="text-[#1A2332] hover:text-[#0B6B5C] font-bold transition-colors text-[15px]"
               >
                 {label}
               </Link>
@@ -98,12 +102,12 @@ export function Header() {
             <button
               onClick={openCart}
               aria-label={`فتح سلة التسوق${count > 0 ? ` - ${count} منتج` : ""}`}
-              className="relative p-2.5 rounded-full hover:bg-[#F7E8E6] transition-colors"
+              className="relative p-2.5 rounded-full hover:bg-[#E8F0ED] transition-colors"
             >
-              <ShoppingBag size={22} className="text-[#251F20]" aria-hidden />
+              <ShoppingBag size={22} className="text-[#1A2332]" aria-hidden />
               {count > 0 && (
                 <span
-                  className="absolute top-0 right-0 w-5 h-5 bg-[#8F3F55] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-sm"
+                  className="absolute top-0 right-0 w-5 h-5 bg-[#0B6B5C] text-white text-[11px] font-bold rounded-full flex items-center justify-center shadow-sm"
                   aria-hidden
                 >
                   {count > 9 ? "9+" : count}
@@ -113,15 +117,15 @@ export function Header() {
 
             {/* Mobile menu toggle */}
             <button
-              className="md:hidden p-2.5 rounded-full hover:bg-[#F7E8E6] transition-colors"
+              className="md:hidden p-2.5 rounded-full hover:bg-[#E8F0ED] transition-colors"
               onClick={() => setMenuOpen((v) => !v)}
               aria-label={menuOpen ? "إغلاق القائمة" : "فتح القائمة"}
               aria-expanded={menuOpen}
             >
               {menuOpen ? (
-                <X size={22} className="text-[#251F20]" aria-hidden />
+                <X size={22} className="text-[#1A2332]" aria-hidden />
               ) : (
-                <Menu size={22} className="text-[#251F20]" aria-hidden />
+                <Menu size={22} className="text-[#1A2332]" aria-hidden />
               )}
             </button>
           </div>
@@ -130,7 +134,7 @@ export function Header() {
         {/* Mobile nav */}
         {menuOpen && (
           <nav
-            className="md:hidden bg-white border-t border-[#E8DAD6] px-4 py-3 shadow-lg absolute w-full"
+            className="md:hidden bg-white border-t border-[#D5E0DC] px-4 py-3 shadow-lg absolute w-full"
             aria-label="قائمة الجوال"
           >
             {navLinks.map(({ href, label }) => (
@@ -138,7 +142,7 @@ export function Header() {
                 key={href}
                 href={href}
                 onClick={() => setMenuOpen(false)}
-                className="block py-4 text-[#251F20] hover:text-[#8F3F55] font-bold border-b border-[#E8DAD6] last:border-0 text-right transition-colors text-lg"
+                className="block py-4 text-[#1A2332] hover:text-[#0B6B5C] font-bold border-b border-[#D5E0DC] last:border-0 text-right transition-colors text-lg"
               >
                 {label}
               </Link>

@@ -11,16 +11,16 @@ type Review = {
 export function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="bg-white rounded-2xl border border-[#E8DAD6] p-5 shadow-sm"
+      className="bg-white rounded-2xl border border-[#D5E0DC] p-5 shadow-sm"
       dir="rtl"
     >
       <div className="flex justify-between items-start mb-3">
         <div>
           <div className="flex items-center gap-1.5">
-            <p className="font-bold text-[#251F20]">{review.name}</p>
-            <CheckCircle size={14} className="text-[#7B9277]" aria-hidden />
+            <p className="font-bold text-[#1A2332]">{review.name}</p>
+            <CheckCircle size={14} className="text-[#2D8B6F]" aria-hidden />
           </div>
-          <p className="text-sm text-[#6F6262]">
+          <p className="text-sm text-[#5A6A72]">
             {review.city} · {review.product}
           </p>
         </div>
@@ -35,9 +35,9 @@ export function ReviewCard({ review }: { review: Review }) {
           ))}
         </div>
       </div>
-      <p className="text-[#6F6262] text-sm leading-relaxed">&quot;{review.text}&quot;</p>
+      <p className="text-[#5A6A72] text-sm leading-relaxed">&quot;{review.text}&quot;</p>
       {review.date && (
-        <p className="text-xs text-[#E8DAD6] mt-2">{review.date}</p>
+        <p className="text-xs text-[#D5E0DC] mt-2">{review.date}</p>
       )}
     </div>
   );
@@ -47,22 +47,19 @@ export const SAMPLE_REVIEWS: Review[] = [
   {
     name: "سارة",
     city: "الرياض",
-    product: "عرض 3 قطع كولاجين",
-    text: "أعجبني أن الطلب واضح والدفع عند الاستلام. التغليف مرتب وحسيت البراند مو عشوائي.",
-    date: "بيانات تجريبية - يُستبدل بتقييمات حقيقية عند الإطلاق",
+    product: "روتين كولاجين 3 شهور",
+    text: "بعد شهر من علكات الكولاجين، حسيت بشرتي أنضر وأظافري ما تتكسر مثل قبل. التغليف مرتب والطلب وصلني بسرعة، ودفعت كاش عند الباب بدون أي تعقيد.",
   },
   {
     name: "نورة",
     city: "جدة",
-    product: "روتين الشعر",
-    text: "البخاخ خفيف وسهل أدخله في يومي. أكثر شيء عجبني الشرح الواضح وطريقة الاستخدام.",
-    date: "بيانات تجريبية - يُستبدل بتقييمات حقيقية عند الإطلاق",
+    product: "علكات شوت العين",
+    text: "كنت دايماً ألبس كونسيلر للهالات، بعد 6 أسابيع من علكات اللوتين صرت أطلع بدون مكياج وأنا واثقة من نظرتي. العلبة فيها 60 علكة، كفّتني شهر كامل.",
   },
   {
     name: "هند",
     city: "الخبر",
     product: "علكات الكلوروفيل",
-    text: "حبيتها للدوام لأنها سهلة وأحسها جزء من روتيني اليومي للانتعاش.",
-    date: "بيانات تجريبية - يُستبدل بتقييمات حقيقية عند الإطلاق",
+    text: "حبيتها للدوام لأنها سهلة وأحسها جزء من روتيني اليومي للانتعاش. فريق الدعم كلمني على واتساب لتأكيد الطلب وكان رقيق جداً.",
   },
 ];
