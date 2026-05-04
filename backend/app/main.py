@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from app.config import settings
+from app.database import engine, _is_sqlite
 from app.routers import health, orders
 
 logging.basicConfig(
@@ -27,6 +28,11 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+if _is_sqlite:
+    from app.database import Base
+    import app.models  # noqa: F401 — ensure models are registered
+    Base.metadata.create_all(bind=engine)
 
 app.include_router(health.router)
 app.include_router(orders.router)

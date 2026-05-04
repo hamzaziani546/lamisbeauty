@@ -19,8 +19,9 @@ logger = logging.getLogger(__name__)
 
 # Trusted product/offer price config - source of truth for backend calculations
 PRODUCT_CATALOG: dict[str, dict] = {
-    "marine-collagen-latte": {
-        "name_ar": "لاتيه الكولاجين البحري لدعم نضارة البشرة ومظهر الخطوط",
+    "lutein-eye-glow-gummies": {
+        "name_ar": "علكات شوت العين باللوتين والزياكسانثين",
+        "sku": "LMS-LEG-001",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
             "two": {"quantity": 2, "price_sar": Decimal("279")},
@@ -28,8 +29,9 @@ PRODUCT_CATALOG: dict[str, dict] = {
             "upsell": {"quantity": 1, "price_sar": Decimal("99")},
         },
     },
-    "rosemary-biotin-spray": {
-        "name_ar": "بخاخ الإكليل والبيوتين لدعم مظهر الشعر وتقوية الروتين",
+    "collagen-glow-gummies": {
+        "name_ar": "علكات الكولاجين بفيتامين C والزنك",
+        "sku": "LMS-CGG-002",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
             "two": {"quantity": 2, "price_sar": Decimal("279")},
@@ -38,7 +40,8 @@ PRODUCT_CATALOG: dict[str, dict] = {
         },
     },
     "chlorophyll-gummies": {
-        "name_ar": "علكات الكلوروفيل بدون سكر لانتعاش يومي من الداخل",
+        "name_ar": "علكات الكلوروفيل بتركيبة المناعة العضوية",
+        "sku": "LMS-CLG-003",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
             "two": {"quantity": 2, "price_sar": Decimal("279")},
@@ -51,7 +54,7 @@ PRODUCT_CATALOG: dict[str, dict] = {
 
 def generate_order_number(db: Session) -> str:
     today = datetime.now(timezone.utc).strftime("%Y%m%d")
-    prefix = f"LB-{today}-"
+    prefix = f"LAMIS-{today}-"
     result = (
         db.query(Order)
         .filter(Order.order_number.like(f"{prefix}%"))
@@ -87,6 +90,7 @@ def recalculate_order(items_in: list) -> tuple[list[dict], Decimal]:
             {
                 "product_id": item.product_id,
                 "product_name_ar": product["name_ar"],
+                "sku": product["sku"],
                 "offer_id": item.offer_id,
                 "quantity": item.quantity,
                 "unit_count": offer["quantity"] * item.quantity,
@@ -144,7 +148,8 @@ def create_order(
     db.flush()
 
     for item_data in validated_items:
-        db_item = OrderItem(order_id=order.id, **item_data)
+        db_fields = {k: v for k, v in item_data.items() if k != "sku"}
+        db_item = OrderItem(order_id=order.id, **db_fields)
         db.add(db_item)
 
     db.commit()

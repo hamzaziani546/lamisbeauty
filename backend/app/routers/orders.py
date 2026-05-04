@@ -1,11 +1,13 @@
 import json
 import logging
+from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.schemas import OrderCreateRequest, OrderCreateResponse, OrderOut
 from app.services import orders as order_service
+from app.services.orders import PRODUCT_CATALOG
 from app.services import sheets as sheet_service
 from app.services.tracking import meta as meta_capi
 from app.services.tracking import tiktok as tiktok_capi
@@ -101,44 +103,27 @@ async def create_order(
         f"{settings.PUBLIC_SITE_URL}/thank-you/{order.order_number}"
     )
 
-    # Sheet payload
+    items_list = list(order.items)
+
+    product_names = "/".join(i.product_name_ar for i in items_list)
+    skus = "/".join(PRODUCT_CATALOG.get(i.product_id, {}).get("sku", "") for i in items_list)
+    quantities = "/".join(str(i.unit_count) for i in items_list)
+
+    sheet_date = datetime.now(timezone.utc).strftime("%d/%m/%Y")
+
+    # Sheet payload — matches: date, order ID, Country, name, phone, product, SKU, quantity, total price, currency, status
     sheet_payload = {
-        "order_id": str(order.id),
-        "order_number": order.order_number,
-        "status": order.status,
-        "customer_name": order.customer_name,
-        "phone_e164": order.phone_e164,
-        "total_sar": float(order.total_sar),
-        "currency": order.currency,
-        "payment_method": order.payment_method,
-        "items": [
-            {
-                "product_id": i.product_id,
-                "product_name_ar": i.product_name_ar,
-                "offer_id": i.offer_id,
-                "quantity": i.quantity,
-                "unit_count": i.unit_count,
-                "price_sar": float(i.price_sar),
-                "source": i.source,
-            }
-            for i in order.items
-        ],
-        "upsell_accepted": any(i.source == "checkout_upsell" for i in order.items),
-        "utm_source": order.utm_source,
-        "utm_medium": order.utm_medium,
-        "utm_campaign": order.utm_campaign,
-        "utm_content": order.utm_content,
-        "utm_term": order.utm_term,
-        "landing_page": order.landing_page,
-        "event_id": order.event_id,
-        "fbp": order.fbp,
-        "fbc": order.fbc,
-        "ttp": order.ttp,
-        "ttclid": order.ttclid,
-        "sc_click_id": order.sc_click_id,
-        "client_ip": order.client_ip,
-        "user_agent": order.user_agent,
-        "notes": "",
+        "date": sheet_date,
+        "order_id": order.order_number,
+        "country": "KSA",
+        "name": order.customer_name,
+        "phone": order.phone_digits,
+        "product": product_names,
+        "sku": skus,
+        "quantity": quantities,
+        "total_price": float(order.total_sar),
+        "currency": "SAR",
+        "status": "",
     }
 
     sheet_resp = await sheet_service.send_order_to_sheet(sheet_payload)
