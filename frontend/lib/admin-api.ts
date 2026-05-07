@@ -1,8 +1,17 @@
 "use client";
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
-  "https://api.lamisbeauty.site";
+function getApiBase() {
+  const configured = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
+  if (typeof window !== "undefined") {
+    const isLocalPage = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+    const configuredIsLocal =
+      configured?.includes("localhost") || configured?.includes("127.0.0.1");
+    if (!isLocalPage && configuredIsLocal) {
+      return "https://api.lamisbeauty.site";
+    }
+  }
+  return configured || "https://api.lamisbeauty.site";
+}
 
 const TOKEN_KEY = "lamis_admin_token";
 const USER_KEY = "lamis_admin_user";
@@ -55,7 +64,7 @@ export async function adminFetch<T = unknown>(
   if (init.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
+  const res = await fetch(`${getApiBase()}${path}`, { ...init, headers });
   if (!res.ok) {
     let detail = res.statusText;
     try {
@@ -70,7 +79,7 @@ export async function adminFetch<T = unknown>(
 }
 
 export async function adminLogin(username: string, password: string) {
-  const res = await fetch(`${API_BASE}/admin/login`, {
+  const res = await fetch(`${getApiBase()}/admin/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
@@ -106,6 +115,7 @@ export type MetricsResponse = {
     cancelled_orders: number;
     revenue_sar: number;
     aov_sar: number;
+    revenue_per_visitor_sar: number;
     conversion_rate: number;
     confirm_rate: number;
     delivery_rate: number;
@@ -118,7 +128,22 @@ export type MetricsResponse = {
     revenue: number;
     cvr: number;
   }[];
-  timeseries: { date: string; clicks: number; orders: number; revenue: number }[];
+  product_breakdown: {
+    product_id: string;
+    product_name_ar: string;
+    line_quantity: number;
+    units_sold: number;
+    orders: number;
+    revenue: number;
+  }[];
+  invalid_reasons: { reason: string; count: number }[];
+  timeseries: {
+    date: string;
+    clicks: number;
+    orders: number;
+    revenue: number;
+    conversion_rate: number;
+  }[];
 };
 
 export type OrderSummary = {
@@ -134,6 +159,10 @@ export type OrderSummary = {
   utm_source: string | null;
   utm_campaign: string | null;
   country_code: string | null;
+  geo_is_valid: boolean | null;
+  geo_is_vpn: boolean | null;
+  geo_is_proxy: boolean | null;
+  geo_block_reason: string | null;
   created_at: string;
 };
 
@@ -141,6 +170,7 @@ export type OrdersListResponse = {
   total: number;
   page: number;
   page_size: number;
+  traffic: "clean" | "all";
   items: OrderSummary[];
 };
 
@@ -168,7 +198,13 @@ export type OrderDetail = {
   attribution: Record<string, string | null>;
   client_ip: string | null;
   user_agent: string | null;
-  country_code: string | null;
+  geo: {
+    country_code: string | null;
+    is_valid: boolean | null;
+    is_vpn: boolean | null;
+    is_proxy: boolean | null;
+    block_reason: string | null;
+  };
   event_id: string;
   admin_notes: string | null;
   tracking_events: {

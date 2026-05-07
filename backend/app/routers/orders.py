@@ -62,11 +62,21 @@ async def create_order(
     client_ip = _get_client_ip(request)
     user_agent = request.headers.get("user-agent", "")
     country_code: Optional[str] = None
+    geo_is_vpn = False
+    geo_is_proxy = False
+    geo_is_valid = False
+    geo_block_reason: Optional[str] = None
 
     # GeoIP fraud check — skip for whitelisted phone numbers
-    if not _is_phone_whitelisted(payload.customer.phone):
+    if _is_phone_whitelisted(payload.customer.phone):
+        geo_block_reason = "phone whitelist bypass"
+    else:
         geo_result = check_ip(client_ip)
         country_code = geo_result.country_code
+        geo_is_vpn = bool(geo_result.is_vpn)
+        geo_is_proxy = bool(geo_result.is_proxy)
+        geo_is_valid = bool(geo_result.allowed)
+        geo_block_reason = geo_result.reason
         if not geo_result.allowed:
             logger.warning(
                 "Order blocked | ip=%s country=%s vpn=%s proxy=%s reason=%s phone=%s",
@@ -95,6 +105,11 @@ async def create_order(
 
     if hasattr(order, "country_code"):
         order.country_code = country_code or "SA"
+    if hasattr(order, "geo_is_valid"):
+        order.geo_is_vpn = geo_is_vpn
+        order.geo_is_proxy = geo_is_proxy
+        order.geo_is_valid = geo_is_valid
+        order.geo_block_reason = geo_block_reason[:255] if geo_block_reason else None
         db.commit()
 
     items_for_tracking = [

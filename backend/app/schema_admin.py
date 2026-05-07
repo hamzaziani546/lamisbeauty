@@ -10,6 +10,10 @@ logger = logging.getLogger(__name__)
 ORDER_COLUMNS = {
     "admin_notes": "TEXT",
     "country_code": "VARCHAR(4)",
+    "geo_is_vpn": "BOOLEAN NOT NULL DEFAULT FALSE",
+    "geo_is_proxy": "BOOLEAN NOT NULL DEFAULT FALSE",
+    "geo_is_valid": "BOOLEAN NOT NULL DEFAULT FALSE",
+    "geo_block_reason": "VARCHAR(255)",
 }
 
 ORDER_INDEXES = [
@@ -17,6 +21,7 @@ ORDER_INDEXES = [
     "CREATE INDEX IF NOT EXISTS idx_orders_status ON orders (status)",
     "CREATE INDEX IF NOT EXISTS idx_orders_utm_source ON orders (utm_source)",
     "CREATE INDEX IF NOT EXISTS idx_orders_utm_campaign ON orders (utm_campaign)",
+    "CREATE INDEX IF NOT EXISTS idx_orders_geo_is_valid ON orders (geo_is_valid)",
 ]
 
 CLICK_INDEXES = [

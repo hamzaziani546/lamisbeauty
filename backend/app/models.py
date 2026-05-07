@@ -51,6 +51,10 @@ class Order(Base):
     tracking_response = Column(Text, nullable=True)
     admin_notes = Column(Text, nullable=True)
     country_code = Column(String(4), nullable=True)
+    geo_is_vpn = Column(Boolean, nullable=False, default=False)
+    geo_is_proxy = Column(Boolean, nullable=False, default=False)
+    geo_is_valid = Column(Boolean, nullable=False, default=False, index=True)
+    geo_block_reason = Column(String(255), nullable=True)
     created_at = Column(DateTime(timezone=True), nullable=False, default=utcnow)
     updated_at = Column(
         DateTime(timezone=True), nullable=False, default=utcnow, onupdate=utcnow

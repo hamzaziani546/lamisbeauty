@@ -36,8 +36,10 @@ app.add_middleware(
 )
 
 if _is_sqlite:
+    import importlib
+
     from app.database import Base
-    import app.models  # noqa: F401 — ensure models are registered
+    importlib.import_module("app.models")  # ensure models are registered
     Base.metadata.create_all(bind=engine)
 
 

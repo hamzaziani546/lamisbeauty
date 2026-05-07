@@ -10,7 +10,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Order, Click
+from app.models import Order, OrderItem, Click
 from app.services.admin_auth import (
     issue_token,
     require_admin,
@@ -83,6 +83,28 @@ def _date_range(
     return s, e
 
 
+def _clean_click_filters(start: datetime, end: datetime) -> list:
+    return [
+        Click.created_at >= start,
+        Click.created_at <= end,
+        Click.country_code == "SA",
+        Click.is_valid.is_(True),
+        Click.is_vpn.is_(False),
+        Click.is_proxy.is_(False),
+    ]
+
+
+def _clean_order_filters(start: datetime, end: datetime) -> list:
+    return [
+        Order.created_at >= start,
+        Order.created_at <= end,
+        Order.country_code == "SA",
+        Order.geo_is_valid.is_(True),
+        Order.geo_is_vpn.is_(False),
+        Order.geo_is_proxy.is_(False),
+    ]
+
+
 @router.post("/login", response_model=LoginResponse)
 def login(body: LoginRequest):
     if not verify_credentials(body.username, body.password):
@@ -105,19 +127,14 @@ def metrics(
 ):
     s, e = _date_range(start, end)
 
-    valid_clicks_q = db.query(Click).filter(
-        Click.created_at >= s,
-        Click.created_at <= e,
-        Click.is_valid.is_(True),
-    )
+    clean_click_filters = _clean_click_filters(s, e)
+    clean_order_filters = _clean_order_filters(s, e)
+
+    valid_clicks_q = db.query(Click).filter(*clean_click_filters)
     total_clicks = valid_clicks_q.count()
     unique_visitors = (
         db.query(func.count(func.distinct(Click.visitor_id)))
-        .filter(
-            Click.created_at >= s,
-            Click.created_at <= e,
-            Click.is_valid.is_(True),
-        )
+        .filter(*clean_click_filters)
         .scalar()
         or 0
     )
@@ -126,19 +143,22 @@ def metrics(
         .filter(
             Click.created_at >= s,
             Click.created_at <= e,
-            Click.is_valid.is_(False),
+            or_(
+                Click.is_valid.is_(False),
+                Click.country_code.is_(None),
+                Click.country_code != "SA",
+                Click.is_vpn.is_(True),
+                Click.is_proxy.is_(True),
+            ),
         )
         .count()
     )
 
-    orders_q = db.query(Order).filter(
-        Order.created_at >= s,
-        Order.created_at <= e,
-    )
+    orders_q = db.query(Order).filter(*clean_order_filters)
     total_orders = orders_q.count()
     revenue = (
         db.query(func.coalesce(func.sum(Order.total_sar), 0))
-        .filter(Order.created_at >= s, Order.created_at <= e)
+        .filter(*clean_order_filters)
         .scalar()
         or Decimal(0)
     )
@@ -154,11 +174,12 @@ def metrics(
     conv_rate = (total_orders / total_clicks * 100) if total_clicks else 0.0
     confirm_rate = (confirmed_orders / total_orders * 100) if total_orders else 0.0
     delivery_rate = (delivered_orders / total_orders * 100) if total_orders else 0.0
+    revenue_per_visitor = float(revenue) / unique_visitors if unique_visitors else 0.0
 
     # Status breakdown
     status_rows = (
         db.query(Order.status, func.count(Order.id))
-        .filter(Order.created_at >= s, Order.created_at <= e)
+        .filter(*clean_order_filters)
         .group_by(Order.status)
         .all()
     )
@@ -170,11 +191,7 @@ def metrics(
             func.coalesce(Click.utm_source, "direct").label("src"),
             func.count(Click.id),
         )
-        .filter(
-            Click.created_at >= s,
-            Click.created_at <= e,
-            Click.is_valid.is_(True),
-        )
+        .filter(*clean_click_filters)
         .group_by("src")
         .order_by(func.count(Click.id).desc())
         .limit(10)
@@ -188,7 +205,7 @@ def metrics(
             func.count(Order.id),
             func.coalesce(func.sum(Order.total_sar), 0),
         )
-        .filter(Order.created_at >= s, Order.created_at <= e)
+        .filter(*clean_order_filters)
         .group_by("src")
         .all()
     )
@@ -209,6 +226,56 @@ def metrics(
         )
     utm_breakdown.sort(key=lambda x: x["clicks"], reverse=True)
 
+    product_rows = (
+        db.query(
+            OrderItem.product_id,
+            OrderItem.product_name_ar,
+            func.sum(OrderItem.quantity),
+            func.sum(OrderItem.unit_count),
+            func.count(func.distinct(Order.id)),
+            func.coalesce(func.sum(OrderItem.price_sar), 0),
+        )
+        .join(Order, OrderItem.order_id == Order.id)
+        .filter(*clean_order_filters)
+        .group_by(OrderItem.product_id, OrderItem.product_name_ar)
+        .order_by(func.coalesce(func.sum(OrderItem.price_sar), 0).desc())
+        .limit(10)
+        .all()
+    )
+    product_breakdown = [
+        {
+            "product_id": row[0],
+            "product_name_ar": row[1],
+            "line_quantity": int(row[2] or 0),
+            "units_sold": int(row[3] or 0),
+            "orders": int(row[4] or 0),
+            "revenue": float(row[5] or 0),
+        }
+        for row in product_rows
+    ]
+
+    invalid_reason_rows = (
+        db.query(func.coalesce(Click.block_reason, "unknown"), func.count(Click.id))
+        .filter(
+            Click.created_at >= s,
+            Click.created_at <= e,
+            or_(
+                Click.is_valid.is_(False),
+                Click.country_code.is_(None),
+                Click.country_code != "SA",
+                Click.is_vpn.is_(True),
+                Click.is_proxy.is_(True),
+            ),
+        )
+        .group_by(func.coalesce(Click.block_reason, "unknown"))
+        .order_by(func.count(Click.id).desc())
+        .limit(8)
+        .all()
+    )
+    invalid_reasons = [
+        {"reason": reason, "count": count} for reason, count in invalid_reason_rows
+    ]
+
     # Daily timeseries
     if "sqlite" in db.bind.dialect.name:
         day_expr = func.strftime("%Y-%m-%d", Click.created_at)
@@ -219,17 +286,13 @@ def metrics(
 
     click_by_day = dict(
         db.query(day_expr, func.count(Click.id))
-        .filter(
-            Click.created_at >= s,
-            Click.created_at <= e,
-            Click.is_valid.is_(True),
-        )
+        .filter(*clean_click_filters)
         .group_by(day_expr)
         .all()
     )
     order_by_day_rows = (
         db.query(order_day, func.count(Order.id), func.coalesce(func.sum(Order.total_sar), 0))
-        .filter(Order.created_at >= s, Order.created_at <= e)
+        .filter(*clean_order_filters)
         .group_by(order_day)
         .all()
     )
@@ -248,6 +311,7 @@ def metrics(
                 "clicks": clicks,
                 "orders": orders,
                 "revenue": rev,
+                "conversion_rate": (orders / clicks * 100) if clicks else 0.0,
             }
         )
         cur += timedelta(days=1)
@@ -264,12 +328,15 @@ def metrics(
             "cancelled_orders": cancelled_orders,
             "revenue_sar": float(revenue),
             "aov_sar": aov,
+            "revenue_per_visitor_sar": revenue_per_visitor,
             "conversion_rate": conv_rate,
             "confirm_rate": confirm_rate,
             "delivery_rate": delivery_rate,
         },
         "status_breakdown": status_breakdown,
         "utm_breakdown": utm_breakdown,
+        "product_breakdown": product_breakdown,
+        "invalid_reasons": invalid_reasons,
         "timeseries": days,
     }
 
@@ -288,6 +355,10 @@ def _serialize_order_summary(o: Order) -> dict:
         "utm_source": o.utm_source,
         "utm_campaign": o.utm_campaign,
         "country_code": getattr(o, "country_code", None),
+        "geo_is_valid": getattr(o, "geo_is_valid", None),
+        "geo_is_vpn": getattr(o, "geo_is_vpn", None),
+        "geo_is_proxy": getattr(o, "geo_is_proxy", None),
+        "geo_block_reason": getattr(o, "geo_block_reason", None),
         "created_at": o.created_at.isoformat(),
     }
 
@@ -298,6 +369,7 @@ def list_orders(
     end: Optional[str] = Query(None),
     status: Optional[str] = Query(None),
     search: Optional[str] = Query(None),
+    traffic: str = Query("clean", pattern="^(clean|all)$"),
     page: int = Query(1, ge=1),
     page_size: int = Query(25, ge=1, le=200),
     db: Session = Depends(get_db),
@@ -306,6 +378,13 @@ def list_orders(
     s, e = _date_range(start, end)
 
     q = db.query(Order).filter(Order.created_at >= s, Order.created_at <= e)
+    if traffic == "clean":
+        q = q.filter(
+            Order.country_code == "SA",
+            Order.geo_is_valid.is_(True),
+            Order.geo_is_vpn.is_(False),
+            Order.geo_is_proxy.is_(False),
+        )
     if status and status != "all":
         q = q.filter(Order.status == status)
     if search:
@@ -331,6 +410,7 @@ def list_orders(
         "total": total,
         "page": page,
         "page_size": page_size,
+        "traffic": traffic,
         "items": [_serialize_order_summary(o) for o in items],
     }
 
@@ -407,7 +487,13 @@ def order_detail(
         },
         "client_ip": order.client_ip,
         "user_agent": order.user_agent,
-        "country_code": getattr(order, "country_code", None),
+        "geo": {
+            "country_code": getattr(order, "country_code", None),
+            "is_valid": getattr(order, "geo_is_valid", None),
+            "is_vpn": getattr(order, "geo_is_vpn", None),
+            "is_proxy": getattr(order, "geo_is_proxy", None),
+            "block_reason": getattr(order, "geo_block_reason", None),
+        },
         "event_id": order.event_id,
         "admin_notes": getattr(order, "admin_notes", None),
         "tracking_events": tracking,
