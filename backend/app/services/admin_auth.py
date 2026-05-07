@@ -61,8 +61,15 @@ def verify_token(token: str) -> Optional[dict]:
 
 
 def verify_credentials(username: str, password: str) -> bool:
-    return hmac.compare_digest(username, settings.ADMIN_USERNAME) and hmac.compare_digest(
-        password, settings.ADMIN_PASSWORD
+    submitted_username = username.strip().casefold()
+    configured_username = settings.ADMIN_USERNAME.strip().casefold()
+    submitted_password = password.strip()
+    configured_password = settings.ADMIN_PASSWORD.strip()
+
+    return hmac.compare_digest(
+        submitted_username, configured_username
+    ) and hmac.compare_digest(
+        submitted_password, configured_password
     )
 
 
