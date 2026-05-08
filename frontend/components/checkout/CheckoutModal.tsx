@@ -9,7 +9,7 @@ import { X, Shield } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { normalizeKsaPhone, isValidKsaPhone } from "@/lib/phone";
 import { createOrder, getAttribution } from "@/lib/api";
-import { getUpsellProduct, OFFER_UPSELL_PRICE } from "@/config/products";
+import { getUpsellProduct, OFFER_UPSELL_PRICE, PRODUCT_MAP } from "@/config/products";
 import { formatSarShort } from "@/lib/money";
 import { Button } from "@/components/ui/Button";
 import { UpsellModal } from "./UpsellModal";
@@ -189,10 +189,25 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 {items.map((item) => (
                   <div
                     key={`${item.productId}-${item.offerId}`}
-                    className="flex justify-between text-sm text-[#5A6A72] mb-1"
+                    className="flex items-center justify-between gap-3 text-sm text-[#5A6A72] mb-2"
                   >
-                    <span>{formatSarShort(item.priceSar)}</span>
-                    <span className="text-right">{item.titleAr}</span>
+                    <span className="shrink-0">{formatSarShort(item.priceSar)}</span>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-12 h-12 rounded-lg bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+                        {PRODUCT_MAP[item.productId] ? (
+                          <img
+                            src={PRODUCT_MAP[item.productId].images.main}
+                            alt={PRODUCT_MAP[item.productId].shortNameAr}
+                            loading="lazy"
+                            decoding="async"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <span className="text-right text-[#1A2332] min-w-0 line-clamp-2">
+                        {item.titleAr}
+                      </span>
+                    </div>
                   </div>
                 ))}
                 <div className="border-t border-[#D5E0DC] mt-2 pt-2 flex justify-between font-bold text-[#1A2332]">

@@ -67,8 +67,14 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
       {/* Product card */}
       <div className="bg-[#F7FAF9] border border-[#D5E0DC] rounded-2xl p-4 mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-[#E8F0ED] to-[#F7FAF9] flex items-center justify-center text-2xl shrink-0">
-            ✨
+          <div className="w-20 h-20 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+            <img
+              src={product.images.main}
+              alt={product.shortNameAr}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
           </div>
           <div>
             <p className="font-bold text-[#1A2332] text-sm leading-snug">

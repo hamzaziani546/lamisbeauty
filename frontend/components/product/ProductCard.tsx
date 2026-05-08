@@ -15,15 +15,14 @@ export function ProductCard({ product }: ProductCardProps) {
         <ShieldCheck size={12} />
         ضمان 30 يوم
       </div>
-      {/* Image placeholder */}
-      <div className="relative h-56 bg-gradient-to-br from-[#E8F0ED] to-[#F7FAF9] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-white/20 group-hover:bg-transparent transition-colors"></div>
-        <div className="text-center p-4 relative z-10 transform group-hover:scale-105 transition-transform">
-          <div className="text-5xl mb-2 drop-shadow-sm">✨</div>
-          <p className="text-[#0B6B5C] font-bold text-sm bg-white px-3 py-1 rounded-full shadow-sm inline-block">
-            {product.shortNameAr}
-          </p>
-        </div>
+      <div className="relative h-72 bg-white flex items-center justify-center overflow-hidden">
+        <img
+          src={product.images.main}
+          alt={product.shortNameAr}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+        />
       </div>
 
       <div className="p-6" dir="rtl">

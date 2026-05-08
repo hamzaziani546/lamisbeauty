@@ -2,7 +2,7 @@
 
 import { X, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
-import { getCrossSells } from "@/config/products";
+import { getCrossSells, PRODUCT_MAP } from "@/config/products";
 import { formatSarShort } from "@/lib/money";
 import { TrustChips } from "@/components/product/TrustChips";
 import { CrossSellCard } from "./CrossSellCard";
@@ -102,13 +102,26 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                     key={`${item.productId}-${item.offerId}`}
                     className="bg-white rounded-2xl p-4 border border-[#D5E0DC] flex items-start justify-between gap-3"
                   >
-                    <div className="flex-1">
-                      <p className="font-bold text-[#1A2332] text-sm leading-snug">
-                        {item.titleAr}
-                      </p>
-                      <p className="text-xs text-[#5A6A72] mt-0.5">
-                        {item.unitCount} {item.unitCount === 1 ? "قطعة" : "قطع"}
-                      </p>
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      <div className="w-16 h-16 rounded-xl bg-[#F7FAF9] border border-[#D5E0DC] overflow-hidden shrink-0">
+                        {PRODUCT_MAP[item.productId] ? (
+                          <img
+                            src={PRODUCT_MAP[item.productId].images.main}
+                            alt={PRODUCT_MAP[item.productId].shortNameAr}
+                            loading="lazy"
+                            decoding="async"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-[#1A2332] text-sm leading-snug">
+                          {item.titleAr}
+                        </p>
+                        <p className="text-xs text-[#5A6A72] mt-0.5">
+                          {item.unitCount} {item.unitCount === 1 ? "قطعة" : "قطع"}
+                        </p>
+                      </div>
                     </div>
                     <div className="text-left shrink-0">
                       <p className="font-bold text-[#0B6B5C]">

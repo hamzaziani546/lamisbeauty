@@ -287,18 +287,14 @@ export default function HomePage() {
             {/* Visual */}
             <div className="order-1 md:order-2 relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#0B6B5C]/15 to-transparent rounded-3xl transform rotate-3 scale-105 -z-10"></div>
-              <div className="relative h-80 md:h-[520px] bg-gradient-to-br from-white via-[#F7FAF9] to-[#E8F0ED] rounded-3xl flex items-center justify-center shadow-2xl border border-white">
-                <div className="text-center px-6">
-                  <p className="text-7xl mb-4 drop-shadow-sm">👁️✨💚</p>
-                  <p className="text-[#0B6B5C] font-bold text-xl bg-white px-6 py-2 rounded-full shadow-sm inline-block mb-3">
-                    روتين لاميس الكامل
-                  </p>
-                  <div className="bg-white/90 rounded-2xl px-5 py-3 inline-block shadow-sm border border-[#D5E0DC]">
-                    <p className="text-[#1A2332] font-bold text-sm">
-                      ٣ منتجات · ١٨٠ علكة · شهر كامل
-                    </p>
-                  </div>
-                </div>
+              <div className="relative h-80 md:h-[520px] bg-gradient-to-br from-white via-[#F7FAF9] to-[#E8F0ED] rounded-3xl shadow-2xl border border-white overflow-hidden">
+                <img
+                  src="/images/hero/lamis-complete-routine-hero-card.webp"
+                  alt="روتين لاميس الكامل: علكات اللوتين والكولاجين والكلوروفيل"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="h-full w-full object-cover object-center"
+                />
                 <div className="absolute top-6 right-6 bg-white rounded-2xl shadow-lg px-4 py-3 text-sm font-bold text-[#2D8B6F] flex items-center gap-2 border border-[#D5E0DC]">
                   <ShieldCheck size={18} />
                   ضمان 30 يوم

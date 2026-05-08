@@ -28,9 +28,14 @@ export function CrossSellCard({ product }: { product: Product }) {
       className="bg-[#F7FAF9] rounded-2xl border border-[#D5E0DC] p-3 flex items-center gap-3"
       dir="rtl"
     >
-      {/* Placeholder image */}
-      <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#E8F0ED] to-[#F7FAF9] flex items-center justify-center shrink-0 text-lg">
-        ✨
+      <div className="w-20 h-20 rounded-xl bg-white shrink-0 overflow-hidden border border-[#D5E0DC]">
+        <img
+          src={product.images.main}
+          alt={product.shortNameAr}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
+        />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-bold text-[#1A2332] leading-snug line-clamp-2">

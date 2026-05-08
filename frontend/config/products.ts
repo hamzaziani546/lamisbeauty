@@ -34,6 +34,10 @@ export type Product = {
     routine: string;
     lifestyle?: string;
     ugc?: string;
+    pdpHero?: string;
+    pdpIngredients?: string;
+    pdpRoutine?: string;
+    pdpScience?: string;
   };
   offers: ProductOffer[];
   crossSellPriority: string[];
@@ -66,8 +70,12 @@ export const PRODUCTS: Product[] = [
     usage: "تناولي علكتين يومياً مع أو بعد الإفطار لأفضل امتصاص.",
     warnings: [],
     images: {
-      main: "/images/placeholders/lutein-main.webp",
+      main: "/images/products/lutein-eye-glow-gummies.webp",
       routine: "/images/placeholders/lutein-routine.webp",
+      pdpHero: "/images/product-pages/lutein-pdp-hero.webp",
+      pdpIngredients: "/images/product-pages/lutein-pdp-ingredients.webp",
+      pdpRoutine: "/images/product-pages/lutein-pdp-routine.webp",
+      pdpScience: "/images/product-pages/lutein-pdp-science.webp",
     },
     offers: [
       {
@@ -151,8 +159,12 @@ export const PRODUCTS: Product[] = [
     usage: "تناولي علكتين يومياً، يفضل بعد الإفطار للحصول على أفضل امتصاص.",
     warnings: [],
     images: {
-      main: "/images/placeholders/collagen-glow-main.webp",
+      main: "/images/products/collagen-glow-gummies.webp",
       routine: "/images/placeholders/collagen-glow-routine.webp",
+      pdpHero: "/images/product-pages/collagen-pdp-hero.webp",
+      pdpIngredients: "/images/product-pages/collagen-pdp-ingredients.webp",
+      pdpRoutine: "/images/product-pages/collagen-pdp-routine.webp",
+      pdpScience: "/images/product-pages/collagen-pdp-science.webp",
     },
     offers: [
       {
@@ -237,8 +249,12 @@ export const PRODUCTS: Product[] = [
     usage: "تناولي علكتين يومياً في أي وقت من اليوم، واستمتعي بانتعاش وثقة تدوم.",
     warnings: [],
     images: {
-      main: "/images/placeholders/chlorophyll-main.webp",
+      main: "/images/products/chlorophyll-gummies.webp",
       routine: "/images/placeholders/chlorophyll-routine.webp",
+      pdpHero: "/images/product-pages/chlorophyll-pdp-hero.webp",
+      pdpIngredients: "/images/product-pages/chlorophyll-pdp-ingredients.webp",
+      pdpRoutine: "/images/product-pages/chlorophyll-pdp-routine.webp",
+      pdpScience: "/images/product-pages/chlorophyll-pdp-lifestyle.webp",
     },
     offers: [
       {
