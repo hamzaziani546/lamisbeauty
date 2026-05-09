@@ -7,9 +7,8 @@ const root = path.resolve(__dirname, "..");
 const publicDir = path.join(root, "public");
 const source = path.join(publicDir, "brand", "lamis-mark-light.png");
 
-const teal = "#0B6B5C";
-const darkTeal = "#084A3E";
-const trustGreen = "#2D8B6F";
+const navy = "#1A2332";
+const navyDeep = "#111827";
 
 async function makeIcon(baseMark, size, filename, scale) {
   const mark = await baseMark
@@ -19,18 +18,16 @@ async function makeIcon(baseMark, size, filename, scale) {
       height: Math.round(size * scale),
       fit: "contain",
     })
-    .modulate({ brightness: 1.06, saturation: 0.92 })
     .png()
     .toBuffer();
 
   const background = Buffer.from(`
     <svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id="g" cx="35%" cy="25%" r="75%">
-          <stop offset="0%" stop-color="${trustGreen}" />
-          <stop offset="68%" stop-color="${teal}" />
-          <stop offset="100%" stop-color="${darkTeal}" />
-        </radialGradient>
+        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${navy}" />
+          <stop offset="100%" stop-color="${navyDeep}" />
+        </linearGradient>
       </defs>
       <rect width="${size}" height="${size}" rx="${Math.round(size * 0.22)}" fill="url(#g)" />
     </svg>
@@ -47,12 +44,12 @@ async function makeIcon(baseMark, size, filename, scale) {
 async function main() {
   const baseMark = sharp(source).trim({ threshold: 10 });
 
-  await makeIcon(baseMark, 16, "favicon-16x16.png", 0.68);
-  await makeIcon(baseMark, 32, "favicon-32x32.png", 0.7);
-  await makeIcon(baseMark, 48, "favicon-48x48.png", 0.7);
-  await makeIcon(baseMark, 180, "apple-touch-icon.png", 0.68);
-  await makeIcon(baseMark, 192, "android-chrome-192x192.png", 0.68);
-  await makeIcon(baseMark, 512, "android-chrome-512x512.png", 0.68);
+  await makeIcon(baseMark, 16, "favicon-16x16.png", 0.78);
+  await makeIcon(baseMark, 32, "favicon-32x32.png", 0.78);
+  await makeIcon(baseMark, 48, "favicon-48x48.png", 0.78);
+  await makeIcon(baseMark, 180, "apple-touch-icon.png", 0.75);
+  await makeIcon(baseMark, 192, "android-chrome-192x192.png", 0.75);
+  await makeIcon(baseMark, 512, "android-chrome-512x512.png", 0.75);
 
   const ico = await pngToIco([
     path.join(publicDir, "favicon-16x16.png"),
