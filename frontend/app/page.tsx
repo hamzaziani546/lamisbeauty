@@ -630,7 +630,7 @@ export default function HomePage() {
               كل مكوّن، له سبب علمي
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              ما حنا من الناس اللي تكتب 'فيتامينات وأعشاب طبيعية' وتسكت. هذي
+              ما حنا من الناس اللي تكتب &#39;فيتامينات وأعشاب طبيعية&#39; وتسكت. هذي
               الجرعات الحقيقية وليش اخترناها.
             </p>
           </div>
@@ -673,7 +673,7 @@ export default function HomePage() {
               رحلتك مع لاميس، أسبوع بأسبوع
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              مو 'سحر فوري'، النتائج الحقيقية تحتاج وقت لأن المكونات تشتغل من تحت
+              مو &#39;سحر فوري&#39;، النتائج الحقيقية تحتاج وقت لأن المكونات تشتغل من تحت
               الجلد. هذا اللي تتوقعينه.
             </p>
           </div>
@@ -752,7 +752,7 @@ export default function HomePage() {
             <p className="text-[#2A3A45] text-lg md:text-xl leading-relaxed max-w-2xl mx-auto mb-6">
               جربي الروتين لـ 30 يوم كاملة. إذا ما حسيتي بفرق حقيقي في بشرتك،
               عينك، أو انتعاشك — رجعي لنا العلب (حتى الفاضية)، ونرجّع لك فلوسك
-              كاملة. بدون أسئلة، بدون 'بس'، بدون تعقيد.
+              كاملة. بدون أسئلة، بدون &#39;بس&#39;، بدون تعقيد.
             </p>
             <div className="inline-flex items-center gap-2 text-[#2D8B6F] font-bold text-sm">
               <Heart size={16} className="fill-[#2D8B6F]" />

@@ -68,14 +68,14 @@ export function Header() {
             className="flex items-center gap-2.5 shrink-0 group"
             aria-label="لاميس - الرئيسية"
           >
-            <div
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0B6B5C] flex items-center justify-center shrink-0 group-hover:bg-[#095A4C] transition-colors shadow-sm"
+            <img
+              src="/brand/lamis-logo-mark.webp"
+              alt=""
               aria-hidden
-            >
-              <span className="text-white font-bold text-lg sm:text-xl leading-none">
-                ل
-              </span>
-            </div>
+              width={56}
+              height={56}
+              className="w-10 h-10 sm:w-14 sm:h-14 object-contain shrink-0"
+            />
             <div>
               <p className="font-bold text-[#1A2332] text-base sm:text-lg leading-tight group-hover:text-[#0B6B5C] transition-colors">
                 لاميس

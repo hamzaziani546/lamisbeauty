@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-import { X, Shield } from "lucide-react";
+import { X, ShieldCheck, CreditCard, Truck, BadgeCheck, Package, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { normalizeKsaPhone, isValidKsaPhone } from "@/lib/phone";
 import { createOrder, getAttribution } from "@/lib/api";
@@ -24,7 +24,6 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
-
 type Step = "form" | "upsell" | "submitting";
 
 interface CheckoutModalProps {
@@ -127,8 +126,20 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         attribution,
       });
 
-      // Fire browser purchase pixels using backend event_id
       trackPurchase(currentItems, currentTotal, resp.event_id);
+
+      try {
+        sessionStorage.setItem(
+          "lamis_last_order",
+          JSON.stringify({
+            items: currentItems,
+            total: currentTotal,
+            orderNumber: resp.order_number,
+          })
+        );
+      } catch {
+        // sessionStorage unavailable — graceful degradation
+      }
 
       clearCart();
       onClose();
@@ -160,6 +171,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         dir="rtl"
         className="relative w-full sm:max-w-md bg-white rounded-3xl shadow-2xl my-auto max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto modal-pop"
       >
+        {/* Close button */}
         {step !== "submitting" && step !== "upsell" && (
           <button
             ref={closeRef}
@@ -171,156 +183,210 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           </button>
         )}
 
-        <div className="p-6">
-          {step === "form" && (
-            <>
-              <h2 className="text-xl font-bold text-[#1A2332] mb-1 text-right">
-                ثبتي طلبك والدفع عند الاستلام
-              </h2>
-              <p className="text-sm text-[#5A6A72] mb-4 text-right">
-                العروض متاحة لفترة محدودة حسب توفر الكمية.
-              </p>
+        {/* ── FORM STEP ─────────────────────────────── */}
+        {step === "form" && (
+          <div className="p-6">
 
-              {/* Order summary */}
-              <div className="bg-[#F7FAF9] rounded-2xl p-4 mb-4 text-right">
-                <p className="text-sm font-bold text-[#1A2332] mb-2">
-                  ملخص الطلب
-                </p>
-                {items.map((item) => (
-                  <div
-                    key={`${item.productId}-${item.offerId}`}
-                    className="flex items-center justify-between gap-3 text-sm text-[#5A6A72] mb-2"
-                  >
-                    <span className="shrink-0">{formatSarShort(item.priceSar)}</span>
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div className="w-12 h-12 rounded-lg bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
-                        {PRODUCT_MAP[item.productId] ? (
+            {/* Header */}
+            <div className="mb-5">
+              <span className="inline-flex items-center gap-1.5 bg-[#E8F0ED] text-[#0B6B5C] text-xs font-bold px-3 py-1 rounded-full mb-3">
+                <CreditCard size={12} aria-hidden />
+                الدفع عند الاستلام — لا دفع مسبق
+              </span>
+              <h2 className="text-xl font-bold text-[#1A2332] leading-tight">
+                خطوة أخيرة — طلبك على وشك يكتمل ✨
+              </h2>
+              <p className="text-sm text-[#5A6A72] mt-1.5">
+                أكملي بياناتك وسيتصل بك فريقنا خلال دقائق لتأكيد الطلب قبل الشحن.
+              </p>
+            </div>
+
+            {/* Order summary */}
+            <div className="bg-[#F7FAF9] rounded-2xl p-4 mb-4 border border-[#D5E0DC]">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-bold text-[#5A6A72] uppercase tracking-wide">ملخص طلبك</p>
+                <span className="text-xs text-[#2D8B6F] font-bold flex items-center gap-1">
+                  <Package size={12} aria-hidden />
+                  {items.length} {items.length === 1 ? "منتج" : "منتجات"}
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                {items.map((item) => {
+                  const prod = PRODUCT_MAP[item.productId];
+                  return (
+                    <div
+                      key={`${item.productId}-${item.offerId}`}
+                      className="flex items-center gap-3"
+                    >
+                      {/* Product image */}
+                      <div className="w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+                        {prod && (
                           <img
-                            src={PRODUCT_MAP[item.productId].images.main}
-                            alt={PRODUCT_MAP[item.productId].shortNameAr}
+                            src={prod.images.main}
+                            alt={prod.shortNameAr}
                             loading="lazy"
                             decoding="async"
                             className="h-full w-full object-cover"
                           />
-                        ) : null}
+                        )}
                       </div>
-                      <span className="text-right text-[#1A2332] min-w-0 line-clamp-2">
-                        {item.titleAr}
+                      {/* Name + price */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-bold text-[#1A2332] line-clamp-2 leading-snug">
+                          {item.titleAr}
+                        </p>
+                      </div>
+                      <span className="shrink-0 font-bold text-[#0B6B5C] text-sm">
+                        {formatSarShort(item.priceSar)}
                       </span>
                     </div>
-                  </div>
-                ))}
-                <div className="border-t border-[#D5E0DC] mt-2 pt-2 flex justify-between font-bold text-[#1A2332]">
-                  <span className="text-[#0B6B5C]">{formatSarShort(total)}</span>
-                  <span>المجموع</span>
-                </div>
+                  );
+                })}
               </div>
 
-              {/* Trust */}
-              <div className="flex items-center gap-2 text-sm text-[#2D8B6F] mb-5 justify-end">
-                <Shield size={14} aria-hidden />
-                <span>الدفع عند الاستلام · شحن سعودي</span>
+              {/* Total */}
+              <div className="mt-3 pt-3 border-t border-[#D5E0DC] flex items-center justify-between">
+                <span className="font-extrabold text-lg text-[#0B6B5C]">{formatSarShort(total)}</span>
+                <span className="text-sm font-bold text-[#1A2332]">المجموع الكلي</span>
               </div>
+            </div>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4 text-right">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
-
-              <form
-                onSubmit={handleSubmit(onFormSubmit)}
-                noValidate
-                className="space-y-4 text-right"
-              >
-                <div>
-                  <label
-                    htmlFor="checkout-name"
-                    className="block text-sm font-medium text-[#1A2332] mb-1"
-                  >
-                    الاسم الكامل
-                  </label>
-                  <input
-                    id="checkout-name"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="اسمك الكريم"
-                    dir="rtl"
-                    {...register("name")}
-                    className="w-full border border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/60 focus:outline-none focus:border-[#0B6B5C] focus:ring-1 focus:ring-[#0B6B5C] transition"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-xs mt-1" role="alert">
-                      {errors.name.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="checkout-phone"
-                    className="block text-sm font-medium text-[#1A2332] mb-1"
-                  >
-                    رقم الجوال السعودي
-                  </label>
-                  <input
-                    id="checkout-phone"
-                    type="tel"
-                    autoComplete="tel"
-                    placeholder="05xxxxxxxx"
-                    dir="ltr"
-                    {...register("phone")}
-                    className="w-full border border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/60 focus:outline-none focus:border-[#0B6B5C] focus:ring-1 focus:ring-[#0B6B5C] transition"
-                  />
-                  {errors.phone && (
-                    <p className="text-red-500 text-xs mt-1" role="alert">
-                      {errors.phone.message}
-                    </p>
-                  )}
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  disabled={!isValid}
+            {/* Trust strip — 5 items */}
+            <div className="flex flex-wrap gap-2 mb-5">
+              {[
+                { icon: CreditCard,    text: "الدفع عند الاستلام" },
+                { icon: ShieldCheck,   text: "ضمان ٣٠ يوم" },
+                { icon: BadgeCheck,    text: "مصرح SFDA" },
+                { icon: Truck,         text: "شحن داخل السعودية" },
+                { icon: MessageCircle, text: "دعم واتساب" },
+              ].map(({ icon: Icon, text }) => (
+                <div
+                  key={text}
+                  className="flex items-center gap-1.5 bg-[#F7FAF9] border border-[#D5E0DC] rounded-full px-3 py-1.5"
                 >
-                  ثبتي طلبي الآن
-                </Button>
+                  <Icon size={13} className="text-[#0B6B5C] shrink-0" aria-hidden />
+                  <span className="text-[11px] font-bold text-[#1A2332] whitespace-nowrap">{text}</span>
+                </div>
+              ))}
+            </div>
 
-                <p className="text-xs text-center text-[#5A6A72]">
-                  بالمتابعة توافقين على{" "}
-                  <a href="/terms" className="underline hover:text-[#0B6B5C]">
-                    الشروط والأحكام
-                  </a>{" "}
-                  و
-                  <a href="/privacy" className="underline hover:text-[#0B6B5C]">
-                    سياسة الخصوصية
-                  </a>
+            {/* Error */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
+                <p className="text-sm text-red-600 text-right">{error}</p>
+              </div>
+            )}
+
+            {/* Form */}
+            <form
+              onSubmit={handleSubmit(onFormSubmit)}
+              noValidate
+              className="space-y-4"
+            >
+              <div>
+                <label
+                  htmlFor="checkout-name"
+                  className="block text-sm font-bold text-[#1A2332] mb-1.5"
+                >
+                  الاسم الكامل
+                </label>
+                <input
+                  id="checkout-name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="اسمك الكريم"
+                  dir="rtl"
+                  {...register("name")}
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-0 transition-colors bg-white"
+                />
+                {errors.name && (
+                  <p className="text-red-500 text-xs mt-1" role="alert">
+                    {errors.name.message}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <label
+                  htmlFor="checkout-phone"
+                  className="block text-sm font-bold text-[#1A2332] mb-1.5"
+                >
+                  رقم الجوال السعودي
+                </label>
+                <input
+                  id="checkout-phone"
+                  type="tel"
+                  autoComplete="tel"
+                  placeholder="05xxxxxxxx"
+                  dir="ltr"
+                  {...register("phone")}
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-0 transition-colors bg-white"
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-xs mt-1" role="alert">
+                    {errors.phone.message}
+                  </p>
+                )}
+                <p className="text-[11px] text-[#5A6A72] mt-1.5">
+                  سيتصل بك فريقنا على هذا الرقم لتأكيد طلبك قبل الشحن
                 </p>
-              </form>
-            </>
-          )}
+              </div>
 
-          {step === "upsell" && upsellProduct && (
+              <Button
+                type="submit"
+                variant="primary"
+                size="lg"
+                fullWidth
+                disabled={!isValid}
+                className="text-base shadow-lg shadow-[#0B6B5C]/20"
+              >
+                أكملي الطلب — {formatSarShort(total)}
+              </Button>
+
+              {/* Shipping estimate + social proof */}
+              <div className="flex items-center justify-center gap-4 pt-1 flex-wrap">
+                <span className="flex items-center gap-1.5 text-xs text-[#5A6A72]">
+                  <Truck size={13} className="text-[#2D8B6F]" aria-hidden />
+                  توصيل خلال ٢–٤ أيام
+                </span>
+                <span className="text-[#D5E0DC]">|</span>
+                <span className="text-xs text-[#5A6A72] flex items-center gap-1">
+                  📦 ٢٠٠+ طلبت هذا الشهر
+                </span>
+              </div>
+
+              <p className="text-xs text-center text-[#5A6A72]">
+                بالمتابعة توافقين على{" "}
+                <a href="/terms" className="underline hover:text-[#0B6B5C]">الشروط والأحكام</a>
+                {" "}و
+                <a href="/privacy" className="underline hover:text-[#0B6B5C]">سياسة الخصوصية</a>
+              </p>
+            </form>
+          </div>
+        )}
+
+        {/* ── UPSELL STEP ───────────────────────────── */}
+        {step === "upsell" && upsellProduct && (
+          <div className="p-6">
             <UpsellModal
               product={upsellProduct}
               onAccept={handleUpsellAccept}
               onDecline={handleUpsellDecline}
             />
-          )}
+          </div>
+        )}
 
-          {step === "submitting" && (
-            <div className="py-16 text-center">
-              <div className="w-12 h-12 border-4 border-[#0B6B5C] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="font-bold text-[#1A2332]">جاري تأكيد طلبك...</p>
-              <p className="text-sm text-[#5A6A72] mt-1">
-                لحظة واحدة من فضلك
-              </p>
-            </div>
-          )}
-        </div>
+        {/* ── SUBMITTING STEP ───────────────────────── */}
+        {step === "submitting" && (
+          <div className="py-20 text-center px-6">
+            <div className="w-14 h-14 border-4 border-[#0B6B5C] border-t-transparent rounded-full animate-spin mx-auto mb-5" />
+            <p className="font-bold text-lg text-[#1A2332]">جاري تأكيد طلبك...</p>
+            <p className="text-sm text-[#5A6A72] mt-2">
+              لحظة واحدة — نحجز لك طلبك الآن
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

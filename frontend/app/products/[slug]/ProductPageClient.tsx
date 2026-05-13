@@ -1,14 +1,21 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
-import { AlertCircle, ChevronRight, CheckCircle, ShieldCheck, ArrowLeft, Flame } from "lucide-react";
+import {
+  CheckCircle,
+  ShieldCheck,
+  ArrowLeft,
+  Flame,
+  Truck,
+  CreditCard,
+  BadgeCheck,
+  FlaskConical,
+} from "lucide-react";
 import type { Product } from "@/config/products";
 import { useCartStore } from "@/store/cart-store";
 import { OfferSelector } from "@/components/product/OfferSelector";
-import { TrustChips } from "@/components/product/TrustChips";
 import { StarRating } from "@/components/product/StarRating";
-import { ReviewCard, SAMPLE_REVIEWS } from "@/components/product/ReviewCard";
+import { ReviewCard, PRODUCT_REVIEWS, SAMPLE_REVIEWS } from "@/components/product/ReviewCard";
 import { Button } from "@/components/ui/Button";
 import { trackAddToCart, trackViewContent } from "@/lib/tracking";
 import { PRODUCTS } from "@/config/products";
@@ -17,27 +24,52 @@ interface Props {
   product: Product;
 }
 
-function ProductSectionImage({
+/** Full-height image that stretches to match its sibling column — fixes desktop tiny-image bug */
+function SectionImage({
   src,
   alt,
   badge,
 }: {
   src: string;
   alt: string;
-  badge: string;
+  badge?: string;
 }) {
   return (
-    <div className="aspect-video bg-white rounded-3xl shadow-sm border border-[#D5E0DC] relative overflow-hidden">
+    <div className="relative rounded-3xl overflow-hidden aspect-[4/5] border border-[#D5E0DC] shadow-sm bg-white">
       <img
         src={src}
         alt={alt}
         loading="lazy"
         decoding="async"
-        className="h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 text-xs font-bold text-[#0B6B5C] shadow-sm">
-        {badge}
-      </div>
+      {badge && (
+        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 text-xs font-bold text-[#0B6B5C] shadow-sm">
+          {badge}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Three trust badges row under the CTA */
+function TrustRow() {
+  return (
+    <div className="grid grid-cols-3 gap-2.5 mt-4">
+      {[
+        { icon: ShieldCheck, title: "ضمان ذهبي ٣٠ يوم", sub: "استرجاع كامل بلا أسئلة" },
+        { icon: CreditCard, title: "الدفع عند الاستلام", sub: "لا دفع مسبق أبداً" },
+        { icon: Truck, title: "شحن للسعودية", sub: "توصيل خلال ٢–٤ أيام" },
+      ].map(({ icon: Icon, title, sub }) => (
+        <div
+          key={title}
+          className="flex flex-col items-center text-center bg-white rounded-2xl p-3 border border-[#D5E0DC] shadow-sm gap-1"
+        >
+          <Icon size={18} className="text-[#0B6B5C]" aria-hidden />
+          <p className="text-[11px] font-bold text-[#1A2332] leading-tight">{title}</p>
+          <p className="text-[10px] text-[#5A6A72] leading-tight">{sub}</p>
+        </div>
+      ))}
     </div>
   );
 }
@@ -56,11 +88,13 @@ export function ProductPageClient({ product }: Props) {
     science: product.images.pdpScience ?? product.images.lifestyle ?? product.images.routine,
   };
 
+  const reviews = PRODUCT_REVIEWS[product.id] ?? SAMPLE_REVIEWS;
+  const crossSells = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 2);
+
   useEffect(() => {
     trackViewContent(product.id, product.offers[0].priceSar);
   }, [product.id, product.offers]);
 
-  // Show sticky CTA only when the main CTA is out of view
   useEffect(() => {
     const el = mainCtaRef.current;
     if (!el) return;
@@ -100,7 +134,6 @@ export function ProductPageClient({ product }: Props) {
     };
     addItem(mainItem);
     trackAddToCart(mainItem);
-
     const crossSellItem = {
       productId: crossSellProduct.id,
       offerId: "one" as const,
@@ -112,93 +145,83 @@ export function ProductPageClient({ product }: Props) {
     };
     addItem(crossSellItem);
     trackAddToCart(crossSellItem);
-
     openCart();
   }
 
-  const crossSells = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 2);
-
   return (
     <div dir="rtl">
-      {/* Breadcrumb */}
-      <div className="bg-white border-b border-[#D5E0DC]">
-        <div className="container-padded py-3 flex items-center gap-2 text-sm text-[#5A6A72]">
-          <Link href="/" className="hover:text-[#0B6B5C] transition-colors">
-            الرئيسية
-          </Link>
-          <ChevronRight size={14} aria-hidden />
-          <Link
-            href="/collections"
-            className="hover:text-[#0B6B5C] transition-colors"
-          >
-            المنتجات
-          </Link>
-          <ChevronRight size={14} aria-hidden />
-          <span className="text-[#1A2332] font-medium">
-            {product.shortNameAr}
-          </span>
-        </div>
-      </div>
 
-      {/* Above the fold */}
+
+      {/* ── HERO ───────────────────────────────────────── */}
       <section className="py-10 md:py-16 bg-[#F7FAF9]">
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-10 items-start">
-            {/* Image (RTL: order-1 md:order-2 => Image on the Right) */}
+
+            {/* Image column — sticky on desktop */}
             <div className="md:sticky md:top-24 order-1 md:order-2">
-              <div className="aspect-square bg-white rounded-3xl flex items-center justify-center shadow-md border border-[#D5E0DC]/50 relative overflow-hidden">
+              <div className="aspect-[4/5] bg-white rounded-3xl shadow-md border border-[#D5E0DC]/50 relative overflow-hidden">
                 <img
                   src={pdpImages.hero}
                   alt={product.nameAr}
                   fetchPriority="high"
                   decoding="async"
-                  className="h-full w-full object-cover"
+                  className="h-full w-full object-cover object-center"
                 />
+                {/* Guarantee badge — top */}
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-bold text-[#0B6B5C] flex items-center gap-1 shadow-sm">
-                  <ShieldCheck size={14} />
-                  ضمان 30 يوم
+                  <ShieldCheck size={13} aria-hidden />
+                  ضمان ٣٠ يوم
                 </div>
               </div>
             </div>
 
-            {/* Info (RTL: order-2 md:order-1 => Text on the Left) */}
-            <div className="order-2 md:order-1">
-              <div className="flex items-center gap-2 mb-3">
-                <StarRating />
-                <span className="text-xs font-medium text-[#5A6A72] bg-white px-2 py-1 rounded-full border border-[#D5E0DC]">
-                  60 علكة · شهر كامل · مصرّحة SFDA
+            {/* Text column */}
+            <div className="order-2 md:order-1 space-y-5">
+
+              {/* Social proof bar */}
+              <div className="flex items-center gap-3 flex-wrap">
+                <StarRating rating={4.9} count={120} />
+                <span className="text-xs font-bold text-[#2D8B6F] bg-[#2D8B6F]/10 px-2.5 py-1 rounded-full">
+                  مصرّحة SFDA
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2332] leading-tight mb-3">
-                {product.nameAr}
-              </h1>
-              <p className="text-[#5A6A72] mt-3 mb-5 leading-relaxed text-lg">
+
+              {/* Emotional H1 */}
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2332] leading-tight">
+                  {product.heroHeadline}
+                </h1>
+                <p className="text-sm text-[#5A6A72] mt-2 font-medium">{product.shortNameAr} · ٦٠ علكة · شهر كامل</p>
+              </div>
+
+              <p className="text-[#5A6A72] leading-relaxed text-base">
                 {product.subheadline}
               </p>
 
               {/* Benefits */}
-              <ul className="space-y-3 mb-6 bg-white p-5 rounded-2xl border border-[#D5E0DC]">
+              <ul className="space-y-2.5 bg-white p-4 rounded-2xl border border-[#D5E0DC]">
                 {product.benefits.map((b) => (
-                  <li
-                    key={b}
-                    className="flex items-start gap-3 text-sm text-[#1A2332] font-medium"
-                  >
-                    <span className="text-[#2D8B6F] bg-[#2D8B6F]/10 p-1 rounded-full mt-0.5">
-                      <CheckCircle size={14} />
+                  <li key={b} className="flex items-start gap-3 text-sm text-[#1A2332] font-medium">
+                    <span className="text-[#2D8B6F] bg-[#2D8B6F]/10 p-1 rounded-full mt-0.5 shrink-0">
+                      <CheckCircle size={13} />
                     </span>
                     <span className="leading-relaxed">{b}</span>
                   </li>
                 ))}
               </ul>
 
+              {/* Urgency */}
+              <div className="flex items-center gap-2 text-xs font-bold text-[#C9A45C] bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">
+                <Flame size={14} className="shrink-0" aria-hidden />
+                متاح الآن للشحن الفوري داخل السعودية
+              </div>
+
               {/* Offer selector */}
-              <div className="mb-5">
+              <div>
                 <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-                  <p className="text-sm font-bold text-[#1A2332]">
-                    اختاري المدة المناسبة لروتينك:
-                  </p>
+                  <p className="text-sm font-bold text-[#1A2332]">اختاري المدة المناسبة لروتينك:</p>
                   <span className="text-[11px] font-bold text-[#2D8B6F] bg-[#2D8B6F]/10 px-2.5 py-1 rounded-full">
-                    كل علبة = 60 علكة · شهر كامل
+                    كل علبة = ٦٠ علكة · شهر كامل
                   </span>
                 </div>
                 <OfferSelector
@@ -218,233 +241,316 @@ export function ProductPageClient({ product }: Props) {
                   aria-label={`أضيفي ${product.shortNameAr} - ${selectedOffer.labelAr} بسعر ${selectedOffer.priceSar} ريال`}
                   className="text-lg shadow-lg shadow-[#0B6B5C]/20 hover:shadow-[#0B6B5C]/30 transform hover:-translate-y-0.5 transition-all"
                 >
-                  أضيفي العرض للسلة — {selectedOffer.priceSar} ريال
+                  أضيفي للسلة — {selectedOffer.priceSar} ريال
                 </Button>
               </div>
 
-              <div className="flex items-center justify-center gap-2 mt-4 text-sm text-[#2D8B6F] font-medium bg-[#2D8B6F]/5 p-2 rounded-lg">
-                <CheckCircle size={16} />
-                الدفع عند الاستلام متاح، وفريقنا يتواصل معك للتأكيد.
-              </div>
-
-              <div className="mt-6">
-                <TrustChips compact />
-              </div>
+              {/* Trust row */}
+              <TrustRow />
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Emotional problem */}
+      {/* ── PAIN / PROBLEM ─────────────────────────────── */}
       <section className="py-12 md:py-16 bg-white">
         <div className="container-padded max-w-3xl">
-          <div className="bg-gradient-to-br from-[#F7FAF9] to-white border border-[#D5E0DC] shadow-sm rounded-3xl p-8 md:p-10 text-center relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#0B6B5C] to-transparent opacity-20"></div>
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#0B6B5C] mb-5 leading-tight">
-              {product.heroHeadline}
-            </h2>
-            <p className="text-[#5A6A72] leading-relaxed text-lg">
-              {product.emotionalCopy}
-            </p>
+          <div className="text-center mb-4">
+            <span className="text-xs font-bold text-[#0B6B5C] bg-[#E8F0ED] px-3 py-1 rounded-full">
+              هل هذا يشبهك؟
+            </span>
+          </div>
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1A2332] text-center leading-tight mb-5">
+            {product.heroHeadline}
+          </h2>
+          <p className="text-[#5A6A72] leading-relaxed text-lg text-center mb-8">
+            {product.emotionalCopy}
+          </p>
+          <div className="text-center">
+            <button
+              onClick={handleAddToCart}
+              className="text-sm font-bold text-[#0B6B5C] underline underline-offset-4 hover:no-underline transition-all"
+            >
+              ابدئي التغيير اليوم ←
+            </button>
           </div>
         </div>
       </section>
 
-      {/* Product mechanism / ingredients */}
+      {/* ── INGREDIENTS ────────────────────────────────── */}
       <section className="py-12 md:py-16 bg-[#F7FAF9]">
         <div className="container-padded">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            {/* Image (RTL: order-1 md:order-1 => Image on the Left) */}
-            <div className="order-1 md:order-1">
-              <ProductSectionImage
+          <div className="grid md:grid-cols-2 gap-10">
+
+            {/* Image — stretches to text height */}
+            <div className="order-1">
+              <SectionImage
                 src={pdpImages.ingredients}
                 alt={`مكونات ${product.shortNameAr}`}
-                badge="مكونات بحثية بجرعات واضحة"
+                badge="جرعات بحثية مدروسة"
               />
             </div>
-            {/* Text (RTL: order-2 md:order-2 => Text on the Right) */}
-            <div className="order-2 md:order-2">
+
+            {/* Text */}
+            <div className="order-2">
               <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full border border-[#D5E0DC] mb-4">
-                <span className="text-[#2D8B6F]">✨</span>
+                <FlaskConical size={14} className="text-[#2D8B6F]" aria-hidden />
                 <span className="text-xs font-bold text-[#5A6A72]">سر الفعالية</span>
               </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-6">
-                المكونات والآلية
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-2">
+                المكونات الفعّالة
               </h2>
-              <div className="space-y-4">
-                {product.ingredientNotes.map((note) => (
-                  <div
-                    key={note}
-                    className="flex items-start gap-4 bg-white rounded-2xl p-5 border border-[#D5E0DC] shadow-sm hover:shadow-md transition-shadow"
-                  >
-                    <span
-                      className="bg-[#F7FAF9] p-2 rounded-xl text-[#2D8B6F] font-bold text-xl leading-none mt-0.5"
-                      aria-hidden
+              <p className="text-sm text-[#5A6A72] mb-6">كل مكون بجرعته المثبتة علمياً — لا حشو، لا ماء</p>
+              <div className="space-y-3">
+                {product.ingredientNotes.map((note, i) => {
+                  const colonIdx = note.indexOf(":");
+                  const name = colonIdx > -1 ? note.slice(0, colonIdx) : note;
+                  const desc = colonIdx > -1 ? note.slice(colonIdx + 1).trim() : "";
+                  return (
+                    <div
+                      key={i}
+                      className="bg-white rounded-2xl p-4 border border-[#D5E0DC] shadow-sm"
                     >
-                      🌿
-                    </span>
-                    <p className="text-[15px] text-[#5A6A72] leading-relaxed font-medium">
-                      {note}
-                    </p>
-                  </div>
-                ))}
+                      <div className="flex items-start gap-3">
+                        <span className="shrink-0 w-8 h-8 rounded-xl bg-[#E8F0ED] text-[#0B6B5C] flex items-center justify-center font-bold text-sm mt-0.5">
+                          {i + 1}
+                        </span>
+                        <div>
+                          <p className="font-bold text-[#1A2332] text-sm leading-snug">{name}</p>
+                          {desc && (
+                            <p className="text-[13px] text-[#5A6A72] mt-1 leading-relaxed">{desc}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* Routine section */}
-      <section className="py-12 md:py-20 bg-white">
+      {/* ── RESULTS TIMELINE ───────────────────────────── */}
+      <section className="py-12 md:py-16 bg-gradient-to-br from-[#0B6B5C] to-[#1E7B68]">
         <div className="container-padded">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            {/* Text (RTL: order-2 md:order-1 => Text on the Left) */}
-            <div className="order-2 md:order-1">
-              <div className="inline-flex items-center gap-2 bg-[#F7FAF9] px-3 py-1 rounded-full border border-[#D5E0DC] mb-4">
-                <span className="text-[#0B6B5C]">⏱️</span>
-                <span className="text-xs font-bold text-[#5A6A72]">روتين سهل</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-5">
-                كيف تستخدمينه؟
-              </h2>
-              <p className="text-[#5A6A72] text-lg leading-relaxed mb-6 bg-[#F7FAF9] p-5 rounded-2xl border border-[#D5E0DC]">
-                {product.usage}
-              </p>
-              {product.warnings.map((w) => (
-                <div
-                  key={w}
-                  className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800 mt-4"
-                >
-                  <AlertCircle size={18} className="shrink-0 mt-0.5 text-amber-600" aria-hidden />
-                  <p className="font-medium">{w}</p>
-                </div>
-              ))}
-            </div>
-            {/* Image (RTL: order-1 md:order-2 => Image on the Right) */}
-            <div className="order-1 md:order-2">
-              <ProductSectionImage
-                src={pdpImages.routine}
-                alt={`روتين استخدام ${product.shortNameAr}`}
-                badge="علكتين يومياً · بدون حبوب مرة"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Science & Authority section */}
-      <section className="py-12 md:py-20 bg-[#F7FAF9]">
-        <div className="container-padded">
-          <div className="grid md:grid-cols-2 gap-10 items-center">
-            {/* Image (RTL: order-1 md:order-1 => Image on the Left) */}
-            <div className="order-1 md:order-1">
-              <ProductSectionImage
-                src={pdpImages.science}
-                alt={`جودة وموثوقية ${product.shortNameAr}`}
-                badge="مصرّحة SFDA · اختبار جودة لكل دفعة"
-              />
-            </div>
-            {/* Text (RTL: order-2 md:order-2 => Text on the Right) */}
-            <div className="order-2 md:order-2">
-              <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full border border-[#D5E0DC] mb-4">
-                <span className="text-[#2D8B6F]">🛡️</span>
-                <span className="text-xs font-bold text-[#5A6A72]">موثوقية وأمان</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-5">
-                جودة تثقين فيها
-              </h2>
-              <p className="text-[#5A6A72] text-lg leading-relaxed mb-6">
-                صحتك وجمالك أمانة. لذلك نحرص على أن تكون منتجاتنا مصرحة من هيئة الغذاء والدواء السعودية (SFDA)، ومكوناتها مدروسة بعناية لتناسب طبيعة واحتياج المرأة في السعودية.
-              </p>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3 text-[15px] text-[#1A2332] font-medium bg-white p-3 rounded-xl border border-[#D5E0DC]">
-                  <span className="text-white bg-[#2D8B6F] rounded-full p-1">
-                    <CheckCircle size={16} />
-                  </span>
-                  <span>مصرحة من هيئة الغذاء والدواء (SFDA)</span>
-                </li>
-                <li className="flex items-center gap-3 text-[15px] text-[#1A2332] font-medium bg-white p-3 rounded-xl border border-[#D5E0DC]">
-                  <span className="text-white bg-[#2D8B6F] rounded-full p-1">
-                    <CheckCircle size={16} />
-                  </span>
-                  <span>مكونات آمنة ومدروسة بعناية</span>
-                </li>
-                <li className="flex items-center gap-3 text-[15px] text-[#1A2332] font-medium bg-white p-3 rounded-xl border border-[#D5E0DC]">
-                  <span className="text-white bg-[#2D8B6F] rounded-full p-1">
-                    <CheckCircle size={16} />
-                  </span>
-                  <span>تركيبة تناسب بيئة وأجواء المملكة</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Warranty section */}
-      <section className="py-12 md:py-16 bg-white">
-        <div className="container-padded max-w-4xl text-center">
-          <div className="bg-gradient-to-b from-[#F7FAF9] to-white rounded-3xl p-8 md:p-12 shadow-sm border border-[#D5E0DC]">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm border border-[#D5E0DC]">
-              <span className="text-4xl">🛡️</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-4">
-              ضمان لاميس الذهبي - 30 يوم
+          <div className="text-center mb-10">
+            <span className="text-white/60 text-xs font-bold tracking-wider uppercase">ماذا تتوقعين؟</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2">
+              جهزي نفسك — النتائج أسرع مما تتوقعين ✨
             </h2>
-            <p className="text-[#5A6A72] text-lg leading-relaxed max-w-2xl mx-auto">
-              واثقين من جودة منتجاتنا وتأثيرها على روتينك. إذا ما حسيتي بالفرق اللي تتمنينه خلال 30 يوم، نرجع لك فلوسك بدون أي أسئلة معقدة. جربي الروتين وأنتِ مرتاحة البال.
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            {product.resultTimeline.map((step, i) => (
+              <div
+                key={i}
+                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-white"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm shrink-0">
+                    {i + 1}
+                  </span>
+                  <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
+                    {step.period}
+                  </span>
+                </div>
+                <p className="font-semibold text-base leading-snug">{step.result}</p>
+              </div>
+            ))}
+          </div>
+          <p className="text-white/40 text-xs text-center mt-6">
+            النتائج تتفاوت حسب الانتظام في الاستخدام والحالة الفردية
+          </p>
+        </div>
+      </section>
+
+      {/* ── REVIEWS (moved up — before routine) ─────────── */}
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container-padded">
+          {/* Aggregate header */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center gap-3 mb-3 flex-wrap">
+              <StarRating rating={4.9} />
+              <span className="font-bold text-[#1A2332] text-lg">٤.٩ من ٥</span>
+              <span className="text-[#5A6A72] text-sm">· ١٢٠+ تقييم موثّق</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332]">
+              تقييمات عميلاتنا في السعودية
+            </h2>
+            <p className="text-[#5A6A72] mt-2 text-sm flex items-center justify-center gap-1.5">
+              <BadgeCheck size={15} className="text-[#2D8B6F]" aria-hidden />
+              كل تقييم من عميلة اشترت فعلاً وتحققنا من طلبها
             </p>
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {reviews.map((review, i) => (
+              <ReviewCard key={i} review={review} />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Cross-sell Bundle Section (Replaced Offer Stack) */}
+      {/* ── ROUTINE ────────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-[#F7FAF9]">
+        <div className="container-padded">
+          <div className="grid md:grid-cols-2 gap-10">
+
+            {/* Text */}
+            <div className="order-2 md:order-1">
+              <div className="inline-flex items-center gap-2 bg-white px-3 py-1 rounded-full border border-[#D5E0DC] mb-4">
+                <span className="text-[#0B6B5C] text-sm">⏱️</span>
+                <span className="text-xs font-bold text-[#5A6A72]">روتين سهل</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-4">
+                كيف تستخدمينه؟
+              </h2>
+              <div className="bg-white rounded-2xl p-5 border border-[#D5E0DC] mb-5">
+                <p className="text-[#1A2332] text-lg leading-relaxed font-medium">
+                  {product.usage}
+                </p>
+              </div>
+              <div className="bg-[#E8F0ED] rounded-2xl p-4 border border-[#C5D9D3]">
+                <p className="text-sm font-bold text-[#0B6B5C] mb-1">نصيحة للنتائج الأفضل:</p>
+                <p className="text-sm text-[#5A6A72] leading-relaxed">
+                  الانتظام هو المفتاح. العلكتان يومياً بدون انقطاع — حتى في أيام السفر.
+                </p>
+              </div>
+            </div>
+
+            {/* Image — stretches to text height */}
+            <div className="order-1 md:order-2">
+              <SectionImage
+                src={pdpImages.routine}
+                alt={`روتين استخدام ${product.shortNameAr}`}
+                badge="علكتين يومياً · بدون حبوب"
+              />
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── SCIENCE / AUTHORITY ────────────────────────── */}
+      <section className="py-12 md:py-16 bg-white">
+        <div className="container-padded">
+          <div className="grid md:grid-cols-2 gap-10">
+
+            {/* Image */}
+            <div className="order-1">
+              <SectionImage
+                src={pdpImages.science}
+                alt={`جودة وموثوقية ${product.shortNameAr}`}
+                badge="مصرّحة SFDA · جودة مضمونة"
+              />
+            </div>
+
+            {/* Text */}
+            <div className="order-2">
+              <div className="inline-flex items-center gap-2 bg-[#F7FAF9] px-3 py-1 rounded-full border border-[#D5E0DC] mb-4">
+                <ShieldCheck size={14} className="text-[#2D8B6F]" aria-hidden />
+                <span className="text-xs font-bold text-[#5A6A72]">العلم يثبتها</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-4">
+                جودة تثقين فيها
+              </h2>
+              <p className="text-[#5A6A72] text-base leading-relaxed mb-6">
+                {product.scienceCopy}
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "مصرحة من هيئة الغذاء والدواء السعودية (SFDA)",
+                  "مكونات بجرعات مدروسة وموثّقة علمياً",
+                  "تركيبة تناسب بيئة واحتياجات المرأة في المملكة",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 text-sm text-[#1A2332] font-medium bg-[#F7FAF9] p-3 rounded-xl border border-[#D5E0DC]"
+                  >
+                    <span className="text-white bg-[#2D8B6F] rounded-full p-1 shrink-0">
+                      <CheckCircle size={14} />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* ── WARRANTY ───────────────────────────────────── */}
+      <section className="py-12 md:py-16 bg-[#F7FAF9]">
+        <div className="container-padded max-w-3xl">
+          <div className="bg-gradient-to-br from-[#0B6B5C] to-[#1E7B68] rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
+            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, #C9A45C 0%, transparent 60%)" }} />
+            <div className="w-16 h-16 bg-white/15 rounded-full flex items-center justify-center mx-auto mb-5 border border-white/30">
+              <ShieldCheck size={32} className="text-white" aria-hidden />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+              ضمان لاميس الذهبي — ٣٠ يوم
+            </h2>
+            <p className="text-white/80 text-base leading-relaxed max-w-xl mx-auto mb-6">
+              واثقين من أثر منتجاتنا. إذا ما حسيتي بالفرق خلال ٣٠ يوماً من الاستخدام المنتظم، نرجع لكِ فلوسك كاملة — بدون نقاش، بدون شرط.
+            </p>
+            <button
+              onClick={handleAddToCart}
+              className="bg-white text-[#0B6B5C] font-bold px-8 py-3 rounded-full text-base hover:bg-white/90 transition-colors shadow-lg"
+            >
+              جربي الآن بدون مخاطرة
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CROSS-SELL BUNDLE ──────────────────────────── */}
       {crossSells.length > 0 && (
-        <section className="py-16 md:py-20 bg-[#F7FAF9]" id="offer-stack">
+        <section className="py-14 md:py-18 bg-white" id="offer-stack">
           <div className="container-padded max-w-4xl">
             <div className="text-center mb-10">
               <span className="inline-block bg-[#E8F0ED] text-[#0B6B5C] text-xs font-bold px-3 py-1 rounded-full mb-3">
                 نتائج مضاعفة
               </span>
-              <h2 className="text-3xl font-bold text-[#1A2332] mb-3">
+              <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-3">
                 ضاعفي النتائج مع الباقة المتكاملة ✨
               </h2>
-              <p className="text-[#5A6A72] text-lg">
-                أكملي روتينك بمنتجات تتكامل مع بعضها لنتائج أسرع وأفضل.
+              <p className="text-[#5A6A72]">
+                أكملي روتينك بمنتجات تتكامل مع بعضها لنتائج أسرع وأشمل.
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {crossSells.map((crossProduct) => (
-                <div key={crossProduct.id} className="bg-white border-2 border-[#D5E0DC] rounded-3xl overflow-hidden hover:border-[#0B6B5C]/50 transition-colors shadow-sm">
-                  <div className="relative h-56 bg-white overflow-hidden">
+                <div
+                  key={crossProduct.id}
+                  className="bg-white border-2 border-[#D5E0DC] rounded-3xl overflow-hidden hover:border-[#0B6B5C]/50 transition-colors shadow-sm"
+                >
+                  <div className="relative aspect-[4/5] bg-white overflow-hidden">
                     <img
                       src={crossProduct.images.main}
                       alt={crossProduct.shortNameAr}
                       loading="lazy"
                       decoding="async"
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-contain"
                     />
                   </div>
                   <div className="p-6">
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-start justify-between mb-3 gap-3">
                       <div>
                         <h3 className="font-bold text-[#1A2332] text-lg">{crossProduct.shortNameAr}</h3>
-                        <p className="text-sm text-[#5A6A72]">+ {product.shortNameAr}</p>
+                        <p className="text-sm text-[#5A6A72] mt-0.5">يتكامل مع {product.shortNameAr}</p>
                       </div>
-                      <div className="text-left">
-                        <p className="font-bold text-xl text-[#0B6B5C]">349 ريال</p>
-                        <p className="text-xs text-[#5A6A72] line-through">بدل 398 ريال</p>
-                        <p className="text-[10px] text-[#2D8B6F] font-bold mt-0.5">
-                          وفّري 49 ريال
-                        </p>
+                      <div className="text-left shrink-0">
+                        <p className="font-bold text-xl text-[#0B6B5C]">٣٤٩ ريال</p>
+                        <p className="text-xs text-[#5A6A72] line-through">بدل ٣٩٨</p>
+                        <p className="text-[10px] text-[#2D8B6F] font-bold mt-0.5">وفّري ٤٩ ريال</p>
                       </div>
                     </div>
-                    
-                    <p className="text-[15px] text-[#5A6A72] mb-6 leading-relaxed line-clamp-2">
+                    <p className="text-sm text-[#5A6A72] mb-5 leading-relaxed line-clamp-2">
                       {crossProduct.subheadline}
                     </p>
-                    
                     <Button
                       variant="primary"
                       fullWidth
@@ -457,57 +563,30 @@ export function ProductPageClient({ product }: Props) {
                 </div>
               ))}
             </div>
-            
-            <div className="flex justify-center mt-8">
-              <TrustChips compact />
-            </div>
           </div>
         </section>
       )}
 
-      {/* Reviews */}
-      <section className="py-16 md:py-20 bg-white">
-        <div className="container-padded">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-[#1A2332] mb-3">
-              تقييمات العميلات
-            </h2>
-            <p className="text-lg text-[#5A6A72]">
-              تجارب حقيقية من عميلاتنا في السعودية
-            </p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SAMPLE_REVIEWS.map((review, i) => (
-              <ReviewCard key={i} review={review} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-16 md:py-20 bg-[#F7FAF9]">
+      {/* ── FAQ ────────────────────────────────────────── */}
+      <section className="py-14 md:py-18 bg-[#F7FAF9]">
         <div className="container-padded max-w-3xl">
           <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-[#1A2332] mb-3">
-              أسئلة شائعة
-            </h2>
-            <p className="text-lg text-[#5A6A72]">
-              كل ما تحتاجين معرفته عن {product.shortNameAr}
-            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-2">أسئلة شائعة</h2>
+            <p className="text-[#5A6A72]">كل ما تحتاجين معرفته عن {product.shortNameAr}</p>
           </div>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {product.faq.map((item) => (
               <details
                 key={item.q}
                 className="bg-white border border-[#D5E0DC] rounded-2xl p-6 group shadow-sm"
               >
-                <summary className="font-bold text-lg text-[#1A2332] cursor-pointer list-none flex justify-between items-center">
-                  {item.q}
-                  <span className="text-[#0B6B5C] text-2xl leading-none group-open:rotate-45 transition-transform inline-block bg-[#E8F0ED] w-8 h-8 rounded-full flex items-center justify-center">
+                <summary className="font-bold text-base text-[#1A2332] cursor-pointer list-none flex justify-between items-center gap-3">
+                  <span>{item.q}</span>
+                  <span className="shrink-0 text-[#0B6B5C] text-xl leading-none group-open:rotate-45 transition-transform w-8 h-8 rounded-full bg-[#E8F0ED] flex items-center justify-center font-bold">
                     +
                   </span>
                 </summary>
-                <p className="mt-4 text-[#5A6A72] text-[15px] leading-relaxed border-t border-[#D5E0DC] pt-4">
+                <p className="mt-4 text-[#5A6A72] text-sm leading-relaxed border-t border-[#D5E0DC] pt-4">
                   {item.a}
                 </p>
               </details>
@@ -516,7 +595,38 @@ export function ProductPageClient({ product }: Props) {
         </div>
       </section>
 
-      {/* Sticky CTA — only visible when main CTA is out of view */}
+      {/* ── FINAL CTA ──────────────────────────────────── */}
+      <section className="py-14 md:py-20 bg-[#1A2332]">
+        <div className="container-padded max-w-xl">
+          <div className="text-center mb-8">
+            <span className="text-[#C9A45C] text-sm font-bold">جاهزة تبدئي؟</span>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 leading-tight">
+              اختاري عرضك وابدئي روتينك اليوم
+            </h2>
+            <p className="text-white/50 text-sm mt-2">الدفع عند الاستلام · لا مخاطرة · ضمان ٣٠ يوم</p>
+          </div>
+          <OfferSelector
+            offers={product.offers.filter((o) => o.id !== "upsell")}
+            selected={selectedOfferId}
+            onSelect={setSelectedOfferId}
+          />
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={handleAddToCart}
+            className="mt-5 text-lg shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 transform hover:-translate-y-0.5 transition-all"
+          >
+            أضيفي للسلة — {selectedOffer.priceSar} ريال
+          </Button>
+          <TrustRow />
+          <p className="text-white/30 text-xs text-center mt-6">
+            مصرحة من هيئة الغذاء والدواء السعودية (SFDA) · شحن لجميع مناطق المملكة
+          </p>
+        </div>
+      </section>
+
+      {/* ── STICKY CTA ─────────────────────────────────── */}
       <div
         className={`fixed bottom-3 left-3 right-3 sm:bottom-5 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:w-[min(640px,calc(100%-2.5rem))] z-50 transition-all duration-300 ease-out ${
           showStickyCta
@@ -524,13 +634,11 @@ export function ProductPageClient({ product }: Props) {
             : "opacity-0 translate-y-6 pointer-events-none"
         }`}
         aria-hidden={!showStickyCta}
-        aria-label="زر الإضافة للسلة ثابت"
       >
         <button
           onClick={handleAddToCart}
           className="group w-full flex items-center justify-between gap-3 bg-gradient-to-l from-[#0B6B5C] via-[#1E7B68] to-[#0B6B5C] text-white rounded-full pr-2 pl-5 py-2 shadow-2xl shadow-[#0B6B5C]/40 ring-1 ring-white/20 hover:shadow-[#0B6B5C]/50 active:scale-[0.99] transition-all overflow-hidden"
         >
-          {/* Right side (RTL start): icon + text */}
           <span className="flex items-center gap-3 min-w-0">
             <span className="shrink-0 w-11 h-11 rounded-full bg-white text-[#0B6B5C] flex items-center justify-center shadow-inner">
               <ArrowLeft size={20} className="rtl:rotate-180 group-hover:-translate-x-0.5 transition-transform" aria-hidden />
@@ -540,30 +648,21 @@ export function ProductPageClient({ product }: Props) {
                 <Flame size={11} className="text-amber-300" aria-hidden />
                 <span>
                   {selectedOffer.durationAr || `${selectedOffer.quantity} علبة`}
-                  {selectedOffer.savingsSar
-                    ? ` · وفّري ${selectedOffer.savingsSar} ريال`
-                    : ""}
+                  {selectedOffer.savingsSar ? ` · وفّري ${selectedOffer.savingsSar} ريال` : ""}
                 </span>
               </span>
-              <span className="font-bold text-[15px] sm:text-base mt-0.5 truncate">
-                أضيفي للسلة
-              </span>
+              <span className="font-bold text-[15px] sm:text-base mt-0.5 truncate">أضيفي للسلة</span>
             </span>
           </span>
-
-          {/* Left side (RTL end): price */}
           <span className="shrink-0 flex flex-col items-end leading-none">
             <span className="text-[10px] text-white/70">السعر</span>
-            <span className="font-extrabold text-lg sm:text-xl">
-              {selectedOffer.priceSar} ر.س
-            </span>
+            <span className="font-extrabold text-lg sm:text-xl">{selectedOffer.priceSar} ر.س</span>
           </span>
         </button>
       </div>
 
-      {/* Bottom spacer reserved only when sticky is active to avoid covering content */}
       <div
-        className={`transition-all duration-300 ${showStickyCta ? "h-24 md:h-24" : "h-0"}`}
+        className={`transition-all duration-300 ${showStickyCta ? "h-24" : "h-0"}`}
         aria-hidden
       />
 

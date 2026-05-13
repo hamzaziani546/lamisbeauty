@@ -1,0 +1,11 @@
+<svg width="240" height="240" viewBox="0 0 240 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="lamisPattern" x="0" y="0" width="60" height="60" patternUnits="userSpaceOnUse">
+      <circle cx="12" cy="12" r="3" fill="#0B6B5C" fill-opacity="0.16" />
+      <circle cx="48" cy="30" r="2.5" fill="#2D8B6F" fill-opacity="0.14" />
+      <circle cx="24" cy="48" r="2" fill="#C9A45C" fill-opacity="0.18" />
+      <path d="M30 10C37.732 10 44 16.268 44 24C44 31.732 37.732 38 30 38C22.268 38 16 31.732 16 24C16 16.268 22.268 10 30 10Z" stroke="#0B6B5C" stroke-opacity="0.08" stroke-width="1.5" />
+    </pattern>
+  </defs>
+  <rect width="240" height="240" fill="url(#lamisPattern)" />
+</svg>

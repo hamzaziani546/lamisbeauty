@@ -74,7 +74,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [, setCurrentUser] = useState<string | null>(null);
   const [tab, setTab] = useState<Tab>("dashboard");
   const [start, setStart] = useState(() => today(-30));
   const [end, setEnd] = useState(() => today());

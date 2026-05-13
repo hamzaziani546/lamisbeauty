@@ -43,6 +43,9 @@ export type Product = {
   crossSellPriority: string[];
   faq: { q: string; a: string }[];
   upsellHeadline: string;
+  orderCountBadge: string;
+  resultTimeline: Array<{ period: string; result: string }>;
+  scienceCopy: string;
 };
 
 export const PRODUCTS: Product[] = [
@@ -134,6 +137,13 @@ export const PRODUCTS: Product[] = [
       },
     ],
     upsellHeadline: "أضيفي علكات الكولاجين لإشراقة كاملة بسعر خاص",
+    orderCountBadge: "١٦٥+ طلبت هذا الشهر",
+    resultTimeline: [
+      { period: "الأسبوع الأول", result: "خفّة ملحوظة في مظهر التعب والانتفاخ تحت العين" },
+      { period: "الأسبوع ٢–٤", result: "الهالات تبدأ تخف وعيونك تبدو أكثر إشراقاً" },
+      { period: "الشهر ٢–٣", result: "نظرة واضحة ومشرقة حتى بدون مكياج — يلاحظها من حولك" },
+    ],
+    scienceCopy: "اللوتين والزياكسانثين هما الصبغتان الوحيدتان اللتان تتراكمان مباشرةً في شبكية العين والجلد المحيط بها. دراسات سريرية أثبتت دورهما في حماية خلايا العين، وتقليل تأثير الإجهاد الضوئي، وتحسين إشراقة المنطقة المحيطة بالعين.",
   },
   {
     id: "collagen-glow-gummies",
@@ -223,6 +233,13 @@ export const PRODUCTS: Product[] = [
       },
     ],
     upsellHeadline: "أضيفي علكات شوت العين لتفتيح الهالات بسعر خاص",
+    orderCountBadge: "٢١٠+ طلبت هذا الشهر",
+    resultTimeline: [
+      { period: "الأسبوع الأول", result: "بشرتك تبدأ تشعر بنعومة مختلفة وترطيب أعمق" },
+      { period: "الأسبوع ٢–٤", result: "إشراقة تظهر من الداخل وتحسن واضح في قوة الأظافر" },
+      { period: "الشهر ٢–٣", result: "بشرة مشدودة، شعر أكثف، وأظافر ما تتكسر — نتيجة تبقى" },
+    ],
+    scienceCopy: "الكولاجين البحري المتحلل يمتصه الجسم بسرعة أعلى بـ١.٥ مرة مقارنة بالكولاجين البقري. فيتامين C ضروري لتصنيع الكولاجين داخل الجسم ولا يعمل بدونه. الزنك يحمي خلايا الجلد من التلف ويقلل الالتهاب — ثلاثة مكونات في علكة واحدة لذيذة.",
   },
   {
     id: "chlorophyll-gummies",
@@ -254,7 +271,7 @@ export const PRODUCTS: Product[] = [
       pdpHero: "/images/product-pages/chlorophyll-pdp-hero.webp",
       pdpIngredients: "/images/product-pages/chlorophyll-pdp-ingredients.webp",
       pdpRoutine: "/images/product-pages/chlorophyll-pdp-routine.webp",
-      pdpScience: "/images/product-pages/chlorophyll-pdp-lifestyle.webp",
+      pdpScience: "/images/product-pages/chlorophyll-pdp-science-v2.webp",
     },
     offers: [
       {
@@ -313,6 +330,13 @@ export const PRODUCTS: Product[] = [
       },
     ],
     upsellHeadline: "أضيفي علكات الكولاجين لإشراقة كاملة بسعر خاص",
+    orderCountBadge: "١٩٠+ طلبت هذا الشهر",
+    resultTimeline: [
+      { period: "الأسبوع الأول", result: "انتعاش حقيقي من الداخل تحسينه من أول أيام الاستخدام" },
+      { period: "الأسبوع ٢–٤", result: "رائحة الجسم تتحسن بشكل واضح وطاقتك ترتفع" },
+      { period: "الشهر ٢–٣", result: "بشرة أنقى، ثقة تامة في نظافتك من الداخل — تفرق جداً" },
+    ],
+    scienceCopy: "الكلوروفيل جزيئياً مشابه للهيموغلوبين في الدم، مما يساعده على ربط السموم وتسريع التخلص منها. أبحاث نُشرت في مجلة Dermatology أثبتت أن الكلوروفيل يقلل البكتيريا المسببة لروائح الجسم. المنتج يحتوي ١٠٠ملغ بالجرعة الفعّالة المثبتة.",
   },
 ];
 

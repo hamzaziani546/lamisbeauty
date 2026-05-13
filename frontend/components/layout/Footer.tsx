@@ -172,7 +172,7 @@ export function Footer() {
         </div>
 
         <div className="border-t border-[#5A6A72]/30 mt-10 pt-6 text-center text-xs text-[#5A6A72]">
-          <p>© {new Date().getFullYear()} لاميس. جميع الحقوق محفوظة.</p>
+          <p suppressHydrationWarning>© {new Date().getFullYear()} لاميس. جميع الحقوق محفوظة.</p>
         </div>
       </div>
     </footer>
