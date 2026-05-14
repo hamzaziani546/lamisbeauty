@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import type { Product } from "@/config/products";
 import { OFFER_UPSELL_PRICE } from "@/config/products";
@@ -67,7 +68,11 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
       {/* Product card */}
       <div className="bg-[#F7FAF9] border border-[#D5E0DC] rounded-2xl p-4 mb-5">
         <div className="flex items-center gap-3">
-          <div className="w-20 h-20 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+          <Link
+            href={`/products/${product.slug}`}
+            aria-label={`ادخلي صفحة ${product.shortNameAr}`}
+            className="w-20 h-20 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0 block"
+          >
             <img
               src={product.images.main}
               alt={product.shortNameAr}
@@ -75,7 +80,7 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
               decoding="async"
               className="h-full w-full object-cover"
             />
-          </div>
+          </Link>
           <div>
             <p className="font-bold text-[#1A2332] text-sm leading-snug">
               {product.shortNameAr}

@@ -173,8 +173,8 @@ export const PRODUCTS: Product[] = [
       routine: "/images/placeholders/collagen-glow-routine.webp",
       pdpHero: "/images/product-pages/collagen-pdp-hero.webp",
       pdpIngredients: "/images/product-pages/collagen-pdp-ingredients.webp",
-      pdpRoutine: "/images/product-pages/collagen-pdp-routine.webp",
-      pdpScience: "/images/product-pages/collagen-pdp-science.webp",
+      pdpRoutine: "/images/product-pages/collagen-pdp-routine-user.webp",
+      pdpScience: "/images/product-pages/collagen-pdp-science-user.webp",
     },
     offers: [
       {
@@ -270,8 +270,8 @@ export const PRODUCTS: Product[] = [
       routine: "/images/placeholders/chlorophyll-routine.webp",
       pdpHero: "/images/product-pages/chlorophyll-pdp-hero.webp",
       pdpIngredients: "/images/product-pages/chlorophyll-pdp-ingredients.webp",
-      pdpRoutine: "/images/product-pages/chlorophyll-pdp-routine.webp",
-      pdpScience: "/images/product-pages/chlorophyll-pdp-science-v2.webp",
+      pdpRoutine: "/images/product-pages/chlorophyll-pdp-routine-user.webp",
+      pdpScience: "/images/product-pages/chlorophyll-pdp-science-user.webp",
     },
     offers: [
       {

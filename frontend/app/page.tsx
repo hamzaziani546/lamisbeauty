@@ -287,9 +287,9 @@ export default function HomePage() {
             {/* Visual */}
             <div className="order-1 md:order-2 relative">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#0B6B5C]/15 to-transparent rounded-3xl transform rotate-3 scale-105 -z-10"></div>
-              <div className="relative h-80 md:h-[520px] bg-gradient-to-br from-white via-[#F7FAF9] to-[#E8F0ED] rounded-3xl shadow-2xl border border-white overflow-hidden">
+              <div className="relative aspect-[4/5] max-w-[420px] mx-auto md:max-w-none bg-gradient-to-br from-white via-[#F7FAF9] to-[#E8F0ED] rounded-3xl shadow-2xl border border-white overflow-hidden">
                 <img
-                  src="/images/hero/lamis-complete-routine-hero-card.webp"
+                  src="/images/hero/lamis-home-hero-user.webp"
                   alt="روتين لاميس الكامل: علكات اللوتين والكولاجين والكلوروفيل"
                   fetchPriority="high"
                   decoding="async"

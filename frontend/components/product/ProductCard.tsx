@@ -34,7 +34,11 @@ export function ProductCard({ product }: ProductCardProps) {
       </div>
 
       {/* Product image */}
-      <div className="relative aspect-[4/5] bg-white overflow-hidden shrink-0">
+      <Link
+        href={`/products/${product.slug}`}
+        aria-label={`ادخلي صفحة ${product.shortNameAr}`}
+        className="relative aspect-[4/5] bg-white overflow-hidden shrink-0 block"
+      >
         <img
           src={product.images.main}
           alt={product.shortNameAr}
@@ -48,7 +52,7 @@ export function ProductCard({ product }: ProductCardProps) {
             🔥 {product.orderCountBadge}
           </span>
         </div>
-      </div>
+      </Link>
 
       {/* Card body */}
       <div className="p-5 flex flex-col flex-1" dir="rtl">
