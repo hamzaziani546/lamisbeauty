@@ -11,7 +11,7 @@ export type Review = {
 export function ReviewCard({ review }: { review: Review }) {
   return (
     <div
-      className="bg-white rounded-2xl border border-[#D5E0DC] p-5 shadow-sm flex flex-col gap-3"
+      className="bg-white rounded-2xl border border-[#D5E0DC] p-5 shadow-sm hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300 flex flex-col gap-3"
       dir="rtl"
     >
       {/* Stars */}

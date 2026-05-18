@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Star, ArrowLeft, ShieldCheck, Flame } from "lucide-react";
 import type { Product } from "@/config/products";
 
@@ -17,7 +18,7 @@ export function ProductCard({ product }: ProductCardProps) {
     <div
       className={`bg-white rounded-3xl border-2 ${
         isBestSeller ? "border-[#C9A45C]" : "border-[#D5E0DC]"
-      } overflow-hidden shadow-sm hover:shadow-xl transition-all group relative flex flex-col`}
+      } overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1 hover:border-[#0B6B5C]/30 transition-all duration-300 group relative flex flex-col`}
     >
       {/* Best seller badge */}
       {isBestSeller && (
@@ -39,11 +40,12 @@ export function ProductCard({ product }: ProductCardProps) {
         aria-label={`ادخلي صفحة ${product.shortNameAr}`}
         className="relative aspect-[4/5] bg-white overflow-hidden shrink-0 block"
       >
-        <img
+        <Image
           src={product.images.main}
           alt={product.shortNameAr}
+          fill
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
           loading="lazy"
-          decoding="async"
           className="h-full w-full object-contain transform group-hover:scale-105 transition-transform duration-500"
         />
         {/* Order count overlay at bottom of image */}

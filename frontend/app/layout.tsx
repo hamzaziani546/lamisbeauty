@@ -1,10 +1,25 @@
 import type { Metadata } from "next";
+import { Inter, Tajawal } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StoreProvider } from "@/components/layout/StoreProvider";
 import { ClickTracker } from "@/components/tracking/ClickTracker";
 import { siteConfig } from "@/config/site";
+
+const tajawal = Tajawal({
+  subsets: ["arabic", "latin"],
+  weight: ["400", "500", "700", "800"],
+  variable: "--font-tajawal",
+  display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -16,12 +31,9 @@ export const metadata: Metadata = {
   manifest: "/site.webmanifest",
   icons: {
     icon: [
-      { url: "/favicon.ico" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon.webp", type: "image/webp" },
     ],
-    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/favicon.webp", type: "image/webp" }],
   },
   openGraph: {
     type: "website",
@@ -47,12 +59,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
-      </head>
-      <body suppressHydrationWarning>
+      <body
+        suppressHydrationWarning
+        className={`${tajawal.variable} ${inter.variable}`}
+      >
         <StoreProvider>
           <ClickTracker />
           <Header />

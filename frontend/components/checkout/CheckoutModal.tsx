@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -158,7 +159,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+        className="fixed inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity"
         onClick={step === "form" ? onClose : undefined}
         aria-hidden
       />
@@ -220,13 +221,14 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       className="flex items-center gap-3"
                     >
                       {/* Product image */}
-                      <div className="w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+                      <div className="relative w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
                         {prod && (
-                          <img
+                          <Image
                             src={prod.images.main}
                             alt={prod.shortNameAr}
+                            fill
                             loading="lazy"
-                            decoding="async"
+                            sizes="56px"
                             className="h-full w-full object-cover"
                           />
                         )}
@@ -298,7 +300,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   placeholder="اسمك الكريم"
                   dir="rtl"
                   {...register("name")}
-                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-0 transition-colors bg-white"
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all duration-300 bg-white"
                 />
                 {errors.name && (
                   <p className="text-red-500 text-xs mt-1" role="alert">
@@ -321,7 +323,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   placeholder="05xxxxxxxx"
                   dir="ltr"
                   {...register("phone")}
-                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-0 transition-colors bg-white"
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all duration-300 bg-white"
                 />
                 {errors.phone && (
                   <p className="text-red-500 text-xs mt-1" role="alert">
@@ -339,7 +341,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 size="lg"
                 fullWidth
                 disabled={!isValid}
-                className="text-base shadow-lg shadow-[#0B6B5C]/20"
+                className="text-base shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 hover:-translate-y-0.5 transition-all duration-300"
               >
                 أكملي الطلب — {formatSarShort(total)}
               </Button>

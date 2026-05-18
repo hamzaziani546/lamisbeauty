@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import {
   CheckCircle,
   ShieldCheck,
@@ -194,13 +195,15 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-10 items-center">
             {/* Text */}
             <div className="order-2 md:order-1">
-              <div className="inline-flex items-center gap-2 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full border border-[#D5E0DC] mb-6 shadow-sm">
-                <span className="bg-[#2D8B6F] text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                  مصرّحة SFDA
-                </span>
-                <span className="text-[#1A2332] font-bold text-sm">
-                  60 علكة في كل علبة · شهر كامل من الروتين
-                </span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 mb-6">
+                <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#0B6B5C] to-[#095A4C] text-white px-3.5 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow">
+                  <CheckCircle size={14} />
+                  <span className="text-[11px] sm:text-xs font-bold">مصرحة من هيئة الغذاء والدواء</span>
+                </div>
+                <div className="inline-flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#D5E0DC] shadow-sm text-[#1A2332] hover:border-[#0B6B5C]/30 transition-colors">
+                  <Sparkles size={14} className="text-[#C9A45C]" />
+                  <span className="text-[11px] sm:text-xs font-bold">60 علكة · شهر كامل من الروتين</span>
+                </div>
               </div>
 
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A2332] leading-[1.15] mb-5">
@@ -266,16 +269,16 @@ export default function HomePage() {
               </div>
 
               {/* Trust strip */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 sm:gap-3">
                 {[
                   { icon: CreditCard, text: "دفع عند الاستلام" },
                   { icon: ShieldCheck, text: "ضمان 30 يوم" },
                   { icon: Truck, text: "شحن لكل المملكة" },
-                  { icon: MessageCircle, text: "دعم واتساب عربي" },
+                  { icon: MessageCircle, text: "دعم واتساب" },
                 ].map(({ icon: Icon, text }) => (
                   <div
                     key={text}
-                    className="flex items-center gap-1.5 bg-white/80 backdrop-blur-sm border border-[#D5E0DC] rounded-xl px-2.5 py-2 text-[11px] sm:text-xs font-bold text-[#1A2332]"
+                    className="flex items-center gap-1.5 bg-white/90 backdrop-blur-md border border-[#D5E0DC]/60 rounded-full px-3 py-2 text-[11px] sm:text-xs font-bold text-[#1A2332] hover:border-[#0B6B5C]/30 hover:shadow-sm transition-all duration-300"
                   >
                     <Icon size={14} className="shrink-0 text-[#2D8B6F]" aria-hidden />
                     <span>{text}</span>
@@ -285,28 +288,17 @@ export default function HomePage() {
             </div>
 
             {/* Visual */}
-            <div className="order-1 md:order-2 relative">
+            <div className="order-1 md:order-2 relative mb-6 md:mb-0 mt-2 md:mt-0">
               <div className="absolute inset-0 bg-gradient-to-tr from-[#0B6B5C]/15 to-transparent rounded-3xl transform rotate-3 scale-105 -z-10"></div>
               <div className="relative aspect-[4/5] max-w-[420px] mx-auto md:max-w-none bg-gradient-to-br from-white via-[#F7FAF9] to-[#E8F0ED] rounded-3xl shadow-2xl border border-white overflow-hidden">
-                <img
-                  src="/images/hero/lamis-home-hero-user.webp"
+                <Image
+                  src="/images/hero/lamis-home-hero-v2.webp"
                   alt="روتين لاميس الكامل: علكات اللوتين والكولاجين والكلوروفيل"
-                  fetchPriority="high"
-                  decoding="async"
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   className="h-full w-full object-cover object-center"
                 />
-                <div className="absolute top-6 right-6 bg-white rounded-2xl shadow-lg px-4 py-3 text-sm font-bold text-[#2D8B6F] flex items-center gap-2 border border-[#D5E0DC]">
-                  <ShieldCheck size={18} />
-                  ضمان 30 يوم
-                </div>
-                <div className="absolute bottom-6 left-6 bg-white rounded-2xl shadow-lg px-4 py-3 text-sm font-bold text-[#0B6B5C] flex items-center gap-2 border border-[#D5E0DC]">
-                  <CheckCircle size={18} />
-                  مصرّحة SFDA
-                </div>
-                <div className="absolute top-1/2 -left-4 -translate-y-1/2 bg-[#0B6B5C] text-white rounded-2xl shadow-lg px-3 py-2 text-xs font-bold flex items-center gap-1.5 rotate-[-8deg]">
-                  <Star size={14} className="fill-white" />
-                  4.9 ★
-                </div>
               </div>
             </div>
           </div>
@@ -318,11 +310,11 @@ export default function HomePage() {
         <div className="container-padded">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl md:text-4xl font-bold text-[#0B6B5C] mb-1">
+              <div key={s.label} className="text-center group">
+                <p className="text-2xl md:text-4xl font-bold text-[#0B6B5C] mb-1 group-hover:scale-110 transition-transform duration-300">
                   {s.value}
                 </p>
-                <p className="text-[13px] md:text-sm text-[#5A6A72] font-medium">
+                <p className="text-[13px] md:text-sm text-[#5A6A72] font-medium group-hover:text-[#1A2332] transition-colors duration-300">
                   {s.label}
                 </p>
               </div>
@@ -332,7 +324,7 @@ export default function HomePage() {
       </section>
 
       {/* Value stacking — what's in the box */}
-      <section className="py-16 md:py-20 bg-[#F7FAF9]">
+      <section className="py-16 md:py-20 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -354,7 +346,7 @@ export default function HomePage() {
             ].map((v) => (
               <div
                 key={v.unit}
-                className="bg-white border border-[#D5E0DC] rounded-2xl p-5 text-center shadow-sm"
+                className="bg-white border border-[#D5E0DC] rounded-2xl p-5 text-center shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300"
               >
                 <p className="text-3xl mb-2">{v.icon}</p>
                 <p className="text-3xl font-bold text-[#0B6B5C] leading-none mb-2">
@@ -366,7 +358,7 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          <div className="mt-8 bg-gradient-to-r from-[#0B6B5C] to-[#095A4C] rounded-3xl p-6 md:p-8 text-white text-center shadow-xl">
+          <div className="mt-8 bg-gradient-to-r from-[#0B6B5C] to-[#095A4C] rounded-3xl p-6 md:p-8 text-white text-center shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             <p className="text-lg md:text-xl font-bold mb-2">
               مقارنة بمكملات الصيدلية: تدفعين أقل وتاخذين تركيبة كاملة
             </p>
@@ -379,7 +371,7 @@ export default function HomePage() {
       </section>
 
       {/* Pain points */}
-      <section className="py-20 md:py-24 bg-[#F7FAF9]">
+      <section className="py-20 md:py-24 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -397,9 +389,9 @@ export default function HomePage() {
             {painPoints.map((item) => (
               <div
                 key={item.title}
-                className="bg-white border border-[#D5E0DC] rounded-[2rem] p-7 text-right relative overflow-hidden"
+                className="bg-white border border-[#D5E0DC] rounded-[2rem] p-7 text-right relative overflow-hidden group hover:border-[#0B6B5C]/30 hover:shadow-xl transition-all duration-500"
               >
-                <div className="text-5xl mb-5 bg-[#F7FAF9] w-16 h-16 rounded-2xl flex items-center justify-center">
+                <div className="text-5xl mb-5 bg-[#F7FAF9] w-16 h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
                   {item.emoji}
                 </div>
                 <h3 className="text-xl font-bold text-[#1A2332] mb-3 leading-snug">
@@ -418,7 +410,7 @@ export default function HomePage() {
       </section>
 
       {/* How it works */}
-      <section id="how" className="py-20 md:py-24 bg-white">
+      <section id="how" className="py-20 md:py-24 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -436,9 +428,9 @@ export default function HomePage() {
             {howItWorks.map((step, idx) => (
               <div
                 key={step.step}
-                className="relative bg-gradient-to-b from-[#F7FAF9] to-white border border-[#D5E0DC] rounded-[2rem] p-8 text-right"
+                className="relative bg-gradient-to-b from-[#F7FAF9] to-white border border-[#D5E0DC] rounded-[2rem] p-8 text-right hover:shadow-lg transition-all duration-300 group"
               >
-                <div className="absolute -top-6 right-6 w-14 h-14 bg-[#0B6B5C] text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg shadow-[#0B6B5C]/30">
+                <div className="absolute -top-6 right-6 w-14 h-14 bg-[#0B6B5C] text-white rounded-full flex items-center justify-center text-2xl font-bold shadow-lg shadow-[#0B6B5C]/30 group-hover:scale-110 transition-transform duration-300">
                   {step.step}
                 </div>
                 <h3 className="text-xl font-bold text-[#1A2332] mb-3 mt-4">
@@ -459,7 +451,7 @@ export default function HomePage() {
       </section>
 
       {/* Products */}
-      <section className="py-20 md:py-24 bg-[#F7FAF9]">
+      <section className="py-20 md:py-24 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -490,7 +482,7 @@ export default function HomePage() {
       </section>
 
       {/* Comparison: Lamis vs Traditional */}
-      <section className="py-20 md:py-24 bg-white">
+      <section className="py-20 md:py-24 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -506,7 +498,7 @@ export default function HomePage() {
           </div>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
             {/* Others */}
-            <div className="bg-[#EDF3F0] rounded-[2rem] p-6 md:p-8 border border-[#D5E0DC]/60">
+            <div className="bg-[#EDF3F0] rounded-[2rem] p-6 md:p-8 border border-[#D5E0DC]/60 hover:border-[#D5E0DC] hover:shadow-md transition-all duration-300">
               <h3 className="font-bold text-[#5A6A72] text-lg mb-5 flex items-center gap-2">
                 <X className="text-red-500" size={22} /> منتجات تقليدية
               </h3>
@@ -523,7 +515,7 @@ export default function HomePage() {
               </ul>
             </div>
             {/* Lamis */}
-            <div className="bg-gradient-to-b from-[#0B6B5C] to-[#095A4C] rounded-[2rem] p-6 md:p-8 text-white shadow-2xl shadow-[#0B6B5C]/20">
+            <div className="bg-gradient-to-b from-[#0B6B5C] to-[#095A4C] rounded-[2rem] p-6 md:p-8 text-white shadow-2xl shadow-[#0B6B5C]/20 hover:shadow-[#0B6B5C]/40 hover:-translate-y-1 transition-all duration-300">
               <h3 className="font-bold text-white text-lg mb-5 flex items-center gap-2">
                 <Heart className="fill-white" size={22} /> روتين لاميس
               </h3>
@@ -544,14 +536,14 @@ export default function HomePage() {
       </section>
 
       {/* Science / Authority */}
-      <section className="py-20 md:py-24 bg-[#F7FAF9]">
+      <section className="py-20 md:py-24 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-1">
-              <div className="aspect-square max-h-[440px] mx-auto bg-gradient-to-br from-white to-[#E8F0ED] rounded-[2rem] flex items-center justify-center shadow-lg border border-white relative overflow-hidden">
-                <div className="absolute inset-0 border-2 border-[#0B6B5C]/10 rounded-[2rem] transform rotate-3"></div>
+              <div className="aspect-square max-h-[440px] mx-auto bg-gradient-to-br from-white to-[#E8F0ED] rounded-[2rem] flex items-center justify-center shadow-lg border border-white relative overflow-hidden group hover:shadow-xl transition-all duration-500">
+                <div className="absolute inset-0 border-2 border-[#0B6B5C]/10 rounded-[2rem] transform rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
                 <div className="text-center z-10 px-6">
-                  <FlaskConical size={72} className="text-[#0B6B5C] mx-auto mb-4" />
+                  <FlaskConical size={72} className="text-[#0B6B5C] mx-auto mb-4 group-hover:scale-110 transition-transform duration-500" />
                   <p className="text-[#1A2332] text-xl font-bold mb-2">
                     مدروسة، مصرّحة، آمنة
                   </p>
@@ -598,9 +590,9 @@ export default function HomePage() {
                 ].map((item) => (
                   <li
                     key={item.title}
-                    className="flex items-start gap-3 bg-white p-4 rounded-2xl border border-[#D5E0DC] shadow-sm"
+                    className="flex items-start gap-3 bg-white p-4 rounded-2xl border border-[#D5E0DC] shadow-sm hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300 group"
                   >
-                    <span className="text-white bg-[#2D8B6F] rounded-full p-1.5 shrink-0 mt-0.5">
+                    <span className="text-white bg-[#2D8B6F] rounded-full p-1.5 shrink-0 mt-0.5 group-hover:scale-110 transition-transform duration-300">
                       <CheckCircle size={16} />
                     </span>
                     <div>
@@ -620,7 +612,7 @@ export default function HomePage() {
       </section>
 
       {/* Ingredients deep dive */}
-      <section className="py-20 md:py-24 bg-white">
+      <section className="py-20 md:py-24 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -638,12 +630,12 @@ export default function HomePage() {
             {ingredients.map((ing) => (
               <div
                 key={ing.name}
-                className="bg-gradient-to-b from-[#F7FAF9] to-white border border-[#D5E0DC] rounded-[2rem] p-7 text-right hover:shadow-lg hover:border-[#0B6B5C]/30 transition-all relative"
+                className="bg-gradient-to-b from-[#F7FAF9] to-white border border-[#D5E0DC] rounded-[2rem] p-7 text-right hover:shadow-xl hover:-translate-y-1 hover:border-[#0B6B5C]/30 transition-all duration-300 relative group"
               >
-                <div className="absolute top-4 left-4 bg-[#2D8B6F] text-white text-[10px] px-2.5 py-1 rounded-full font-bold">
+                <div className="absolute top-4 left-4 bg-[#2D8B6F] text-white text-[10px] px-2.5 py-1 rounded-full font-bold shadow-sm">
                   {ing.tag}
                 </div>
-                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm text-3xl border border-[#D5E0DC]">
+                <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mb-4 shadow-sm text-3xl border border-[#D5E0DC] group-hover:scale-110 transition-transform duration-300">
                   {ing.icon}
                 </div>
                 <h3 className="text-lg font-bold text-[#1A2332] mb-3 leading-snug">
@@ -663,7 +655,7 @@ export default function HomePage() {
       </section>
 
       {/* Results timeline */}
-      <section className="py-20 md:py-24 bg-[#F7FAF9]">
+      <section className="py-20 md:py-24 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -683,9 +675,9 @@ export default function HomePage() {
               return (
                 <div
                   key={t.week}
-                  className="bg-white rounded-[2rem] p-7 border border-[#D5E0DC] shadow-sm relative"
+                  className="bg-white rounded-[2rem] p-7 border border-[#D5E0DC] shadow-sm relative hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
                 >
-                  <div className="w-14 h-14 bg-gradient-to-br from-[#0B6B5C] to-[#095A4C] rounded-2xl flex items-center justify-center text-white shadow-lg mb-4">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#0B6B5C] to-[#095A4C] rounded-2xl flex items-center justify-center text-white shadow-lg mb-4 group-hover:scale-110 transition-transform duration-300">
                     <Icon size={26} />
                   </div>
                   <span className="inline-block text-[#0B6B5C] font-bold text-xs bg-[#E8F0ED] px-3 py-1 rounded-full mb-3">
@@ -705,7 +697,7 @@ export default function HomePage() {
       </section>
 
       {/* Reviews */}
-      <section className="py-20 md:py-24 bg-white">
+      <section className="py-20 md:py-24 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <div className="inline-flex items-center gap-2 mb-4">
@@ -738,9 +730,9 @@ export default function HomePage() {
       {/* Warranty section */}
       <section className="py-16 md:py-20 bg-[#F7FAF9]">
         <div className="container-padded max-w-4xl text-center">
-          <div className="bg-gradient-to-b from-white to-[#F7FAF9] rounded-[2rem] p-10 md:p-14 shadow-lg border-2 border-[#C9A45C]/30 relative overflow-hidden">
+          <div className="bg-gradient-to-b from-white to-[#F7FAF9] rounded-[2rem] p-10 md:p-14 shadow-lg border-2 border-[#C9A45C]/30 relative overflow-hidden hover:shadow-2xl hover:border-[#C9A45C]/50 transition-all duration-500 group">
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-[#C9A45C]/30 via-[#C9A45C] to-[#C9A45C]/30"></div>
-            <div className="w-24 h-24 bg-gradient-to-br from-[#C9A45C] to-[#a8843e] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+            <div className="w-24 h-24 bg-gradient-to-br from-[#C9A45C] to-[#a8843e] rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl group-hover:scale-110 transition-transform duration-500">
               <ShieldCheck size={48} className="text-white" />
             </div>
             <span className="inline-block text-[#C9A45C] font-bold text-sm bg-[#C9A45C]/10 px-4 py-1.5 rounded-full mb-4">
@@ -766,7 +758,7 @@ export default function HomePage() {
       <section className="py-20 md:py-24 bg-white">
         <div className="container-padded">
           <div className="max-w-3xl mx-auto text-center">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0B6B5C] to-[#095A4C] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-[#0B6B5C]/30">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#0B6B5C] to-[#095A4C] flex items-center justify-center mx-auto mb-8 shadow-xl shadow-[#0B6B5C]/30 hover:scale-110 transition-transform duration-500">
               <span className="text-white font-bold text-3xl">ل</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-6 leading-tight">
@@ -777,7 +769,7 @@ export default function HomePage() {
               من علب التغليف الأجنبية اللي ما تكلمنا بلغتنا، ومن المكملات اللي
               ما تعرف أجواءنا ولا روتيننا.
             </p>
-            <p className="text-[#1A2332] leading-relaxed text-lg md:text-xl bg-[#F7FAF9] p-6 rounded-2xl border border-[#D5E0DC] font-medium">
+            <p className="text-[#1A2332] leading-relaxed text-lg md:text-xl bg-[#F7FAF9] p-6 rounded-2xl border border-[#D5E0DC] font-medium hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300">
               لاميس بنت سعودية، لبنت سعودية. روتين واضح، مكونات شريفة، ودعم
               يكلمك بلهجتك. ما نبيع لك وعود — نبيع لك نتائج تشوفينها في المرآة
               كل صباح.
@@ -787,7 +779,7 @@ export default function HomePage() {
       </section>
 
       {/* Order experience reassurance — boosts confirmation & delivery rate */}
-      <section className="py-20 md:py-24 bg-[#1A2332] relative overflow-hidden">
+      <section className="py-20 md:py-24 bg-[#1A2332] relative overflow-hidden [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-5"></div>
         <div className="container-padded relative z-10 max-w-5xl">
           <div className="text-center mb-12">
@@ -827,10 +819,10 @@ export default function HomePage() {
               return (
                 <div
                   key={s.title}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 text-right"
+                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-6 text-right hover:bg-white/10 hover:-translate-y-1 transition-all duration-300 group"
                 >
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 bg-[#C9A45C] rounded-2xl flex items-center justify-center text-white shadow-lg">
+                    <div className="w-12 h-12 bg-[#C9A45C] rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <Icon size={22} />
                     </div>
                     <span className="text-[#C9A45C] text-xs font-bold uppercase tracking-wider">
@@ -857,7 +849,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 md:py-24 bg-[#F7FAF9]">
+      <section className="py-20 md:py-24 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded max-w-3xl">
           <div className="text-center mb-12">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
@@ -874,11 +866,11 @@ export default function HomePage() {
             {faqs.map((faq) => (
               <details
                 key={faq.q}
-                className="bg-white border border-[#D5E0DC] rounded-2xl p-5 md:p-6 group text-right shadow-sm hover:shadow-md transition-shadow"
+                className="bg-white border border-[#D5E0DC] rounded-2xl p-5 md:p-6 group text-right shadow-sm hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300"
               >
                 <summary className="font-bold text-[16px] md:text-lg text-[#1A2332] cursor-pointer list-none flex justify-between items-center gap-4">
-                  <span>{faq.q}</span>
-                  <span className="text-[#0B6B5C] text-2xl leading-none group-open:rotate-45 transition-transform inline-flex bg-[#E8F0ED] w-8 h-8 rounded-full items-center justify-center shrink-0">
+                  <span className="group-hover:text-[#0B6B5C] transition-colors">{faq.q}</span>
+                  <span className="text-[#0B6B5C] text-2xl leading-none group-open:rotate-45 transition-transform duration-300 inline-flex bg-[#E8F0ED] w-8 h-8 rounded-full items-center justify-center shrink-0">
                     +
                   </span>
                 </summary>
@@ -888,14 +880,14 @@ export default function HomePage() {
               </details>
             ))}
           </div>
-          <div className="text-center mt-10 bg-white border border-[#D5E0DC] rounded-2xl p-6">
+          <div className="text-center mt-10 bg-white border border-[#D5E0DC] rounded-2xl p-6 hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300">
             <p className="text-[#1A2332] font-bold mb-2">عندك سؤال ثاني؟</p>
             <p className="text-[#5A6A72] text-sm mb-4">
               فريقنا السعودي يرد عليك بالعربي على واتساب خلال دقائق.
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 bg-[#2D8B6F] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-[#257A5F] transition-all"
+              className="inline-flex items-center gap-2 bg-[#2D8B6F] text-white font-bold px-6 py-3 rounded-full text-sm hover:bg-[#257A5F] hover:-translate-y-0.5 shadow-md hover:shadow-lg transition-all duration-300"
             >
               <MessageCircle size={16} />
               تواصلي معنا واتساب
@@ -905,7 +897,7 @@ export default function HomePage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-[#0B6B5C] via-[#095A4C] to-[#084A3E] relative overflow-hidden">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-[#0B6B5C] via-[#095A4C] to-[#084A3E] relative overflow-hidden [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="absolute inset-0 bg-[url('/images/pattern.svg')] opacity-10"></div>
         <div className="absolute top-10 right-10 text-[#C9A45C]/20 text-9xl font-bold select-none">
           ل
@@ -949,7 +941,7 @@ export default function HomePage() {
             </span>
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle size={16} className="text-[#C9A45C]" />
-              مصرّحة SFDA
+              مصرحة من هيئة الغذاء والدواء
             </span>
           </div>
         </div>

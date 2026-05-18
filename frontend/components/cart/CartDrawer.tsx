@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { X, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { getCrossSells, PRODUCT_MAP } from "@/config/products";
@@ -100,16 +101,17 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                 {items.map((item) => (
                   <div
                     key={`${item.productId}-${item.offerId}`}
-                    className="bg-white rounded-2xl p-4 border border-[#D5E0DC] flex items-start justify-between gap-3"
+                    className="bg-white rounded-2xl p-4 border border-[#D5E0DC] flex items-start justify-between gap-3 hover:border-[#0B6B5C]/30 hover:shadow-sm transition-all duration-300"
                   >
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                      <div className="w-16 h-16 rounded-xl bg-[#F7FAF9] border border-[#D5E0DC] overflow-hidden shrink-0">
+                      <div className="relative w-16 h-16 rounded-xl bg-[#F7FAF9] border border-[#D5E0DC] overflow-hidden shrink-0">
                         {PRODUCT_MAP[item.productId] ? (
-                          <img
+                          <Image
                             src={PRODUCT_MAP[item.productId].images.main}
                             alt={PRODUCT_MAP[item.productId].shortNameAr}
+                            fill
                             loading="lazy"
-                            decoding="async"
+                            sizes="64px"
                             className="h-full w-full object-cover"
                           />
                         ) : null}
@@ -190,6 +192,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
               size="lg"
               fullWidth
               onClick={handleCheckout}
+              className="shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 hover:-translate-y-0.5 transition-all duration-300"
             >
               إتمام الطلب والدفع عند الاستلام
             </Button>

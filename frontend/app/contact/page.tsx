@@ -24,9 +24,9 @@ export default function ContactPage() {
 
           <div className="space-y-4">
             {/* WhatsApp */}
-            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-[#25D366] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-[#25D366] rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
                   <MessageCircle size={22} className="text-white" aria-hidden />
                 </div>
                 <div>
@@ -56,9 +56,9 @@ export default function ContactPage() {
             </div>
 
             {/* Email */}
-            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-12 h-12 bg-[#0B6B5C] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-[#0B6B5C] rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
                   <Mail size={22} className="text-white" aria-hidden />
                 </div>
                 <div>
@@ -75,9 +75,9 @@ export default function ContactPage() {
             </div>
 
             {/* Hours */}
-            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm">
+            <div className="bg-white rounded-3xl p-6 border border-[#D5E0DC] shadow-sm hover:shadow-md transition-shadow duration-300">
               <div className="flex items-center gap-4 mb-3">
-                <div className="w-12 h-12 bg-[#E8F0ED] rounded-2xl flex items-center justify-center shrink-0">
+                <div className="w-12 h-12 bg-[#E8F0ED] rounded-2xl flex items-center justify-center shrink-0 shadow-sm">
                   <Clock size={22} className="text-[#0B6B5C]" aria-hidden />
                 </div>
                 <div>

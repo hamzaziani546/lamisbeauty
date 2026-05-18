@@ -359,7 +359,7 @@ export function getUpsellProduct(cartProductIds: string[]): Product | null {
   return PRODUCTS.find((p) => p.id === "collagen-glow-gummies") || null;
 }
 
-export const OFFER_UPSELL_PRICE = 149;
+export const OFFER_UPSELL_PRICE = 99;
 
 export const FULL_ROUTINE_BUNDLE = {
   id: "full-routine",

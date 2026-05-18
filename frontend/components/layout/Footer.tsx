@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { MessageCircle, Mail, ChevronDown } from "lucide-react";
 import { useState } from "react";
@@ -28,9 +29,14 @@ export function Footer() {
           {/* Brand */}
           <div className="mb-6 md:mb-0">
             <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#0B6B5C] flex items-center justify-center">
-                <span className="text-white font-bold text-lg leading-none">ل</span>
-              </div>
+              <Image
+                src="/brand/lamis-logo-mark-v2.webp"
+                alt="لاميس"
+                width={40}
+                height={40}
+                sizes="40px"
+                className="w-10 h-10 object-contain shrink-0"
+              />
               <div>
                 <p className="font-bold text-base leading-tight">لاميس</p>
                 <p className="text-[#5A6A72] text-xs">مكملات جمال بمعايير صيدلانية</p>
@@ -79,7 +85,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/products/lutein-eye-glow-gummies"
-                  className="hover:text-white transition-colors block"
+                  className="hover:text-white hover:-translate-x-1 transition-all duration-300 block"
                 >
                   علكات شوت العين باللوتين
                 </Link>
@@ -87,7 +93,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/products/collagen-glow-gummies"
-                  className="hover:text-white transition-colors block"
+                  className="hover:text-white hover:-translate-x-1 transition-all duration-300 block"
                 >
                   علكات الكولاجين بفيتامين C والزنك
                 </Link>
@@ -95,7 +101,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/products/chlorophyll-gummies"
-                  className="hover:text-white transition-colors block"
+                  className="hover:text-white hover:-translate-x-1 transition-all duration-300 block"
                 >
                   علكات الكلوروفيل
                 </Link>
@@ -103,7 +109,7 @@ export function Footer() {
               <li>
                 <Link
                   href="/collections"
-                  className="hover:text-white transition-colors block"
+                  className="hover:text-white hover:-translate-x-1 transition-all duration-300 block"
                 >
                   جميع المنتجات
                 </Link>
@@ -134,27 +140,27 @@ export function Footer() {
               }`}
             >
               <li>
-                <Link href="/shipping" className="hover:text-white transition-colors block">
+                <Link href="/shipping" className="hover:text-white hover:-translate-x-1 transition-all duration-300 block">
                   سياسة الشحن
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="hover:text-white transition-colors block">
+                <Link href="/returns" className="hover:text-white hover:-translate-x-1 transition-all duration-300 block">
                   الاستبدال والإرجاع
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors block">
+                <Link href="/privacy" className="hover:text-white hover:-translate-x-1 transition-all duration-300 block">
                   سياسة الخصوصية
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors block">
+                <Link href="/terms" className="hover:text-white hover:-translate-x-1 transition-all duration-300 block">
                   الشروط والأحكام
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="hover:text-white transition-colors block">
+                <Link href="/contact" className="hover:text-white hover:-translate-x-1 transition-all duration-300 block">
                   تواصل معنا
                 </Link>
               </li>

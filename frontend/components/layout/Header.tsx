@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, ShieldCheck, Truck, Gift } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
@@ -58,7 +59,7 @@ export function Header() {
       </div>
 
       <header
-        className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-[#D5E0DC] shadow-sm"
+        className="sticky top-0 z-30 bg-white/90 backdrop-blur-lg border-b border-[#D5E0DC]/50 shadow-sm transition-all duration-300"
         dir="rtl"
       >
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-4">
@@ -68,13 +69,15 @@ export function Header() {
             className="flex items-center gap-2.5 shrink-0 group"
             aria-label="لاميس - الرئيسية"
           >
-            <img
-              src="/brand/lamis-logo-mark.webp"
+            <Image
+              src="/brand/lamis-logo-mark-v2.webp"
               alt=""
               aria-hidden
               width={56}
               height={56}
-              className="w-10 h-10 sm:w-14 sm:h-14 object-contain shrink-0"
+              sizes="56px"
+              priority
+              className="w-10 h-10 sm:w-14 sm:h-14 object-contain shrink-0 group-hover:scale-110 transition-transform duration-300"
             />
             <div>
               <p className="font-bold text-[#1A2332] text-base sm:text-lg leading-tight group-hover:text-[#0B6B5C] transition-colors">
@@ -90,7 +93,7 @@ export function Header() {
               <Link
                 key={href}
                 href={href}
-                className="text-[#1A2332] hover:text-[#0B6B5C] font-bold transition-colors text-[15px]"
+                className="text-[#1A2332] hover:text-[#0B6B5C] font-bold transition-all duration-300 text-[15px] hover:-translate-y-0.5"
               >
                 {label}
               </Link>
@@ -134,7 +137,7 @@ export function Header() {
         {/* Mobile nav */}
         {menuOpen && (
           <nav
-            className="md:hidden bg-white border-t border-[#D5E0DC] px-4 py-3 shadow-lg absolute w-full"
+            className="md:hidden bg-white/95 backdrop-blur-lg border-t border-[#D5E0DC]/50 px-4 py-3 shadow-xl absolute w-full animate-in slide-in-from-top-2 duration-300"
             aria-label="قائمة الجوال"
           >
             {navLinks.map(({ href, label }) => (

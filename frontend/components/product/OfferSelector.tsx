@@ -27,10 +27,10 @@ export function OfferSelector({
             type="button"
             onClick={() => onSelect(offer.id)}
             aria-pressed={isSelected}
-            className={`relative flex items-center justify-between w-full rounded-2xl border-2 px-4 py-3.5 text-right transition-all ${
+            className={`relative flex items-center justify-between w-full rounded-2xl border-2 px-4 py-3.5 text-right transition-all duration-300 hover:-translate-y-0.5 ${
               isSelected
-                ? "border-[#0B6B5C] bg-[#F7FAF9] shadow-md"
-                : "border-[#D5E0DC] bg-white hover:border-[#0B6B5C]/40"
+                ? "border-[#0B6B5C] bg-[#F7FAF9] shadow-md ring-1 ring-[#0B6B5C]/20"
+                : "border-[#D5E0DC] bg-white hover:border-[#0B6B5C]/40 hover:shadow-sm"
             } ${isBest ? "ring-2 ring-[#C9A45C]/30" : ""}`}
           >
             {isBest && (

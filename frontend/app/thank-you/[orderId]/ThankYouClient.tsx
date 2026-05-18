@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   AlertCircle,
   CheckCircle,
@@ -160,9 +161,9 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
           </div>
 
           {/* 3. CALL PREP CARD */}
-          <div className="bg-white border-2 border-[#0B6B5C]/20 rounded-3xl p-6 shadow-sm">
+          <div className="bg-white border-2 border-[#0B6B5C]/20 rounded-3xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-[#0B6B5C] rounded-full flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 bg-[#0B6B5C] rounded-full flex items-center justify-center shrink-0 shadow-sm">
                 <Phone size={14} className="text-white" aria-hidden />
               </div>
               <h2 className="font-bold text-[#1A2332]">استعدي للمكالمة</h2>
@@ -192,7 +193,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
 
           {/* 4. ORDER SUMMARY */}
           {order && order.items.length > 0 && (
-            <div className="bg-white border border-[#D5E0DC] rounded-3xl p-6 shadow-sm">
+            <div className="bg-white border border-[#D5E0DC] rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
               <h2 className="font-bold text-[#1A2332] mb-4">ملخص طلبك</h2>
               <div className="space-y-3 mb-4">
                 {order.items.map((item, i) => {
@@ -205,8 +206,14 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                   return (
                     <div key={i} className="flex items-center gap-4 bg-[#F7FAF9] rounded-2xl p-3">
                       {product && (
-                        <div className="w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
-                          <img src={product.images.main} alt={product.shortNameAr} className="h-full w-full object-cover" />
+                        <div className="relative w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
+                          <Image
+                            src={product.images.main}
+                            alt={product.shortNameAr}
+                            fill
+                            sizes="56px"
+                            className="h-full w-full object-cover"
+                          />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
@@ -236,7 +243,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
           )}
 
           {/* 5. JOURNEY TIMELINE */}
-          <div className="bg-white border border-[#D5E0DC] rounded-3xl p-6 shadow-sm">
+          <div className="bg-white border border-[#D5E0DC] rounded-3xl p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
             <h2 className="font-bold text-[#1A2332] mb-5">رحلة طلبك</h2>
             <div className="relative">
               <div className="absolute right-[1.0625rem] top-9 bottom-9 w-0.5 bg-gradient-to-b from-[#0B6B5C] via-[#D5E0DC] to-[#D5E0DC]" aria-hidden />
@@ -326,12 +333,15 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                   <Link
                     key={product.id}
                     href={`/products/${product.slug}`}
-                    className="bg-white border border-[#D5E0DC] rounded-2xl overflow-hidden hover:border-[#0B6B5C]/50 hover:shadow-md transition-all group"
+                    className="bg-white border border-[#D5E0DC] rounded-2xl overflow-hidden hover:border-[#0B6B5C]/50 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 group"
                   >
-                    <div className="h-40 bg-[#F7FAF9] overflow-hidden">
-                      <img
+                    <div className="relative h-40 bg-[#F7FAF9] overflow-hidden">
+                      <Image
                         src={product.images.main}
                         alt={product.shortNameAr}
+                        fill
+                        loading="lazy"
+                        sizes="(min-width: 640px) 50vw, 100vw"
                         className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                     </div>

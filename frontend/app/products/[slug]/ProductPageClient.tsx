@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import {
   CheckCircle,
   ShieldCheck,
@@ -35,16 +36,17 @@ function SectionImage({
   badge?: string;
 }) {
   return (
-    <div className="relative rounded-3xl overflow-hidden aspect-[4/5] border border-[#D5E0DC] shadow-sm bg-white">
-      <img
+    <div className="relative rounded-3xl overflow-hidden aspect-[4/5] border border-[#D5E0DC] shadow-sm bg-white hover:shadow-lg hover:border-[#0B6B5C]/20 transition-all duration-500 group">
+      <Image
         src={src}
         alt={alt}
+        fill
         loading="lazy"
-        decoding="async"
-        className="absolute inset-0 h-full w-full object-cover object-center"
+        sizes="(min-width: 768px) 50vw, 100vw"
+        className="absolute inset-0 h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
       />
       {badge && (
-        <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-4 py-1.5 text-xs font-bold text-[#0B6B5C] shadow-sm">
+        <div className="absolute bottom-4 right-4 bg-white/95 backdrop-blur-md rounded-full px-4 py-1.5 text-xs font-bold text-[#0B6B5C] shadow-md border border-[#D5E0DC]/50">
           {badge}
         </div>
       )}
@@ -63,9 +65,9 @@ function TrustRow() {
       ].map(({ icon: Icon, title, sub }) => (
         <div
           key={title}
-          className="flex flex-col items-center text-center bg-white rounded-2xl p-3 border border-[#D5E0DC] shadow-sm gap-1"
+          className="flex flex-col items-center text-center bg-white rounded-2xl p-3 border border-[#D5E0DC] shadow-sm gap-1 hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300 group"
         >
-          <Icon size={18} className="text-[#0B6B5C]" aria-hidden />
+          <Icon size={18} className="text-[#0B6B5C] group-hover:scale-110 transition-transform duration-300" aria-hidden />
           <p className="text-[11px] font-bold text-[#1A2332] leading-tight">{title}</p>
           <p className="text-[10px] text-[#5A6A72] leading-tight">{sub}</p>
         </div>
@@ -160,11 +162,12 @@ export function ProductPageClient({ product }: Props) {
             {/* Image column — sticky on desktop */}
             <div className="md:sticky md:top-24 order-1 md:order-2">
               <div className="aspect-[4/5] bg-white rounded-3xl shadow-md border border-[#D5E0DC]/50 relative overflow-hidden">
-                <img
+                <Image
                   src={pdpImages.hero}
                   alt={product.nameAr}
-                  fetchPriority="high"
-                  decoding="async"
+                  fill
+                  priority
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   className="h-full w-full object-cover object-center"
                 />
                 {/* Guarantee badge — top */}
@@ -182,7 +185,7 @@ export function ProductPageClient({ product }: Props) {
               <div className="flex items-center gap-3 flex-wrap">
                 <StarRating rating={4.9} count={120} />
                 <span className="text-xs font-bold text-[#2D8B6F] bg-[#2D8B6F]/10 px-2.5 py-1 rounded-full">
-                  مصرّحة SFDA
+                  مصرحة من هيئة الغذاء والدواء
                 </span>
               </div>
 
@@ -199,10 +202,10 @@ export function ProductPageClient({ product }: Props) {
               </p>
 
               {/* Benefits */}
-              <ul className="space-y-2.5 bg-white p-4 rounded-2xl border border-[#D5E0DC]">
+              <ul className="space-y-2.5 bg-white p-5 rounded-2xl border border-[#D5E0DC] shadow-sm hover:shadow-md hover:border-[#0B6B5C]/20 transition-all duration-300">
                 {product.benefits.map((b) => (
                   <li key={b} className="flex items-start gap-3 text-sm text-[#1A2332] font-medium">
-                    <span className="text-[#2D8B6F] bg-[#2D8B6F]/10 p-1 rounded-full mt-0.5 shrink-0">
+                    <span className="text-[#2D8B6F] bg-[#2D8B6F]/10 p-1 rounded-full mt-0.5 shrink-0 shadow-sm">
                       <CheckCircle size={13} />
                     </span>
                     <span className="leading-relaxed">{b}</span>
@@ -254,7 +257,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── PAIN / PROBLEM ─────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded max-w-3xl">
           <div className="text-center mb-4">
             <span className="text-xs font-bold text-[#0B6B5C] bg-[#E8F0ED] px-3 py-1 rounded-full">
@@ -279,7 +282,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── INGREDIENTS ────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-[#F7FAF9]">
+      <section className="py-12 md:py-16 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-10">
 
@@ -310,10 +313,10 @@ export function ProductPageClient({ product }: Props) {
                   return (
                     <div
                       key={i}
-                      className="bg-white rounded-2xl p-4 border border-[#D5E0DC] shadow-sm"
+                      className="bg-white rounded-2xl p-4 border border-[#D5E0DC] shadow-sm hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300 group"
                     >
                       <div className="flex items-start gap-3">
-                        <span className="shrink-0 w-8 h-8 rounded-xl bg-[#E8F0ED] text-[#0B6B5C] flex items-center justify-center font-bold text-sm mt-0.5">
+                        <span className="shrink-0 w-8 h-8 rounded-xl bg-[#E8F0ED] text-[#0B6B5C] flex items-center justify-center font-bold text-sm mt-0.5 group-hover:scale-110 transition-transform duration-300">
                           {i + 1}
                         </span>
                         <div>
@@ -334,7 +337,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── RESULTS TIMELINE ───────────────────────────── */}
-      <section className="py-12 md:py-16 bg-gradient-to-br from-[#0B6B5C] to-[#1E7B68]">
+      <section className="py-12 md:py-16 bg-gradient-to-br from-[#0B6B5C] to-[#1E7B68] [content-visibility:auto] [contain-intrinsic-size:700px]">
         <div className="container-padded">
           <div className="text-center mb-10">
             <span className="text-white/60 text-xs font-bold tracking-wider uppercase">ماذا تتوقعين؟</span>
@@ -346,10 +349,10 @@ export function ProductPageClient({ product }: Props) {
             {product.resultTimeline.map((step, i) => (
               <div
                 key={i}
-                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-white"
+                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 text-white hover:bg-white/20 hover:-translate-y-1 transition-all duration-300 group"
               >
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm shrink-0">
+                  <span className="w-7 h-7 rounded-full bg-white/20 flex items-center justify-center font-bold text-sm shrink-0 group-hover:scale-110 transition-transform duration-300">
                     {i + 1}
                   </span>
                   <span className="text-xs font-bold text-white/70 uppercase tracking-wider">
@@ -367,7 +370,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── REVIEWS (moved up — before routine) ─────────── */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           {/* Aggregate header */}
           <div className="text-center mb-8">
@@ -393,7 +396,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── ROUTINE ────────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-[#F7FAF9]">
+      <section className="py-12 md:py-16 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-10">
 
@@ -433,7 +436,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── SCIENCE / AUTHORITY ────────────────────────── */}
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]">
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-10">
 
@@ -466,9 +469,9 @@ export function ProductPageClient({ product }: Props) {
                 ].map((item) => (
                   <li
                     key={item}
-                    className="flex items-center gap-3 text-sm text-[#1A2332] font-medium bg-[#F7FAF9] p-3 rounded-xl border border-[#D5E0DC]"
+                    className="flex items-center gap-3 text-sm text-[#1A2332] font-medium bg-[#F7FAF9] p-3 rounded-xl border border-[#D5E0DC] hover:border-[#0B6B5C]/30 hover:shadow-sm transition-all duration-300 group"
                   >
-                    <span className="text-white bg-[#2D8B6F] rounded-full p-1 shrink-0">
+                    <span className="text-white bg-[#2D8B6F] rounded-full p-1 shrink-0 group-hover:scale-110 transition-transform duration-300">
                       <CheckCircle size={14} />
                     </span>
                     <span>{item}</span>
@@ -482,7 +485,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── WARRANTY ───────────────────────────────────── */}
-      <section className="py-12 md:py-16 bg-[#F7FAF9]">
+      <section className="py-12 md:py-16 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:700px]">
         <div className="container-padded max-w-3xl">
           <div className="bg-gradient-to-br from-[#0B6B5C] to-[#1E7B68] rounded-3xl p-8 md:p-12 text-center text-white relative overflow-hidden">
             <div className="absolute inset-0 opacity-10" style={{ backgroundImage: "radial-gradient(circle at 80% 20%, #C9A45C 0%, transparent 60%)" }} />
@@ -497,7 +500,7 @@ export function ProductPageClient({ product }: Props) {
             </p>
             <button
               onClick={handleAddToCart}
-              className="bg-white text-[#0B6B5C] font-bold px-8 py-3 rounded-full text-base hover:bg-white/90 transition-colors shadow-lg"
+              className="bg-white text-[#0B6B5C] font-bold px-8 py-3 rounded-full text-base hover:bg-white/90 hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               جربي الآن بدون مخاطرة
             </button>
@@ -507,7 +510,7 @@ export function ProductPageClient({ product }: Props) {
 
       {/* ── CROSS-SELL BUNDLE ──────────────────────────── */}
       {crossSells.length > 0 && (
-        <section className="py-14 md:py-18 bg-white" id="offer-stack">
+        <section className="py-14 md:py-18 bg-white [content-visibility:auto] [contain-intrinsic-size:900px]" id="offer-stack">
           <div className="container-padded max-w-4xl">
             <div className="text-center mb-10">
               <span className="inline-block bg-[#E8F0ED] text-[#0B6B5C] text-xs font-bold px-3 py-1 rounded-full mb-3">
@@ -525,15 +528,16 @@ export function ProductPageClient({ product }: Props) {
               {crossSells.map((crossProduct) => (
                 <div
                   key={crossProduct.id}
-                  className="bg-white border-2 border-[#D5E0DC] rounded-3xl overflow-hidden hover:border-[#0B6B5C]/50 transition-colors shadow-sm"
+                  className="bg-white border-2 border-[#D5E0DC] rounded-3xl overflow-hidden hover:border-[#0B6B5C]/50 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 shadow-sm group"
                 >
                   <div className="relative aspect-[4/5] bg-white overflow-hidden">
-                    <img
+                    <Image
                       src={crossProduct.images.main}
                       alt={crossProduct.shortNameAr}
+                      fill
                       loading="lazy"
-                      decoding="async"
-                      className="h-full w-full object-contain"
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      className="h-full w-full object-contain group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
                   <div className="p-6">
@@ -568,7 +572,7 @@ export function ProductPageClient({ product }: Props) {
       )}
 
       {/* ── FAQ ────────────────────────────────────────── */}
-      <section className="py-14 md:py-18 bg-[#F7FAF9]">
+      <section className="py-14 md:py-18 bg-[#F7FAF9] [content-visibility:auto] [contain-intrinsic-size:800px]">
         <div className="container-padded max-w-3xl">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332] mb-2">أسئلة شائعة</h2>
@@ -578,11 +582,11 @@ export function ProductPageClient({ product }: Props) {
             {product.faq.map((item) => (
               <details
                 key={item.q}
-                className="bg-white border border-[#D5E0DC] rounded-2xl p-6 group shadow-sm"
+                className="bg-white border border-[#D5E0DC] rounded-2xl p-6 group shadow-sm hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300"
               >
                 <summary className="font-bold text-base text-[#1A2332] cursor-pointer list-none flex justify-between items-center gap-3">
-                  <span>{item.q}</span>
-                  <span className="shrink-0 text-[#0B6B5C] text-xl leading-none group-open:rotate-45 transition-transform w-8 h-8 rounded-full bg-[#E8F0ED] flex items-center justify-center font-bold">
+                  <span className="group-hover:text-[#0B6B5C] transition-colors">{item.q}</span>
+                  <span className="shrink-0 text-[#0B6B5C] text-xl leading-none group-open:rotate-45 transition-transform duration-300 w-8 h-8 rounded-full bg-[#E8F0ED] flex items-center justify-center font-bold">
                     +
                   </span>
                 </summary>
@@ -596,7 +600,7 @@ export function ProductPageClient({ product }: Props) {
       </section>
 
       {/* ── FINAL CTA ──────────────────────────────────── */}
-      <section className="py-14 md:py-20 bg-[#1A2332]">
+      <section className="py-14 md:py-20 bg-[#1A2332] [content-visibility:auto] [contain-intrinsic-size:700px]">
         <div className="container-padded max-w-xl">
           <div className="text-center mb-8">
             <span className="text-[#C9A45C] text-sm font-bold">جاهزة تبدئي؟</span>
@@ -637,7 +641,7 @@ export function ProductPageClient({ product }: Props) {
       >
         <button
           onClick={handleAddToCart}
-          className="group w-full flex items-center justify-between gap-3 bg-gradient-to-l from-[#0B6B5C] via-[#1E7B68] to-[#0B6B5C] text-white rounded-full pr-2 pl-5 py-2 shadow-2xl shadow-[#0B6B5C]/40 ring-1 ring-white/20 hover:shadow-[#0B6B5C]/50 active:scale-[0.99] transition-all overflow-hidden"
+          className="group w-full flex items-center justify-between gap-3 bg-gradient-to-l from-[#0B6B5C] via-[#1E7B68] to-[#0B6B5C] text-white rounded-full pr-2 pl-5 py-2 shadow-2xl shadow-[#0B6B5C]/40 ring-1 ring-white/20 hover:shadow-[#0B6B5C]/60 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 overflow-hidden"
         >
           <span className="flex items-center gap-3 min-w-0">
             <span className="shrink-0 w-11 h-11 rounded-full bg-white text-[#0B6B5C] flex items-center justify-center shadow-inner">

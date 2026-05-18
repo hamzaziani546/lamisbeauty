@@ -22,7 +22,7 @@ export default function CollectionsPage() {
 
           {/* SFDA badge */}
           <span className="inline-block text-[#0B6B5C] font-bold text-xs bg-[#E8F0ED] px-3 py-1 rounded-full mb-5">
-            مكملات بمعايير صيدلانية · مصرّحة SFDA
+            مكملات بمعايير صيدلانية · مصرحة من هيئة الغذاء والدواء
           </span>
 
           {/* H1 — pain-led */}
@@ -104,11 +104,11 @@ export default function CollectionsPage() {
               style={{ backgroundImage: "radial-gradient(circle at 80% 20%, #C9A45C 0%, transparent 55%)" }}
             />
 
-            <div className="absolute top-4 right-4 bg-[#C9A45C] text-white text-[11px] font-bold px-3 py-1 rounded-full">
+            <div className="absolute top-4 right-4 bg-[#C9A45C] text-white text-[11px] font-bold px-3 py-1 rounded-full shadow-md">
               أفضل قيمة
             </div>
 
-            <span className="inline-block text-[#C9A45C] font-bold text-sm bg-white/10 px-3 py-1 rounded-full mb-5">
+            <span className="inline-block text-[#C9A45C] font-bold text-sm bg-white/10 px-3 py-1 rounded-full mb-5 backdrop-blur-sm border border-white/10">
               روتين ٣ شهور
             </span>
 
@@ -128,19 +128,19 @@ export default function CollectionsPage() {
             <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-8 flex-wrap">
               <Link
                 href="/products/collagen-glow-gummies"
-                className="inline-block bg-[#C9A45C] text-white font-bold px-6 py-3 rounded-full hover:bg-[#a8843e] transition-colors shadow-lg"
+                className="inline-block bg-[#C9A45C] text-white font-bold px-6 py-3 rounded-full hover:bg-[#a8843e] hover:-translate-y-0.5 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 ٣ شهور كولاجين الإشراقة
               </Link>
               <Link
                 href="/products/lutein-eye-glow-gummies"
-                className="inline-block bg-white text-[#0B6B5C] font-bold px-6 py-3 rounded-full hover:bg-[#F7FAF9] transition-colors shadow-lg"
+                className="inline-block bg-white text-[#0B6B5C] font-bold px-6 py-3 rounded-full hover:bg-[#F7FAF9] hover:-translate-y-0.5 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 ٣ شهور شوت العين
               </Link>
               <Link
                 href="/products/chlorophyll-gummies"
-                className="inline-block bg-white/20 text-white font-bold px-6 py-3 rounded-full hover:bg-white/30 transition-colors border border-white/30"
+                className="inline-block bg-white/20 text-white font-bold px-6 py-3 rounded-full hover:bg-white/30 hover:-translate-y-0.5 transition-all duration-300 border border-white/30 hover:shadow-lg"
               >
                 ٣ شهور الكلوروفيل
               </Link>

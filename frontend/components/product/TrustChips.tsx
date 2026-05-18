@@ -3,7 +3,7 @@ import { Truck, ShieldCheck, MessageCircle, CreditCard, CheckCircle } from "luci
 const chips = [
   { icon: CreditCard, text: "الدفع عند الاستلام" },
   { icon: ShieldCheck, text: "ضمان 30 يوم" },
-  { icon: CheckCircle, text: "مصرح من SFDA" },
+  { icon: CheckCircle, text: "مصرحة من هيئة الغذاء والدواء" },
   { icon: Truck, text: "شحن داخل السعودية" },
   { icon: MessageCircle, text: "دعم واتساب" },
 ];

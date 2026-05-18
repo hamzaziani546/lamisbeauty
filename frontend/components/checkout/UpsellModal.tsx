@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import type { Product } from "@/config/products";
 import { OFFER_UPSELL_PRICE } from "@/config/products";
@@ -62,22 +63,23 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
       </h2>
 
       <p className="text-[#5A6A72] mb-4">
-        بما أنك ثبتي طلبك، تقدري تضيفي هذا المنتج لروتينك اليوم بسعر 99 ريال.
+        بما أنك ثبتي طلبك، تقدري تضيفي هذا المنتج لروتينك اليوم بسعر {OFFER_UPSELL_PRICE} ريال.
       </p>
 
       {/* Product card */}
-      <div className="bg-[#F7FAF9] border border-[#D5E0DC] rounded-2xl p-4 mb-5">
+      <div className="bg-[#F7FAF9] border border-[#D5E0DC] rounded-2xl p-4 mb-5 hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300 group">
         <div className="flex items-center gap-3">
           <Link
             href={`/products/${product.slug}`}
             aria-label={`ادخلي صفحة ${product.shortNameAr}`}
-            className="w-20 h-20 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0 block"
+            className="relative w-20 h-20 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0 block group-hover:border-[#0B6B5C]/20 transition-colors"
           >
-            <img
+            <Image
               src={product.images.main}
               alt={product.shortNameAr}
+              fill
               loading="lazy"
-              decoding="async"
+              sizes="80px"
               className="h-full w-full object-cover"
             />
           </Link>

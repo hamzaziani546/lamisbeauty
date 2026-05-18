@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Plus } from "lucide-react";
 import type { Product } from "@/config/products";
 import { useCartStore } from "@/store/cart-store";
@@ -25,15 +26,16 @@ export function CrossSellCard({ product }: { product: Product }) {
 
   return (
     <div
-      className="bg-[#F7FAF9] rounded-2xl border border-[#D5E0DC] p-3 flex items-center gap-3"
+      className="bg-[#F7FAF9] rounded-2xl border border-[#D5E0DC] p-3 flex items-center gap-3 hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300 group"
       dir="rtl"
     >
-      <div className="w-20 h-20 rounded-xl bg-white shrink-0 overflow-hidden border border-[#D5E0DC]">
-        <img
+      <div className="relative w-20 h-20 rounded-xl bg-white shrink-0 overflow-hidden border border-[#D5E0DC] group-hover:border-[#0B6B5C]/20 transition-colors">
+        <Image
           src={product.images.main}
           alt={product.shortNameAr}
+          fill
           loading="lazy"
-          decoding="async"
+          sizes="80px"
           className="h-full w-full object-cover"
         />
       </div>

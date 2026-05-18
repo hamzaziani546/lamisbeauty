@@ -30,7 +30,7 @@ export default function AboutPage() {
             <p className="text-[#5A6A72] leading-relaxed mb-4">
               وُلدت لاميس من سؤال بسيط: ليش ما فيه مكمل جمال سعودي بمعايير
               صيدلانية؟ السوق مليان منتجات مستوردة بادعاءات كبيرة وبدون تصريح
-              محلي. قررنا نسوي الشي الصح: مكملات مصرحة من SFDA، بجرعات بحثية
+              محلي. قررنا نسوي الشي الصح: مكملات مصرحة من هيئة الغذاء والدواء، بجرعات بحثية
               واضحة (مو أرقام رمزية على الكرتون)، ونشرح كل مكوّن بلغة مفهومة.
               ما نبيع وعود — نبيع نتائج تشوفينها في المرآة.
             </p>
@@ -44,16 +44,16 @@ export default function AboutPage() {
           {/* Values */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-8">
             {[
-              { title: "معايير صيدلانية", desc: "مصرحة SFDA بأرقام تسجيل رسمية. جرعات بحثية واضحة، اختبار جودة لكل دفعة." },
+              { title: "معايير صيدلانية", desc: "مصرحة من هيئة الغذاء والدواء بأرقام تسجيل رسمية. جرعات بحثية واضحة، اختبار جودة لكل دفعة." },
               { title: "شفافية مطلقة", desc: "كل مكوّن، كل جرعة، كل مصدر — موضح بوضوح. لا ادعاءات طبية ولا وعود مبالغ فيها." },
               { title: "سعودية ١٠٠٪", desc: "دفع عند الاستلام، شحن لكل المملكة، ودعم بالعربي عبر واتساب. صُممت لأجواءنا وروتيننا." },
               { title: "ضمان بدون مخاطرة", desc: "ضمان ذهبي 30 يوم. جربي الروتين، وإذا ما حسيتي بفرق، فلوسك ترجع لك كاملة." },
             ].map((v) => (
               <div
                 key={v.title}
-                className="bg-white rounded-2xl p-5 border border-[#D5E0DC] shadow-sm"
+                className="bg-white rounded-2xl p-5 border border-[#D5E0DC] shadow-sm hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300 group"
               >
-                <h3 className="font-bold text-[#1A2332] mb-2">{v.title}</h3>
+                <h3 className="font-bold text-[#1A2332] mb-2 group-hover:text-[#0B6B5C] transition-colors">{v.title}</h3>
                 <p className="text-sm text-[#5A6A72] leading-relaxed">{v.desc}</p>
               </div>
             ))}
