@@ -127,7 +127,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         attribution,
       });
 
-      trackPurchase(currentItems, currentTotal, resp.event_id);
+      trackPurchase(currentItems, currentTotal, resp.event_id, e164);
 
       try {
         sessionStorage.setItem(

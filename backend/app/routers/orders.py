@@ -159,6 +159,13 @@ async def create_order(
     # CAPI events - fire and forget; failures logged
     tracking_results: dict = {}
 
+    capi_context = {
+        "order_number": order.order_number,
+        "total_sar": float(order.total_sar),
+        "item_count": len(items_for_tracking),
+        "event_source_url": event_source_url,
+    }
+
     meta_resp = await meta_capi.send_purchase_event(
         order_number=order.order_number,
         phone_digits=order.phone_digits,
@@ -171,7 +178,7 @@ async def create_order(
         user_agent=order.user_agent,
     )
     tracking_results["meta"] = meta_resp
-    order_service.log_tracking_event(db, order, "meta", "Purchase", sheet_payload, meta_resp)
+    order_service.log_tracking_event(db, order, "meta", "Purchase", capi_context, meta_resp)
 
     tt_resp = await tiktok_capi.send_purchase_event(
         order_number=order.order_number,
@@ -185,7 +192,7 @@ async def create_order(
         user_agent=order.user_agent,
     )
     tracking_results["tiktok"] = tt_resp
-    order_service.log_tracking_event(db, order, "tiktok", "CompletePayment", sheet_payload, tt_resp)
+    order_service.log_tracking_event(db, order, "tiktok", "CompletePayment", capi_context, tt_resp)
 
     snap_resp = await snap_capi.send_purchase_event(
         order_number=order.order_number,
@@ -193,11 +200,12 @@ async def create_order(
         total_sar=float(order.total_sar),
         items=items_for_tracking,
         event_source_url=event_source_url,
+        sc_click_id=order.sc_click_id,
         client_ip=order.client_ip,
         user_agent=order.user_agent,
     )
     tracking_results["snapchat"] = snap_resp
-    order_service.log_tracking_event(db, order, "snapchat", "PURCHASE", sheet_payload, snap_resp)
+    order_service.log_tracking_event(db, order, "snapchat", "PURCHASE", capi_context, snap_resp)
 
     order.tracking_response = json.dumps(tracking_results, ensure_ascii=False, default=str)
     db.commit()

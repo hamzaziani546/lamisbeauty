@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { StoreProvider } from "@/components/layout/StoreProvider";
 import { ClickTracker } from "@/components/tracking/ClickTracker";
+import { TrackingProvider } from "@/components/tracking/TrackingProvider";
 import { siteConfig } from "@/config/site";
 
 const tajawal = Tajawal({
@@ -64,6 +65,7 @@ export default function RootLayout({
         className={`${tajawal.variable} ${inter.variable}`}
       >
         <StoreProvider>
+          <TrackingProvider />
           <ClickTracker />
           <Header />
           <main>{children}</main>

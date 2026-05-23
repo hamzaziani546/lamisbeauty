@@ -10,7 +10,7 @@ from sqlalchemy import func, or_
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Order, OrderItem, Click
+from app.models import Order, OrderItem, Click, TrackingEvent
 from app.services.admin_auth import (
     issue_token,
     require_admin,
@@ -542,3 +542,91 @@ def update_order(
 @router.get("/statuses")
 def statuses(_admin: dict = Depends(require_admin)):
     return {"statuses": ORDER_STATUSES}
+
+
+@router.get("/capi-logs")
+def capi_logs(
+    start: Optional[str] = Query(None),
+    end: Optional[str] = Query(None),
+    platform: Optional[str] = Query(None, description="meta | tiktok | snapchat"),
+    success: Optional[bool] = Query(None),
+    order_id: Optional[str] = Query(None, description="order_number or UUID"),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=200),
+    db: Session = Depends(get_db),
+    _admin: dict = Depends(require_admin),
+):
+    """
+    Return CAPI (Conversions API) event logs with full request/response bodies.
+    Use this to debug pixel-to-CAPI deduplication and match quality.
+    """
+    s, e = _date_range(start, end)
+
+    q = db.query(TrackingEvent).filter(
+        TrackingEvent.created_at >= s,
+        TrackingEvent.created_at <= e,
+    )
+    if platform:
+        q = q.filter(TrackingEvent.platform == platform)
+    if success is not None:
+        q = q.filter(TrackingEvent.success.is_(success))
+    if order_id:
+        # join to orders to allow lookup by order_number
+        matched = (
+            db.query(Order.id)
+            .filter(
+                (Order.order_number == order_id) | (Order.id == order_id)
+            )
+            .scalar()
+        )
+        if matched:
+            q = q.filter(TrackingEvent.order_id == matched)
+        else:
+            return {"total": 0, "page": page, "page_size": page_size, "items": []}
+
+    total = q.count()
+    rows = (
+        q.order_by(TrackingEvent.created_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+        .all()
+    )
+
+    items = [
+        {
+            "id": str(r.id),
+            "order_id": str(r.order_id) if r.order_id else None,
+            "platform": r.platform,
+            "event_name": r.event_name,
+            "event_id": r.event_id,
+            "status_code": r.status_code,
+            "success": r.success,
+            "payload": _safe_json(r.payload_json),
+            "response": _safe_json(r.response_json),
+            "created_at": r.created_at.isoformat(),
+        }
+        for r in rows
+    ]
+
+    success_count = db.query(TrackingEvent).filter(
+        TrackingEvent.created_at >= s,
+        TrackingEvent.created_at <= e,
+        TrackingEvent.success.is_(True),
+        *([TrackingEvent.platform == platform] if platform else []),
+    ).count()
+
+    fail_count = db.query(TrackingEvent).filter(
+        TrackingEvent.created_at >= s,
+        TrackingEvent.created_at <= e,
+        TrackingEvent.success.is_(False),
+        *([TrackingEvent.platform == platform] if platform else []),
+    ).count()
+
+    return {
+        "total": total,
+        "success_count": success_count,
+        "fail_count": fail_count,
+        "page": page,
+        "page_size": page_size,
+        "items": items,
+    }

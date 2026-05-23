@@ -163,19 +163,32 @@ def log_tracking_event(
     order: Order,
     platform: str,
     event_name: str,
-    payload: dict,
+    context: dict,
     response: dict,
 ) -> None:
+    """
+    Persist a CAPI event log record.
+    `context` is non-PII metadata about the request (order_number, total, etc.).
+    `response` is the raw dict returned by the CAPI service function.
+    """
     import json as _json
     te = TrackingEvent(
         order_id=order.id,
         platform=platform,
         event_name=event_name,
         event_id=order.order_number,
-        payload_json=_json.dumps(payload, ensure_ascii=False, default=str),
+        payload_json=_json.dumps(context, ensure_ascii=False, default=str),
         response_json=_json.dumps(response, ensure_ascii=False, default=str),
         status_code=response.get("status_code"),
-        success=response.get("success", False),
+        success=bool(response.get("success", False)),
     )
     db.add(te)
     db.commit()
+    logger.info(
+        "CAPI log saved | platform=%s event=%s order=%s success=%s status=%s",
+        platform,
+        event_name,
+        order.order_number,
+        te.success,
+        te.status_code,
+    )
