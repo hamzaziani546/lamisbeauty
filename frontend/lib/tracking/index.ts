@@ -36,11 +36,6 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[1]) : undefined;
 }
 
-// Strip the leading '+' from E.164 so Meta gets digits-only (9665XXXXXXXX)
-function phoneDigits(e164: string): string {
-  return e164.replace(/^\+/, "");
-}
-
 // ─── PageView ──────────────────────────────────────────────────────────────
 
 export function trackPageView(): void {
@@ -196,12 +191,10 @@ export function trackPurchase(
   const numItems = items.reduce((s, i) => s + i.unitCount, 0);
 
   // ── Meta ──────────────────────────────────────────────────────────────────
-  // Advanced matching: set phone via setUserData (digits only, no '+').
+  // fbq('setUserData') is not a valid SDK command in fbevents.js v2.9+.
+  // Phone advanced matching is handled server-side via CAPI (hashed).
   // The pixel reads _fbp / _fbc cookies automatically — do NOT pass them
   // in the track() call's 4th argument (only eventID belongs there).
-  if (phone) {
-    window.fbq?.("setUserData", { ph: phoneDigits(phone) });
-  }
   window.fbq?.(
     "track",
     "Purchase",
