@@ -16,6 +16,7 @@ async def send_purchase_event(
     items: list[dict],
     event_source_url: str,
     sc_click_id: Optional[str],
+    sc_cookie1: Optional[str],
     client_ip: Optional[str],
     user_agent: Optional[str],
 ) -> dict:
@@ -44,6 +45,9 @@ async def send_purchase_event(
         user_data["client_user_agent"] = user_agent
     if sc_click_id:
         user_data["sc_click_id"] = sc_click_id
+    if sc_cookie1:
+        # _scid cookie value — improves Snap match quality as sc_cookie1
+        user_data["sc_cookie1"] = sc_cookie1
 
     event_payload = {
         "event_name": "PURCHASE",

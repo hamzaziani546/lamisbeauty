@@ -47,6 +47,7 @@ class AttributionIn(BaseModel):
     ttp: Optional[str] = None
     ttclid: Optional[str] = None
     sc_click_id: Optional[str] = None
+    sc_cookie1: Optional[str] = None  # value of _scid cookie → sc_cookie1 in Snap CAPI
 
 
 class OrderCreateRequest(BaseModel):

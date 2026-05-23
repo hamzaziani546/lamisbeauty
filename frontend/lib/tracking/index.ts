@@ -14,24 +14,34 @@ declare global {
   }
 }
 
-// ─── helpers ──────────────────────────────────────────────────────────────
+// ─── helpers ───────────────────────────────────────────────────────────────
 
 export function genEventId(prefix: string): string {
-  const rand = typeof crypto !== "undefined" && crypto.randomUUID
-    ? crypto.randomUUID().replace(/-/g, "").slice(0, 12)
-    : Math.random().toString(36).slice(2, 14);
+  const rand =
+    typeof crypto !== "undefined" && crypto.randomUUID
+      ? crypto.randomUUID().replace(/-/g, "").slice(0, 12)
+      : Math.random().toString(36).slice(2, 14);
   return `${prefix}_${Date.now()}_${rand}`;
 }
 
 function getCookie(name: string): string | undefined {
   if (typeof document === "undefined") return undefined;
   const match = document.cookie.match(
-    new RegExp("(?:^|; )" + name.replace(/[.$?*|{}()[\]\\/+^]/g, "\\$&") + "=([^;]*)")
+    new RegExp(
+      "(?:^|; )" +
+        name.replace(/[.$?*|{}()[\]\\/+^]/g, "\\$&") +
+        "=([^;]*)"
+    )
   );
   return match ? decodeURIComponent(match[1]) : undefined;
 }
 
-// ─── PageView ─────────────────────────────────────────────────────────────
+// Strip the leading '+' from E.164 so Meta gets digits-only (9665XXXXXXXX)
+function phoneDigits(e164: string): string {
+  return e164.replace(/^\+/, "");
+}
+
+// ─── PageView ──────────────────────────────────────────────────────────────
 
 export function trackPageView(): void {
   const eid = genEventId("pv");
@@ -40,7 +50,7 @@ export function trackPageView(): void {
   window.snaptr?.("track", "PAGE_VIEW", { client_dedup_id: eid });
 }
 
-// ─── ViewContent ──────────────────────────────────────────────────────────
+// ─── ViewContent ───────────────────────────────────────────────────────────
 
 export function trackViewContent(
   productId: string,
@@ -64,7 +74,9 @@ export function trackViewContent(
   window.ttq?.track(
     "ViewContent",
     {
-      contents: [{ content_id: productId, content_type: "product", quantity: 1, price: value }],
+      contents: [
+        { content_id: productId, content_type: "product", quantity: 1, price: value },
+      ],
       value,
       currency: "SAR",
     },
@@ -79,7 +91,7 @@ export function trackViewContent(
   });
 }
 
-// ─── AddToCart ────────────────────────────────────────────────────────────
+// ─── AddToCart ─────────────────────────────────────────────────────────────
 
 export function trackAddToCart(item: CartItem, eventId?: string): void {
   const eid = eventId ?? genEventId("atc");
@@ -122,7 +134,7 @@ export function trackAddToCart(item: CartItem, eventId?: string): void {
   });
 }
 
-// ─── InitiateCheckout ─────────────────────────────────────────────────────
+// ─── InitiateCheckout ──────────────────────────────────────────────────────
 
 export function trackInitiateCheckout(
   items: CartItem[],
@@ -131,6 +143,7 @@ export function trackInitiateCheckout(
 ): void {
   const eid = eventId ?? genEventId("ic");
   const contentIds = items.map((i) => i.productId);
+  const numItems = items.reduce((s, i) => s + i.unitCount, 0);
 
   window.fbq?.(
     "track",
@@ -138,7 +151,7 @@ export function trackInitiateCheckout(
     {
       content_ids: contentIds,
       content_type: "product",
-      num_items: items.reduce((s, i) => s + i.unitCount, 0),
+      num_items: numItems,
       value: total,
       currency: "SAR",
     },
@@ -164,14 +177,14 @@ export function trackInitiateCheckout(
     price: total,
     currency: "SAR",
     item_ids: contentIds,
-    number_items: items.reduce((s, i) => s + i.unitCount, 0),
+    number_items: numItems,
     client_dedup_id: eid,
   });
 }
 
-// ─── Purchase ─────────────────────────────────────────────────────────────
-// event_id MUST match the order_number sent to CAPI on the backend
-// phone is passed raw (no hashing) – hashing happens server-side only
+// ─── Purchase ──────────────────────────────────────────────────────────────
+// event_id MUST equal the order_number used by all three CAPI backends.
+// phone is passed raw (no hashing) — hashing is server-side only.
 
 export function trackPurchase(
   items: CartItem[],
@@ -182,13 +195,13 @@ export function trackPurchase(
   const contentIds = items.map((i) => i.productId);
   const numItems = items.reduce((s, i) => s + i.unitCount, 0);
 
-  // Read pixel cookies for better matching
-  const fbp = getCookie("_fbp");
-  const fbc = getCookie("_fbc");
-  const ttp = getCookie("_ttp");
-
-  // ── Meta ──────────────────────────────────────────────────────────────
-  // Send fbp/fbc as advanced matching – no hashing on browser side
+  // ── Meta ──────────────────────────────────────────────────────────────────
+  // Advanced matching: set phone via setUserData (digits only, no '+').
+  // The pixel reads _fbp / _fbc cookies automatically — do NOT pass them
+  // in the track() call's 4th argument (only eventID belongs there).
+  if (phone) {
+    window.fbq?.("setUserData", { ph: phoneDigits(phone) });
+  }
   window.fbq?.(
     "track",
     "Purchase",
@@ -203,23 +216,17 @@ export function trackPurchase(
         quantity: i.unitCount,
         item_price: i.priceSar,
       })),
-      ...(phone ? { ph: phone } : {}),
     },
-    {
-      eventID: eventId,
-      ...(fbp ? { fbp } : {}),
-      ...(fbc ? { fbc } : {}),
-    }
+    { eventID: eventId }
   );
 
-  // ── TikTok ────────────────────────────────────────────────────────────
-  // Identify call with phone (raw, no hashing) before the Purchase event
+  // ── TikTok ────────────────────────────────────────────────────────────────
+  // identify() before track() enriches the event with the phone number.
+  // The SDK normalises + hashes it automatically — pass raw E.164.
+  // Do NOT include ttp in the event data object; the SDK reads _ttp cookie itself.
   if (phone) {
-    window.ttq?.identify({
-      phone_number: phone,
-    });
+    window.ttq?.identify({ phone_number: phone });
   }
-
   window.ttq?.track(
     "CompletePayment",
     {
@@ -231,14 +238,13 @@ export function trackPurchase(
       })),
       value: total,
       currency: "SAR",
-      ...(ttp ? { ttp } : {}),
     },
     { event_id: eventId }
   );
 
-  // ── Snapchat ──────────────────────────────────────────────────────────
-  // client_dedup_id must match event_id sent to Snap CAPI
-  // transaction_id also sent for 30-day purchase dedup window
+  // ── Snapchat ──────────────────────────────────────────────────────────────
+  // client_dedup_id = transaction_id = eventId → enables 30-day PURCHASE dedup window.
+  // Snap does not support phone number on the browser pixel.
   window.snaptr?.("track", "PURCHASE", {
     price: total,
     currency: "SAR",

@@ -23,6 +23,8 @@ export type AttributionPayload = {
   ttp?: string;
   ttclid?: string;
   sc_click_id?: string;
+  /** Value of the _scid cookie — used as sc_cookie1 in Snap CAPI for match quality */
+  sc_cookie1?: string;
 };
 
 export type CreateOrderPayload = {
@@ -103,6 +105,7 @@ export function getAttribution(): AttributionPayload {
     ttp: getCookie("_ttp"),
     ttclid: params.get("ttclid") || stored.ttclid,
     sc_click_id: params.get("ScCid") || stored.sc_click_id,
+    sc_cookie1: getCookie("_scid"),
   };
 
   // Persist for later checkout

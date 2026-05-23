@@ -194,6 +194,8 @@ async def create_order(
     tracking_results["tiktok"] = tt_resp
     order_service.log_tracking_event(db, order, "tiktok", "CompletePayment", capi_context, tt_resp)
 
+    sc_cookie1 = payload.attribution.sc_cookie1 if payload.attribution else None
+
     snap_resp = await snap_capi.send_purchase_event(
         order_number=order.order_number,
         phone_digits=order.phone_digits,
@@ -201,6 +203,7 @@ async def create_order(
         items=items_for_tracking,
         event_source_url=event_source_url,
         sc_click_id=order.sc_click_id,
+        sc_cookie1=sc_cookie1,
         client_ip=order.client_ip,
         user_agent=order.user_agent,
     )

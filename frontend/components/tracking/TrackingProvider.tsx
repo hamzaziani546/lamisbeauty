@@ -9,20 +9,21 @@ const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
 const SNAP_PIXEL_ID = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
 
-// ─── Route-change PageView ─────────────────────────────────────────────────
-// Initial PageView is fired by the pixel init scripts below.
-// This hook fires on subsequent client-side navigations only.
+// Module-level flag — resets on full page load/refresh but NOT on client-side navigation.
+// This prevents double-firing PageView: pixel init scripts fire the first one,
+// and subsequent client-side route changes fire via trackPageView().
+let _pixelBooted = false;
+
 function RouteChangeTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Skip the very first mount — the pixel init code already fires PageView
-    const hasBooted = sessionStorage.getItem("px_booted");
-    if (!hasBooted) {
-      sessionStorage.setItem("px_booted", "1");
+    if (!_pixelBooted) {
+      _pixelBooted = true;
       return;
     }
     trackPageView();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   return null;
@@ -33,7 +34,7 @@ export function TrackingProvider() {
     <>
       <RouteChangeTracker />
 
-      {/* ── Meta Pixel ── strategy="lazyOnload" defers until page is idle */}
+      {/* ── Meta Pixel ── lazyOnload = deferred until page is idle */}
       {META_PIXEL_ID && (
         <Script
           id="meta-pixel"
@@ -77,7 +78,7 @@ ttq.page();
         />
       )}
 
-      {/* ── Snap Pixel ── deferred, init without email (identify at purchase time) */}
+      {/* ── Snap Pixel ── deferred, init without user data (identify at purchase) */}
       {SNAP_PIXEL_ID && (
         <Script
           id="snap-pixel"
@@ -86,7 +87,7 @@ ttq.page();
             __html: `
 (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
 {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
-a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
+a.queue=[];var s='script',r=t.createElement(s);r.async=!0;
 r.src=n;var u=t.getElementsByTagName(s)[0];
 u.parentNode.insertBefore(r,u);})(window,document,'https://sc-static.net/scevent.min.js');
 snaptr('init','${SNAP_PIXEL_ID}');
