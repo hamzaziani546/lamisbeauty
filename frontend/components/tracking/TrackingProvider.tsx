@@ -9,19 +9,26 @@ const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
 const SNAP_PIXEL_ID = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
 
-// Module-level flag — resets on full page load/refresh but NOT on client-side navigation.
-// This prevents double-firing PageView: pixel init scripts fire the first one,
-// and subsequent client-side route changes fire via trackPageView().
-let _pixelBooted = false;
+// Module-level state — persists across Strict Mode remounts (unlike component state).
+// Logic:
+//   1. First ever run (_lastTrackedPath = ""): init scripts already fired PageView → skip.
+//   2. Same pathname again (Strict Mode remount): nothing changed → skip.
+//   3. Pathname changed: new page → fire trackPageView().
+let _lastTrackedPath = "";
 
 function RouteChangeTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!_pixelBooted) {
-      _pixelBooted = true;
-      return;
-    }
+    // Same path (first load or Strict Mode re-run) — init scripts already fired it.
+    if (_lastTrackedPath === pathname) return;
+
+    const isFirstLoad = _lastTrackedPath === "";
+    _lastTrackedPath = pathname;
+
+    // Skip the initial path — pixel init scripts handle the very first PageView.
+    if (isFirstLoad) return;
+
     trackPageView();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);

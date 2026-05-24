@@ -41,7 +41,9 @@ function getCookie(name: string): string | undefined {
 export function trackPageView(): void {
   const eid = genEventId("pv");
   window.fbq?.("track", "PageView", {}, { eventID: eid });
-  window.ttq?.track("PageView", {}, { event_id: eid });
+  // ttq.page() fires LandingPageView — same as the init call — so all TikTok
+  // page views appear under one consistent event name in the pixel helper.
+  window.ttq?.page();
   window.snaptr?.("track", "PAGE_VIEW", { client_dedup_id: eid });
 }
 
