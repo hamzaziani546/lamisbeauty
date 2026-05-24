@@ -8,6 +8,7 @@ import { trackPageView } from "@/lib/tracking";
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 const TIKTOK_PIXEL_ID = process.env.NEXT_PUBLIC_TIKTOK_PIXEL_ID;
 const SNAP_PIXEL_ID = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
+const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
 
 // Module-level state — persists across Strict Mode remounts (unlike component state).
 // Logic:
@@ -99,6 +100,29 @@ r.src=n;var u=t.getElementsByTagName(s)[0];
 u.parentNode.insertBefore(r,u);})(window,document,'https://sc-static.net/scevent.min.js');
 snaptr('init','${SNAP_PIXEL_ID}');
 snaptr('track','PAGE_VIEW');
+            `,
+          }}
+        />
+      )}
+
+      {/* ── Google Ads ── afterInteractive so page-view config fires reliably */}
+      {GOOGLE_ADS_ID && (
+        <Script
+          id="google-ads-script"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        />
+      )}
+      {GOOGLE_ADS_ID && (
+        <Script
+          id="google-ads-config"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', '${GOOGLE_ADS_ID}');
             `,
           }}
         />

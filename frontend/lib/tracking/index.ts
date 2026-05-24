@@ -11,6 +11,8 @@ declare global {
       page: () => void;
     };
     snaptr?: (action: string, event: string, data?: object) => void;
+    gtag?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
   }
 }
 
@@ -248,4 +250,18 @@ export function trackPurchase(
     transaction_id: eventId,
     client_dedup_id: eventId,
   });
+
+  // ── Google Ads ────────────────────────────────────────────────────────────
+  // Fires the conversion tied to the label configured in the account.
+  // transaction_id deduplicates repeat firings for the same order.
+  const gadsLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL;
+  const gadsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
+  if (gadsId && gadsLabel) {
+    window.gtag?.("event", "conversion", {
+      send_to: `${gadsId}/${gadsLabel}`,
+      value: total,
+      currency: "SAR",
+      transaction_id: eventId,
+    });
+  }
 }
