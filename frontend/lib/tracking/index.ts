@@ -38,6 +38,22 @@ function getCookie(name: string): string | undefined {
   return match ? decodeURIComponent(match[1]) : undefined;
 }
 
+// SHA-256 hash via Web Crypto API (browser-side, for pixel advanced matching).
+async function sha256Hex(text: string): Promise<string> {
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(text)
+  );
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+// Normalise phone to digits-only (no +) for Meta hashing: +966527837429 → 966527837429
+function stripPlus(phone: string): string {
+  return phone.replace(/^\+/, "");
+}
+
 // ─── PageView ──────────────────────────────────────────────────────────────
 
 export function trackPageView(): void {
@@ -183,22 +199,25 @@ export function trackInitiateCheckout(
 
 // ─── Purchase ──────────────────────────────────────────────────────────────
 // event_id MUST equal the order_number used by all three CAPI backends.
-// phone is passed raw (no hashing) — hashing is server-side only.
+// phone is E.164 (e.g. +966527837429) — hashing done here for Meta advanced matching.
 
-export function trackPurchase(
+export async function trackPurchase(
   items: CartItem[],
   total: number,
   eventId: string,
   phone?: string
-): void {
+): Promise<void> {
   const contentIds = items.map((i) => i.productId);
   const numItems = items.reduce((s, i) => s + i.unitCount, 0);
 
   // ── Meta ──────────────────────────────────────────────────────────────────
-  // fbq('setUserData') is not a valid SDK command in fbevents.js v2.9+.
-  // Phone advanced matching is handled server-side via CAPI (hashed).
-  // The pixel reads _fbp / _fbc cookies automatically — do NOT pass them
-  // in the track() call's 4th argument (only eventID belongs there).
+  // Re-call fbq('init') with hashed phone for advanced matching before Purchase.
+  // ph must be SHA-256 of the digits-only number (no + sign).
+  if (phone) {
+    const metaId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
+    const hashedPhone = await sha256Hex(stripPlus(phone));
+    if (metaId) window.fbq?.("init", metaId, { ph: hashedPhone });
+  }
   window.fbq?.(
     "track",
     "Purchase",
@@ -220,7 +239,6 @@ export function trackPurchase(
   // ── TikTok ────────────────────────────────────────────────────────────────
   // identify() before track() enriches the event with the phone number.
   // The SDK normalises + hashes it automatically — pass raw E.164.
-  // Do NOT include ttp in the event data object; the SDK reads _ttp cookie itself.
   if (phone) {
     window.ttq?.identify({ phone_number: phone });
   }
@@ -240,8 +258,12 @@ export function trackPurchase(
   );
 
   // ── Snapchat ──────────────────────────────────────────────────────────────
+  // Re-call snaptr('init') with phone for user matching — Snap hashes automatically.
   // client_dedup_id = transaction_id = eventId → enables 30-day PURCHASE dedup window.
-  // Snap does not support phone number on the browser pixel.
+  if (phone) {
+    const snapId = process.env.NEXT_PUBLIC_SNAP_PIXEL_ID;
+    if (snapId) window.snaptr?.("init", snapId, { user_phone_number: phone });
+  }
   window.snaptr?.("track", "PURCHASE", {
     price: total,
     currency: "SAR",
@@ -252,11 +274,12 @@ export function trackPurchase(
   });
 
   // ── Google Ads ────────────────────────────────────────────────────────────
-  // Fires the conversion tied to the label configured in the account.
+  // Enhanced conversions: set user_data before firing conversion event.
   // transaction_id deduplicates repeat firings for the same order.
   const gadsLabel = process.env.NEXT_PUBLIC_GOOGLE_ADS_LABEL;
   const gadsId = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID;
   if (gadsId && gadsLabel) {
+    if (phone) window.gtag?.("set", "user_data", { phone_number: phone });
     window.gtag?.("event", "conversion", {
       send_to: `${gadsId}/${gadsLabel}`,
       value: total,
