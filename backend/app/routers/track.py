@@ -46,8 +46,7 @@ def record_click(
     request: Request,
     db: Session = Depends(get_db),
 ):
-    """Record a landing-page visit. Marks invalid clicks (non-KSA, VPN, proxy) so
-    metrics only count clean Saudi traffic."""
+    """Record a landing-page visit with geo/VPN signals for admin analytics."""
     client_ip = _get_client_ip(request)
     user_agent = request.headers.get("user-agent", "")
 

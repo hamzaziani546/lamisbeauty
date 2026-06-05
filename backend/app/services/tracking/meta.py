@@ -64,7 +64,7 @@ async def send_purchase_event(
         "user_data": user_data,
         "custom_data": {
             "value": round(total_sar, 2),
-            "currency": "SAR",
+            "currency": "MAD",
             "content_ids": content_ids,
             "content_type": "product",
             "contents": contents,

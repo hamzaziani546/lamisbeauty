@@ -14,7 +14,7 @@
 
 **Archetype:** The Trusted Expert (Pharmacist × Premium Feminine)
 
-Lamis is the knowledgeable friend who also happens to be a pharmacist. She doesn't sell hype — she recommends what works, explains why, and stands behind it. She speaks Saudi dialect, understands the climate and lifestyle, and never talks down to you.
+Lamis is the knowledgeable friend who also happens to be a pharmacist. She doesn't sell hype — she recommends what works, explains why, and stands behind it. She speaks clear Arabic with Moroccan warmth, understands local climate and COD culture, and never talks down to you.
 
 **Voice:** Confident, clinical-warm, specific (numbers over adjectives), Saudi dialect, zero fluff.
 
@@ -28,14 +28,14 @@ Lamis is the knowledgeable friend who also happens to be a pharmacist. She doesn
 
 ## Brand Positioning
 
-**Category:** Premium Nutraceutical Gummies for Saudi Women
+**Category:** Premium Nutraceutical Gummies for Moroccan Women
 **Position:** صيدلية جمالك الخاصة — Your personal beauty pharmacy.
 
 **Positioning Statement:**
-For Saudi women (25–40) who are tired of overpromising beauty products and confusing supplement options, Lamis is the trusted nutraceutical brand that delivers science-backed gummy supplements with pharmaceutical-grade transparency — SFDA-certified, research-dose ingredients, and a 30-day golden guarantee. Unlike generic imported supplements, Lamis is formulated for Saudi climate, sold with COD, and supported in Arabic via WhatsApp.
+For Moroccan women (25–40) who are tired of overpromising beauty products and confusing supplement options, Lamis is the trusted nutraceutical brand that delivers science-backed gummy supplements with pharmaceutical-grade transparency — clear dosages, quality-controlled batches, and a 30-day golden guarantee. Sold with COD, fast delivery (same-day Casablanca, 1–2 days nationwide), WhatsApp confirmation, prices in MAD.
 
 **Competitive Moat:**
-- SFDA certification (not just "natural" claims)
+- ONSSA certification (not just "natural" claims)
 - Research-dose transparency (20mg Lutein, 100mg Chlorophyll, Type I Marine Collagen)
 - Saudi-first experience (COD, local shipping, Arabic WhatsApp support)
 - 30-day money-back guarantee (risk reversal)
@@ -87,7 +87,7 @@ Shifted from beauty-pink (#8F3F55) to **pharmaceutical teal** — evoking trust,
 ## Design Principles
 
 1. **Clinical clean** — White space, sharp typography, minimal decoration. Think pharmacy shelf, not Instagram boutique.
-2. **Badge-heavy** — SFDA certification, dosage numbers, and guarantee badges visible on every scroll.
+2. **Badge-heavy** — ONSSA certification, dosage numbers, and guarantee badges visible on every scroll.
 3. **Proof-first** — Reviews, numbers, and science before emotional copy.
 4. **Saudi-native** — RTL-first, KSA dialect, local city names, COD-prominent.
 

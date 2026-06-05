@@ -39,11 +39,11 @@ export function Footer() {
               />
               <div>
                 <p className="font-bold text-base leading-tight">لاميس</p>
-                <p className="text-[#5A6A72] text-xs">مكملات جمال بمعايير صيدلانية</p>
+                <p className="text-[#5A6A72] text-xs">مكملات جمال مصرحة من ONSSA</p>
               </div>
             </div>
             <p className="text-sm text-[#5A6A72] leading-relaxed">
-              مكملات جمال سعودية بمعايير صيدلانية. مصرحة من SFDA، بجرعات بحثية واضحة، دفع عند الاستلام، وضمان ذهبي 30 يوم.
+              مكملات جمال مغربية مصرحة من ONSSA. جرعات بحثية واضحة، دفع عند الاستلام، توصيل سريع لكل المغرب، وضمان 30 يوم.
             </p>
             <div className="flex flex-col gap-3 mt-6">
               {WHATSAPP && (

@@ -1,27 +1,27 @@
-import { Truck, ShieldCheck, MessageCircle, CreditCard, CheckCircle } from "lucide-react";
+import { ShieldCheck, Truck, CreditCard, MessageCircle, BadgeCheck } from "lucide-react";
+import { MARKET } from "@/config/market";
 
 const chips = [
-  { icon: CreditCard, text: "الدفع عند الاستلام" },
-  { icon: ShieldCheck, text: "ضمان 30 يوم" },
-  { icon: CheckCircle, text: "مصرحة من هيئة الغذاء والدواء" },
-  { icon: Truck, text: "شحن داخل السعودية" },
-  { icon: MessageCircle, text: "دعم واتساب" },
+  { icon: BadgeCheck, text: MARKET.onssa.badgeShortAr },
+  { icon: CreditCard, text: MARKET.trust.codAr },
+  { icon: ShieldCheck, text: MARKET.trust.guaranteeAr },
+  { icon: Truck, text: MARKET.shipping.shortAr },
+  { icon: MessageCircle, text: MARKET.trust.whatsappAr },
 ];
 
 export function TrustChips({ compact = false }: { compact?: boolean }) {
   return (
-    <div
-      className={`flex flex-wrap gap-2.5 ${compact ? "justify-start" : "justify-center"}`}
-      dir="rtl"
-    >
+    <div className={`flex flex-wrap gap-2 ${compact ? "gap-1.5" : ""}`}>
       {chips.map(({ icon: Icon, text }) => (
-        <div
+        <span
           key={text}
-          className="flex items-center gap-1.5 bg-white border border-[#D5E0DC] text-[#0B6B5C] rounded-full px-3.5 py-1.5 text-xs font-bold shadow-sm hover:border-[#0B6B5C]/30 transition-colors"
+          className={`inline-flex items-center gap-1.5 bg-[#F7FAF9] border border-[#D5E0DC] text-[#1A2332] font-bold rounded-full ${
+            compact ? "text-[10px] px-2 py-1" : "text-xs px-3 py-1.5"
+          }`}
         >
-          <Icon size={14} className="shrink-0 text-[#2D8B6F]" aria-hidden />
-          <span>{text}</span>
-        </div>
+          <Icon size={13} className="text-[#0B6B5C]" aria-hidden />
+          {text}
+        </span>
       ))}
     </div>
   );

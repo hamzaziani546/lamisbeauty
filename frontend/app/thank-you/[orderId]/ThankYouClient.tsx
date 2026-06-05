@@ -28,25 +28,25 @@ const WHATSAPP = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "";
 const REVIEWS = [
   {
     name: "سارة أ.",
-    city: "الرياض",
-    product: "كولاجين · ٣ شهور",
-    text: "كلموني في أقل من ٥ دقائق! كانوا ودودين جداً وأكدوا كل التفاصيل. الطلب وصل اليوم التالي.",
+    city: "الدار البيضاء",
+    product: "كولاجين · 3 شهور",
+    text: "عيطولي فأقل من 5 دقائق! كانوا لطاف وأكدو كلشي. الطلب وصل فنهارين.",
     stars: 5,
-    age: "منذ ٣ أيام",
+    age: "منذ 3 أيام",
   },
   {
     name: "نورة م.",
-    city: "جدة",
+    city: "طنجة",
     product: "شوت العين · شهرين",
-    text: "أول ما أنهيت الطلب جاء اتصال سريع جداً. بعد شهر ما عدت أشوف الهالات بنفس الشكل.",
+    text: "من بعد الطلب جا اتصال بسرعة. من بعد شهر الهالات ما بقاوش بحال قبل.",
     stars: 5,
-    age: "منذ ٥ أيام",
+    age: "منذ 5 أيام",
   },
   {
     name: "هند ع.",
-    city: "الدمام",
+    city: "فاس",
     product: "كلوروفيل · شهر",
-    text: "الفريق كان محترم بالمكالمة والتوصيل أسرع من المتوقع. حسيت بفرق في الانتعاش من الأسبوع الأول!",
+    text: "الفريق محترم والتوصيل أسرع من المتوقع. حسيت بفرق فالانتعاش من الأسبوع الأول!",
     stars: 5,
     age: "منذ أسبوع",
   },
@@ -62,27 +62,27 @@ const TIMELINE = [
   {
     icon: Package,
     label: "الشحن",
-    desc: "طلبك يُشحن فور التأكيد الهاتفي",
+    desc: "الطلب كيتصيفط من بعد التأكيد",
     active: false,
   },
   {
     icon: Truck,
     label: "التوصيل",
-    desc: "خلال ٢–٤ أيام عمل داخل المملكة",
+    desc: "الدار البيضاء نفس اليوم · باقي المدن 1–2 يوم",
     active: false,
   },
   {
     icon: CheckCircle,
     label: "الاستلام والدفع",
-    desc: "تستلمين المنتج وتدفعين كاش عند الباب",
+    desc: "كتستلمي المنتج وكتخلّصي كاش عند الباب",
     active: false,
   },
 ];
 
 const RESULTS = [
-  { period: "الأسبوع الأول", result: "تبدئين تحسين فرقاً في الانتعاش والطاقة طوال اليوم" },
-  { period: "الأسبوع ٢–٤", result: "إشراقة تظهر على البشرة وتخف ملامح التعب والهالات" },
-  { period: "الشهر ٢–٣", result: "نتائج واضحة تلاحظها من حولك — بشرة، شعر، وثقة" },
+  { period: "الأسبوع الأول", result: "كتبدا تحسي بفرق فالانتعاش والطاقة" },
+  { period: "الأسبوع 2–4", result: "إشراقة تظهر على البشرة وتخف ملامح التعب والهالات" },
+  { period: "الشهر 2–3", result: "نتائج واضحة تلاحظها من حولك — بشرة، شعر، وثقة" },
 ];
 
 function StarRow({ count = 5 }: { count?: number }) {
@@ -127,11 +127,11 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
             <Phone size={15} className={isBusinessHours ? "animate-pulse shrink-0" : "shrink-0"} aria-hidden />
             {isBusinessHours ? (
               <p className="text-sm font-bold text-center leading-snug">
-                فريقنا سيتصل بك خلال أقل من ١٠ دقائق — جهزي الرد على أي رقم غير معروف 📞
+                الفريق غادي يعيط ليك فأقل من 10 دقائق — جاوبي على أي نمرة ما معروفة 📞
               </p>
             ) : (
               <p className="text-sm font-bold text-center leading-snug">
-                طلبك بأمان ✅ سنتصل بك في بداية ساعات العمل (٩ صباحاً) لتأكيد عنوانك
+                الطلب ديالك آمين ✅ غادي نعيطو ليك من 9h الصباح باش نأكدو العنوان
               </p>
             )}
           </div>
@@ -177,9 +177,9 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
             </div>
             <div className="space-y-3">
               {[
-                { n: "١", body: <>سيؤكد فريقنا <span className="font-semibold text-[#1A2332]">عنوانك وموعد التوصيل</span> المناسب لك</> },
-                { n: "٢", body: <>المكالمة لن تأخذ أكثر من <span className="font-semibold text-[#1A2332]">دقيقتين</span> فقط</> },
-                { n: "٣", body: <>بعد التأكيد يُشحن طلبك <span className="font-semibold text-[#1A2332]">مباشرة</span> والدفع عند الاستلام</> },
+                { n: "1", body: <>سيؤكد فريقنا <span className="font-semibold text-[#1A2332]">عنوانك وموعد التوصيل</span> المناسب لك</> },
+                { n: "2", body: <>المكالمة لن تأخذ أكثر من <span className="font-semibold text-[#1A2332]">دقيقتين</span> فقط</> },
+                { n: "3", body: <>بعد التأكيد يُشحن طلبك <span className="font-semibold text-[#1A2332]">مباشرة</span> والدفع عند الاستلام</> },
               ].map(({ n, body }) => (
                 <div key={n} className="flex items-start gap-3">
                   <div className="w-6 h-6 rounded-full bg-[#E8F0ED] text-[#0B6B5C] font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
@@ -199,10 +199,10 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                 {order.items.map((item, i) => {
                   const product = PRODUCT_MAP[item.productId];
                   const duration = item.titleAr.includes("علبتين")
-                    ? "علبتين · ٦٠ يوم"
-                    : item.titleAr.includes("3 علب") || item.titleAr.includes("٣ علب")
-                    ? "٣ علب · ٩٠ يوم"
-                    : "٦٠ علكة · شهر كامل";
+                    ? "علبتين · 60 يوم"
+                    : item.titleAr.includes("3 علب") || item.titleAr.includes("3 علب")
+                    ? "3 علب · 90 يوم"
+                    : "60 علكة · شهر كامل";
                   return (
                     <div key={i} className="flex items-center gap-4 bg-[#F7FAF9] rounded-2xl p-3">
                       {product && (
@@ -223,7 +223,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                         <p className="text-xs text-[#5A6A72] mt-0.5">{duration}</p>
                       </div>
                       <p className="font-bold text-[#0B6B5C] shrink-0 text-sm whitespace-nowrap">
-                        {item.priceSar} ر.س
+                        {item.priceMad} د.م
                       </p>
                     </div>
                   );
@@ -236,7 +236,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                 </span>
                 <div className="text-right">
                   <p className="text-xs text-[#5A6A72]">المجموع</p>
-                  <p className="font-bold text-xl text-[#1A2332]">{order.total} ر.س</p>
+                  <p className="font-bold text-xl text-[#1A2332]">{order.total} د.م</p>
                 </div>
               </div>
             </div>
@@ -296,7 +296,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
               <h2 className="font-bold text-[#1A2332]">تجارب عميلاتنا</h2>
               <div className="flex items-center gap-1.5 text-xs text-[#5A6A72]">
                 <StarRow />
-                <span>٤.٩ / ٥</span>
+                <span>4.9 / 5</span>
               </div>
             </div>
             <div className="space-y-3">
@@ -349,7 +349,7 @@ export function ThankYouClient({ orderId }: { orderId: string }) {
                       <p className="font-bold text-sm text-[#1A2332] leading-snug mb-1">{product.shortNameAr}</p>
                       <p className="text-xs text-[#5A6A72] mb-3 line-clamp-2">{product.subheadline}</p>
                       <div className="flex items-center justify-between">
-                        <span className="font-bold text-[#0B6B5C] text-sm">يبدأ من {product.offers[0].priceSar} ر.س</span>
+                        <span className="font-bold text-[#0B6B5C] text-sm">يبدأ من {product.offers[0].priceMad} د.م</span>
                         <span className="text-xs bg-[#E8F0ED] text-[#0B6B5C] px-2.5 py-1 rounded-full font-medium">اكتشفي</span>
                       </div>
                     </div>

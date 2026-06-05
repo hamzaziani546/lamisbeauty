@@ -17,7 +17,7 @@ export function CrossSellCard({ product }: { product: Product }) {
       quantity: 1,
       unitCount: 1,
       titleAr: product.shortNameAr,
-      priceSar: offer.priceSar,
+      priceMad: offer.priceMad,
       source: "cart_cross_sell" as const,
     };
     addItem(item);
@@ -44,16 +44,16 @@ export function CrossSellCard({ product }: { product: Product }) {
           {product.shortNameAr}
         </p>
         <p className="text-sm text-[#0B6B5C] font-medium mt-0.5">
-          {offer.priceSar} ريال
+          {offer.priceMad} درهم
         </p>
       </div>
       <button
         onClick={handleAdd}
-        aria-label={`أضيفي ${product.shortNameAr} للسلة`}
+        aria-label={`زيدي ${product.shortNameAr} للسلة`}
         className="shrink-0 flex items-center gap-1 bg-[#0B6B5C] text-white text-xs font-bold px-3 py-2 rounded-full hover:bg-[#095A4C] transition-colors"
       >
         <Plus size={12} aria-hidden />
-        أضيفيه
+        زيديه
       </button>
     </div>
   );

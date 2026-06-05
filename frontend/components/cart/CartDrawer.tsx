@@ -4,7 +4,7 @@ import Image from "next/image";
 import { X, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
 import { getCrossSells, PRODUCT_MAP } from "@/config/products";
-import { formatSarShort } from "@/lib/money";
+import { formatMadShort } from "@/lib/money";
 import { TrustChips } from "@/components/product/TrustChips";
 import { CrossSellCard } from "./CrossSellCard";
 import { Button } from "@/components/ui/Button";
@@ -16,9 +16,9 @@ interface CartDrawerProps {
 }
 
 export function CartDrawer({ onCheckout }: CartDrawerProps) {
-  const { items, isOpen, closeCart, removeItem, totalSar } = useCartStore();
+  const { items, isOpen, closeCart, removeItem, totalMad } = useCartStore();
   const closeRef = useRef<HTMLButtonElement>(null);
-  const total = totalSar();
+  const total = totalMad();
 
   const cartProductIds = items.map((i) => i.productId);
   const crossSells = getCrossSells(cartProductIds);
@@ -92,7 +92,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
             <div className="text-center py-16 text-[#5A6A72]">
               <ShoppingBag size={48} className="mx-auto mb-4 opacity-30" aria-hidden />
               <p className="font-medium">السلة فارغة</p>
-              <p className="text-sm mt-1">اختاري منتجاً من روتين لاميس</p>
+              <p className="text-sm mt-1">اختاري منتج من روتين لاميس</p>
             </div>
           ) : (
             <>
@@ -127,7 +127,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                     </div>
                     <div className="text-left shrink-0">
                       <p className="font-bold text-[#0B6B5C]">
-                        {formatSarShort(item.priceSar)}
+                        {formatMadShort(item.priceMad)}
                       </p>
                       <button
                         onClick={() => removeItem(item.productId, item.offerId)}
@@ -144,7 +144,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
               {/* Progress bar upsell hint */}
               {items.length < 2 && (
                 <div className="bg-[#E8F0ED] rounded-xl p-3 text-sm text-[#0B6B5C] text-center font-medium">
-                  أضيفي منتجاً واحداً واحصلي على عرض خاص في الخطوة التالية ✨
+                  زيدي منتج واحد وخذي عرض خاص فالخطوة الجاية ✨
                 </div>
               )}
 
@@ -153,7 +153,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                 <div className="flex justify-between items-center font-bold text-[#1A2332]">
                   <span>المجموع</span>
                   <span className="text-[#0B6B5C] text-lg">
-                    {formatSarShort(total)}
+                    {formatMadShort(total)}
                   </span>
                 </div>
                 <p className="text-xs text-[#2D8B6F] mt-1 text-center">
@@ -168,7 +168,7 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                     كمّلي روتين لاميس
                   </p>
                   <p className="text-xs text-[#5A6A72] mb-3">
-                    عميلات كثير يضيفون منتج ثاني عشان يكون الروتين متكامل.
+                    بزاف ديال الكليانصات كيزيدو منتج ثاني باش الروتين يولّى كامل.
                   </p>
                   <div className="space-y-3">
                     {crossSells.map((product) => (

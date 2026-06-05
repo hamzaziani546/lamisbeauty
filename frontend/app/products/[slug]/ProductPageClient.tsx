@@ -20,6 +20,8 @@ import { ReviewCard, PRODUCT_REVIEWS, SAMPLE_REVIEWS } from "@/components/produc
 import { Button } from "@/components/ui/Button";
 import { trackAddToCart, trackViewContent } from "@/lib/tracking";
 import { PRODUCTS } from "@/config/products";
+import { MARKET } from "@/config/market";
+import { OnssaCertificate } from "@/components/trust/OnssaCertificate";
 
 interface Props {
   product: Product;
@@ -59,9 +61,9 @@ function TrustRow() {
   return (
     <div className="grid grid-cols-3 gap-2.5 mt-4">
       {[
-        { icon: ShieldCheck, title: "ضمان ذهبي ٣٠ يوم", sub: "استرجاع كامل بلا أسئلة" },
+        { icon: ShieldCheck, title: "ضمان ذهبي 30 يوم", sub: "استرجاع كامل بلا أسئلة" },
         { icon: CreditCard, title: "الدفع عند الاستلام", sub: "لا دفع مسبق أبداً" },
-        { icon: Truck, title: "شحن للسعودية", sub: "توصيل خلال ٢–٤ أيام" },
+        { icon: Truck, title: "توصيل لكل المغرب", sub: "الدار البيضاء نفس اليوم · باقي المدن 1–2 يوم" },
       ].map(({ icon: Icon, title, sub }) => (
         <div
           key={title}
@@ -94,7 +96,7 @@ export function ProductPageClient({ product }: Props) {
   const crossSells = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 2);
 
   useEffect(() => {
-    trackViewContent(product.id, product.offers[0].priceSar);
+    trackViewContent(product.id, product.offers[0].priceMad);
   }, [product.id, product.offers]);
 
   useEffect(() => {
@@ -115,7 +117,7 @@ export function ProductPageClient({ product }: Props) {
       quantity: 1,
       unitCount: selectedOffer.quantity,
       titleAr: `${product.shortNameAr} - ${selectedOffer.labelAr}`,
-      priceSar: selectedOffer.priceSar,
+      priceMad: selectedOffer.priceMad,
       source: "pdp" as const,
     };
     addItem(item);
@@ -131,7 +133,7 @@ export function ProductPageClient({ product }: Props) {
       quantity: 1,
       unitCount: 1,
       titleAr: `${product.shortNameAr} - عرض الباقة`,
-      priceSar: bundleUnitPrice,
+      priceMad: bundleUnitPrice,
       source: "pdp" as const,
     };
     addItem(mainItem);
@@ -142,7 +144,7 @@ export function ProductPageClient({ product }: Props) {
       quantity: 1,
       unitCount: 1,
       titleAr: `${crossSellProduct.shortNameAr} - عرض الباقة`,
-      priceSar: 174,
+      priceMad: 174,
       source: "pdp" as const,
     };
     addItem(crossSellItem);
@@ -173,7 +175,7 @@ export function ProductPageClient({ product }: Props) {
                 {/* Guarantee badge — top */}
                 <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs font-bold text-[#0B6B5C] flex items-center gap-1 shadow-sm">
                   <ShieldCheck size={13} aria-hidden />
-                  ضمان ٣٠ يوم
+                  ضمان 30 يوم
                 </div>
               </div>
             </div>
@@ -185,7 +187,7 @@ export function ProductPageClient({ product }: Props) {
               <div className="flex items-center gap-3 flex-wrap">
                 <StarRating rating={4.9} count={120} />
                 <span className="text-xs font-bold text-[#2D8B6F] bg-[#2D8B6F]/10 px-2.5 py-1 rounded-full">
-                  مصرحة من هيئة الغذاء والدواء
+                  {MARKET.onssa.badgeAr}
                 </span>
               </div>
 
@@ -194,7 +196,7 @@ export function ProductPageClient({ product }: Props) {
                 <h1 className="text-2xl sm:text-3xl font-bold text-[#1A2332] leading-tight">
                   {product.heroHeadline}
                 </h1>
-                <p className="text-sm text-[#5A6A72] mt-2 font-medium">{product.shortNameAr} · ٦٠ علكة · شهر كامل</p>
+                <p className="text-sm text-[#5A6A72] mt-2 font-medium">{product.shortNameAr} · 60 علكة · شهر كامل</p>
               </div>
 
               <p className="text-[#5A6A72] leading-relaxed text-base">
@@ -216,7 +218,7 @@ export function ProductPageClient({ product }: Props) {
               {/* Urgency */}
               <div className="flex items-center gap-2 text-xs font-bold text-[#C9A45C] bg-amber-50 border border-amber-200 px-3 py-2 rounded-xl">
                 <Flame size={14} className="shrink-0" aria-hidden />
-                متاح الآن للشحن الفوري داخل السعودية
+                متاح الآن للشحن الفوري داخل المغرب
               </div>
 
               {/* Offer selector */}
@@ -224,7 +226,7 @@ export function ProductPageClient({ product }: Props) {
                 <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
                   <p className="text-sm font-bold text-[#1A2332]">اختاري المدة المناسبة لروتينك:</p>
                   <span className="text-[11px] font-bold text-[#2D8B6F] bg-[#2D8B6F]/10 px-2.5 py-1 rounded-full">
-                    كل علبة = ٦٠ علكة · شهر كامل
+                    كل علبة = 60 علكة · شهر كامل
                   </span>
                 </div>
                 <OfferSelector
@@ -241,10 +243,10 @@ export function ProductPageClient({ product }: Props) {
                   size="lg"
                   fullWidth
                   onClick={handleAddToCart}
-                  aria-label={`أضيفي ${product.shortNameAr} - ${selectedOffer.labelAr} بسعر ${selectedOffer.priceSar} ريال`}
+                  aria-label={`زيدي ${product.shortNameAr} - ${selectedOffer.labelAr} بسعر ${selectedOffer.priceMad} درهم`}
                   className="text-lg shadow-lg shadow-[#0B6B5C]/20 hover:shadow-[#0B6B5C]/30 transform hover:-translate-y-0.5 transition-all"
                 >
-                  أضيفي للسلة — {selectedOffer.priceSar} ريال
+                  زيدي للسلة — {selectedOffer.priceMad} درهم
                 </Button>
               </div>
 
@@ -275,7 +277,7 @@ export function ProductPageClient({ product }: Props) {
               onClick={handleAddToCart}
               className="text-sm font-bold text-[#0B6B5C] underline underline-offset-4 hover:no-underline transition-all"
             >
-              ابدئي التغيير اليوم ←
+              بدا التغيير اليوم ←
             </button>
           </div>
         </div>
@@ -376,11 +378,11 @@ export function ProductPageClient({ product }: Props) {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-3 mb-3 flex-wrap">
               <StarRating rating={4.9} />
-              <span className="font-bold text-[#1A2332] text-lg">٤.٩ من ٥</span>
-              <span className="text-[#5A6A72] text-sm">· ١٢٠+ تقييم موثّق</span>
+              <span className="font-bold text-[#1A2332] text-lg">4.9 من 5</span>
+              <span className="text-[#5A6A72] text-sm">· 120+ تقييم موثّق</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-[#1A2332]">
-              تقييمات عميلاتنا في السعودية
+              تقييمات عميلاتنا في المغرب
             </h2>
             <p className="text-[#5A6A72] mt-2 text-sm flex items-center justify-center gap-1.5">
               <BadgeCheck size={15} className="text-[#2D8B6F]" aria-hidden />
@@ -445,7 +447,7 @@ export function ProductPageClient({ product }: Props) {
               <SectionImage
                 src={pdpImages.science}
                 alt={`جودة وموثوقية ${product.shortNameAr}`}
-                badge="مصرّحة SFDA · جودة مضمونة"
+                badge={`${MARKET.onssa.badgeAr} · جودة مضمونة`}
               />
             </div>
 
@@ -463,9 +465,9 @@ export function ProductPageClient({ product }: Props) {
               </p>
               <ul className="space-y-3">
                 {[
-                  "مصرحة من هيئة الغذاء والدواء السعودية (SFDA)",
+                  MARKET.onssa.badgeFullAr,
                   "مكونات بجرعات مدروسة وموثّقة علمياً",
-                  "تركيبة تناسب بيئة واحتياجات المرأة في المملكة",
+                  "تركيبة تناسب بيئة واحتياجات المرأة في المغرب",
                 ].map((item) => (
                   <li
                     key={item}
@@ -478,6 +480,12 @@ export function ProductPageClient({ product }: Props) {
                   </li>
                 ))}
               </ul>
+              <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
+                <OnssaCertificate variant="thumb" />
+                <p className="text-xs text-[#5A6A72] leading-relaxed text-center sm:text-right">
+                  شهادة ONSSA — اضغطي للتكبير والتحقق من الاعتماد الرسمي.
+                </p>
+              </div>
             </div>
 
           </div>
@@ -493,10 +501,10 @@ export function ProductPageClient({ product }: Props) {
               <ShieldCheck size={32} className="text-white" aria-hidden />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-              ضمان لاميس الذهبي — ٣٠ يوم
+              ضمان لاميس الذهبي — 30 يوم
             </h2>
             <p className="text-white/80 text-base leading-relaxed max-w-xl mx-auto mb-6">
-              واثقين من أثر منتجاتنا. إذا ما حسيتي بالفرق خلال ٣٠ يوماً من الاستخدام المنتظم، نرجع لكِ فلوسك كاملة — بدون نقاش، بدون شرط.
+              واثقين من أثر منتجاتنا. إذا ما حسيتي بالفرق خلال 30 يوماً من الاستخدام المنتظم، نرجع لكِ فلوسك كاملة — بدون نقاش، بدون شرط.
             </p>
             <button
               onClick={handleAddToCart}
@@ -547,9 +555,9 @@ export function ProductPageClient({ product }: Props) {
                         <p className="text-sm text-[#5A6A72] mt-0.5">يتكامل مع {product.shortNameAr}</p>
                       </div>
                       <div className="text-left shrink-0">
-                        <p className="font-bold text-xl text-[#0B6B5C]">٣٤٩ ريال</p>
-                        <p className="text-xs text-[#5A6A72] line-through">بدل ٣٩٨</p>
-                        <p className="text-[10px] text-[#2D8B6F] font-bold mt-0.5">وفّري ٤٩ ريال</p>
+                        <p className="font-bold text-xl text-[#0B6B5C]">349 درهم</p>
+                        <p className="text-xs text-[#5A6A72] line-through">بدل 398</p>
+                        <p className="text-[10px] text-[#2D8B6F] font-bold mt-0.5">وفّري 49 درهم</p>
                       </div>
                     </div>
                     <p className="text-sm text-[#5A6A72] mb-5 leading-relaxed line-clamp-2">
@@ -561,7 +569,7 @@ export function ProductPageClient({ product }: Props) {
                       onClick={() => handleAddBundle(crossProduct)}
                       className="shadow-md shadow-[#0B6B5C]/10"
                     >
-                      أضيفي الباقة للسلة
+                      زيدي الباقة للسلة
                     </Button>
                   </div>
                 </div>
@@ -605,9 +613,9 @@ export function ProductPageClient({ product }: Props) {
           <div className="text-center mb-8">
             <span className="text-[#C9A45C] text-sm font-bold">جاهزة تبدئي؟</span>
             <h2 className="text-2xl sm:text-3xl font-bold text-white mt-2 leading-tight">
-              اختاري عرضك وابدئي روتينك اليوم
+              اختاري العرض وابدا روتينك اليوم
             </h2>
-            <p className="text-white/50 text-sm mt-2">الدفع عند الاستلام · لا مخاطرة · ضمان ٣٠ يوم</p>
+            <p className="text-white/50 text-sm mt-2">الدفع عند الاستلام · لا مخاطرة · ضمان 30 يوم</p>
           </div>
           <OfferSelector
             offers={product.offers.filter((o) => o.id !== "upsell")}
@@ -621,11 +629,11 @@ export function ProductPageClient({ product }: Props) {
             onClick={handleAddToCart}
             className="mt-5 text-lg shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 transform hover:-translate-y-0.5 transition-all"
           >
-            أضيفي للسلة — {selectedOffer.priceSar} ريال
+            زيدي للسلة — {selectedOffer.priceMad} درهم
           </Button>
           <TrustRow />
           <p className="text-white/30 text-xs text-center mt-6">
-            مصرحة من هيئة الغذاء والدواء السعودية (SFDA) · شحن لجميع مناطق المملكة
+            {MARKET.onssa.badgeAr} · {MARKET.trust.nationwideAr}
           </p>
         </div>
       </section>
@@ -652,15 +660,15 @@ export function ProductPageClient({ product }: Props) {
                 <Flame size={11} className="text-amber-300" aria-hidden />
                 <span>
                   {selectedOffer.durationAr || `${selectedOffer.quantity} علبة`}
-                  {selectedOffer.savingsSar ? ` · وفّري ${selectedOffer.savingsSar} ريال` : ""}
+                  {selectedOffer.savingsMad ? ` · وفّري ${selectedOffer.savingsMad} درهم` : ""}
                 </span>
               </span>
-              <span className="font-bold text-[15px] sm:text-base mt-0.5 truncate">أضيفي للسلة</span>
+              <span className="font-bold text-[15px] sm:text-base mt-0.5 truncate">زيدي للسلة</span>
             </span>
           </span>
           <span className="shrink-0 flex flex-col items-end leading-none">
             <span className="text-[10px] text-white/70">السعر</span>
-            <span className="font-extrabold text-lg sm:text-xl">{selectedOffer.priceSar} ر.س</span>
+            <span className="font-extrabold text-lg sm:text-xl">{selectedOffer.priceMad} د.م</span>
           </span>
         </button>
       </div>

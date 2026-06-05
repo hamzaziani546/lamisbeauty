@@ -58,7 +58,7 @@ async def send_purchase_event(
         "user_data": user_data,
         "custom_data": {
             "value": round(total_sar, 2),       # float, not str
-            "currency": "SAR",
+            "currency": "MAD",
             "item_ids": item_ids,
             "number_items": number_items,
             "order_id": order_number,           # enables 30-day PURCHASE dedup window

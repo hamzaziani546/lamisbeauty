@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Order, OrderItem, TrackingEvent
 from app.schemas import OrderCreateRequest, OrderCreateResponse
-from app.services.phone import normalize_ksa_phone
+from app.services.phone import normalize_ma_phone
 from app.config import settings
 
 logger = logging.getLogger(__name__)
@@ -24,8 +24,8 @@ PRODUCT_CATALOG: dict[str, dict] = {
         "sku": "LMS-LEG-001",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
-            "two": {"quantity": 2, "price_sar": Decimal("279")},
-            "three": {"quantity": 3, "price_sar": Decimal("349")},
+            "two": {"quantity": 2, "price_sar": Decimal("349")},
+            "three": {"quantity": 3, "price_sar": Decimal("449")},
             "upsell": {"quantity": 1, "price_sar": Decimal("99")},
         },
     },
@@ -34,8 +34,8 @@ PRODUCT_CATALOG: dict[str, dict] = {
         "sku": "LMS-CGG-002",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
-            "two": {"quantity": 2, "price_sar": Decimal("279")},
-            "three": {"quantity": 3, "price_sar": Decimal("349")},
+            "two": {"quantity": 2, "price_sar": Decimal("349")},
+            "three": {"quantity": 3, "price_sar": Decimal("449")},
             "upsell": {"quantity": 1, "price_sar": Decimal("99")},
         },
     },
@@ -44,8 +44,8 @@ PRODUCT_CATALOG: dict[str, dict] = {
         "sku": "LMS-CLG-003",
         "offers": {
             "one": {"quantity": 1, "price_sar": Decimal("199")},
-            "two": {"quantity": 2, "price_sar": Decimal("279")},
-            "three": {"quantity": 3, "price_sar": Decimal("349")},
+            "two": {"quantity": 2, "price_sar": Decimal("349")},
+            "three": {"quantity": 3, "price_sar": Decimal("449")},
             "upsell": {"quantity": 1, "price_sar": Decimal("99")},
         },
     },
@@ -108,7 +108,7 @@ def create_order(
     client_ip: Optional[str] = None,
     user_agent: Optional[str] = None,
 ) -> Order:
-    phone_e164, phone_digits = normalize_ksa_phone(request.customer.phone)
+    phone_e164, phone_digits = normalize_ma_phone(request.customer.phone)
     validated_items, total_sar = recalculate_order(request.items)
     order_number = generate_order_number(db)
 
@@ -118,16 +118,23 @@ def create_order(
         "fbp": None, "fbc": None, "ttp": None, "ttclid": None, "sc_click_id": None,
     })()
 
+    delivery_note = ""
+    city = getattr(request.customer, "city", "") or ""
+    address = getattr(request.customer, "address", "") or ""
+    if city or address:
+        delivery_note = f"المدينة: {city}\nالعنوان: {address}".strip()
+
     order = Order(
         order_number=order_number,
         customer_name=request.customer.name.strip(),
         phone_e164=phone_e164,
         phone_digits=phone_digits,
+        admin_notes=delivery_note or None,
         status="new",
         subtotal_sar=total_sar,
         discount_sar=Decimal("0"),
         total_sar=total_sar,
-        currency="SAR",
+        currency="MAD",
         payment_method="cod",
         event_id=order_number,
         landing_page=getattr(attr, "landing_page", None),

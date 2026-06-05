@@ -81,7 +81,7 @@ export function trackViewContent(
       content_ids: [productId],
       content_type: "product",
       value,
-      currency: "SAR",
+      currency: "MAD",
     },
     { eventID: eid }
   );
@@ -93,14 +93,14 @@ export function trackViewContent(
         { content_id: productId, content_type: "product", quantity: 1, price: value },
       ],
       value,
-      currency: "SAR",
+      currency: "MAD",
     },
     { event_id: eid }
   );
 
   window.snaptr?.("track", "VIEW_CONTENT", {
     price: value,
-    currency: "SAR",
+    currency: "MAD",
     item_ids: [productId],
     client_dedup_id: eid,
   });
@@ -117,8 +117,8 @@ export function trackAddToCart(item: CartItem, eventId?: string): void {
     {
       content_ids: [item.productId],
       content_type: "product",
-      value: item.priceSar,
-      currency: "SAR",
+      value: item.priceMad,
+      currency: "MAD",
     },
     { eventID: eid }
   );
@@ -131,18 +131,18 @@ export function trackAddToCart(item: CartItem, eventId?: string): void {
           content_id: item.productId,
           content_type: "product",
           quantity: item.unitCount,
-          price: item.priceSar,
+          price: item.priceMad,
         },
       ],
-      value: item.priceSar,
-      currency: "SAR",
+      value: item.priceMad,
+      currency: "MAD",
     },
     { event_id: eid }
   );
 
   window.snaptr?.("track", "ADD_CART", {
-    price: item.priceSar,
-    currency: "SAR",
+    price: item.priceMad,
+    currency: "MAD",
     item_ids: [item.productId],
     number_items: item.unitCount,
     client_dedup_id: eid,
@@ -168,7 +168,7 @@ export function trackInitiateCheckout(
       content_type: "product",
       num_items: numItems,
       value: total,
-      currency: "SAR",
+      currency: "MAD",
     },
     { eventID: eid }
   );
@@ -180,17 +180,17 @@ export function trackInitiateCheckout(
         content_id: i.productId,
         content_type: "product",
         quantity: i.unitCount,
-        price: i.priceSar,
+        price: i.priceMad,
       })),
       value: total,
-      currency: "SAR",
+      currency: "MAD",
     },
     { event_id: eid }
   );
 
   window.snaptr?.("track", "START_CHECKOUT", {
     price: total,
-    currency: "SAR",
+    currency: "MAD",
     item_ids: contentIds,
     number_items: numItems,
     client_dedup_id: eid,
@@ -223,14 +223,14 @@ export async function trackPurchase(
     "Purchase",
     {
       value: total,
-      currency: "SAR",
+      currency: "MAD",
       content_ids: contentIds,
       content_type: "product",
       num_items: numItems,
       contents: items.map((i) => ({
         id: i.productId,
         quantity: i.unitCount,
-        item_price: i.priceSar,
+        item_price: i.priceMad,
       })),
     },
     { eventID: eventId }
@@ -249,10 +249,10 @@ export async function trackPurchase(
         content_id: i.productId,
         content_type: "product",
         quantity: i.unitCount,
-        price: i.priceSar,
+        price: i.priceMad,
       })),
       value: total,
-      currency: "SAR",
+      currency: "MAD",
     },
     { event_id: eventId }
   );
@@ -266,7 +266,7 @@ export async function trackPurchase(
   }
   window.snaptr?.("track", "PURCHASE", {
     price: total,
-    currency: "SAR",
+    currency: "MAD",
     item_ids: contentIds,
     number_items: numItems,
     transaction_id: eventId,
@@ -283,7 +283,7 @@ export async function trackPurchase(
     window.gtag?.("event", "conversion", {
       send_to: `${gadsId}/${gadsLabel}`,
       value: total,
-      currency: "SAR",
+      currency: "MAD",
       transaction_id: eventId,
     });
   }

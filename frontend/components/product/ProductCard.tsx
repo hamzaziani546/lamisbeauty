@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import Image from "next/image";
 import { Star, ArrowLeft, ShieldCheck, Flame } from "lucide-react";
 import type { Product } from "@/config/products";
@@ -31,7 +31,7 @@ export function ProductCard({ product }: ProductCardProps) {
       {/* Guarantee badge */}
       <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-full shadow-sm z-10 flex items-center gap-1 text-[10px] font-bold text-[#2D8B6F] border border-[#D5E0DC]">
         <ShieldCheck size={11} aria-hidden />
-        ضمان ٣٠ يوم
+        ضمان 30 يوم
       </div>
 
       {/* Product image */}
@@ -68,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <span className="text-[11px] text-[#5A6A72] font-bold mr-1">4.9</span>
           </div>
           <span className="text-[10px] text-[#2D8B6F] font-bold bg-[#2D8B6F]/10 px-2 py-0.5 rounded-full whitespace-nowrap">
-            ٦٠ علكة · شهر كامل
+            60 علكة · شهر كامل
           </span>
         </div>
 
@@ -100,8 +100,8 @@ export function ProductCard({ product }: ProductCardProps) {
           <div>
             <span className="text-[10px] text-[#5A6A72] block mb-0.5">يبدأ من</span>
             <span className="text-[#0B6B5C] font-extrabold text-xl leading-none">
-              {baseOffer?.priceSar}
-              <span className="text-sm font-medium mr-0.5">ريال</span>
+              {baseOffer?.priceMad}
+              <span className="text-sm font-medium mr-0.5">درهم</span>
             </span>
           </div>
           <Link
@@ -109,15 +109,15 @@ export function ProductCard({ product }: ProductCardProps) {
             className="flex items-center gap-1.5 bg-[#0B6B5C] text-white text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#095A4C] transition-all shadow-md shadow-[#0B6B5C]/20 group-hover:shadow-[#0B6B5C]/30 whitespace-nowrap"
             aria-label={`اختاري عرض ${product.shortNameAr}`}
           >
-            اختاري عرضك
+            اختاري العرض
             <ArrowLeft size={14} aria-hidden />
           </Link>
         </div>
 
         {/* Best offer teaser */}
-        {bestOffer && bestOffer.savingsSar && (
+        {bestOffer && bestOffer.savingsMad && (
           <p className="text-[10px] text-[#2D8B6F] font-bold mt-3 text-center bg-[#2D8B6F]/5 rounded-xl py-1.5 border border-[#D5E0DC]/50">
-            عرض ٣ شهور: {bestOffer.priceSar} ريال · وفّري {bestOffer.savingsSar} ريال
+            عرض 3 شهور: {bestOffer.priceMad} درهم · وفّري {bestOffer.savingsMad} درهم
           </p>
         )}
       </div>

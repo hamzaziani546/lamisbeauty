@@ -12,7 +12,7 @@ export interface CartItem {
   quantity: number;
   unitCount: number;
   titleAr: string;
-  priceSar: number;
+  priceMad: number;
   source: CartItemSource;
 }
 
@@ -24,7 +24,7 @@ interface CartState {
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
-  totalSar: () => number;
+  totalMad: () => number;
   itemCount: () => number;
 }
 
@@ -44,7 +44,7 @@ function mergeCartItem(items: CartItem[], nextItem: CartItem): CartItem[] {
           ...item,
           quantity: item.quantity + nextItem.quantity,
           unitCount: item.unitCount + nextItem.unitCount,
-          priceSar: item.priceSar + nextItem.priceSar,
+          priceMad: item.priceMad + nextItem.priceMad,
         }
       : item
   );
@@ -69,11 +69,11 @@ export const useCartStore = create<CartState>()(
       clearCart: () => set({ items: [], isOpen: false }),
       openCart: () => set({ isOpen: true }),
       closeCart: () => set({ isOpen: false }),
-      totalSar: () => get().items.reduce((sum, item) => sum + item.priceSar, 0),
+      totalMad: () => get().items.reduce((sum, item) => sum + item.priceMad, 0),
       itemCount: () => get().items.reduce((sum, item) => sum + item.quantity, 0),
     }),
     {
-      name: "lamis-cart",
+      name: "lamis-cart-ma",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         items: state.items,

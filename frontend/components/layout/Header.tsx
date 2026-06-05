@@ -16,8 +16,9 @@ const navLinks = [
 
 const ANNOUNCEMENTS = [
   { text: "ضمان لاميس الذهبي: استرجاع خلال 30 يوم بدون أسئلة", icon: ShieldCheck },
-  { text: "الدفع عند الاستلام متاح لجميع مدن المملكة", icon: Truck },
-  { text: "توصيل سريع: 1-2 أيام للمدن الرئيسية", icon: Truck },
+  { text: "مصرح من ONSSA — جودة وسلامة مضمونة", icon: ShieldCheck },
+  { text: "الدفع عند الاستلام لجميع مدن المغرب", icon: Truck },
+  { text: "الدار البيضاء: توصيل نفس اليوم · باقي المدن 1-2 يوم", icon: Truck },
   { text: "اطلبي الآن واحصلي على خصم خاص للكميات", icon: Gift },
 ];
 
@@ -83,7 +84,7 @@ export function Header() {
               <p className="font-bold text-[#1A2332] text-base sm:text-lg leading-tight group-hover:text-[#0B6B5C] transition-colors">
                 لاميس
               </p>
-              <p className="text-[#5A6A72] text-xs leading-tight">مكملات جمال بمعايير صيدلانية</p>
+              <p className="text-[#5A6A72] text-xs leading-tight">مكملات جمال مصرحة من ONSSA</p>
             </div>
           </Link>
 

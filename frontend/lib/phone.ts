@@ -1,39 +1,45 @@
 /**
- * Client-side KSA phone normalization and validation.
- * Mirrors the backend logic in app/services/phone.py.
+ * Client-side Morocco mobile normalization and validation.
+ * Mirrors backend app/services/phone.py
  */
 
-const KSA_PATTERNS = [
-  /^\+9665(\d{8})$/,
-  /^009665(\d{8})$/,
-  /^9665(\d{8})$/,
-  /^05(\d{8})$/,
-  /^5(\d{8})$/,
+const MA_PATTERNS = [
+  /^\+212[67](\d{8})$/,
+  /^00212[67](\d{8})$/,
+  /^212[67](\d{8})$/,
+  /^0[67](\d{8})$/,
+  /^[67](\d{8})$/,
 ];
 
-export function normalizeKsaPhone(raw: string): {
+export function normalizeMaPhone(raw: string): {
   e164: string;
   digits: string;
 } {
   const cleaned = raw.replace(/[\s\-\(\)]/g, "").trim();
 
-  for (const pattern of KSA_PATTERNS) {
+  for (const pattern of MA_PATTERNS) {
     const m = cleaned.match(pattern);
     if (m) {
       const local8 = m[1];
-      const digits = `9665${local8}`;
+      const prefix = local8[0];
+      const digits = `212${prefix}${local8}`;
       return { e164: `+${digits}`, digits };
     }
   }
 
-  throw new Error("رقم الجوال يجب أن يكون رقماً سعودياً صحيحاً يبدأ بـ 05");
+  throw new Error("رقم الجوال يجب أن يكون رقماً مغربياً صحيحاً يبدأ بـ 06 أو 07");
 }
 
-export function isValidKsaPhone(raw: string): boolean {
+export function isValidMaPhone(raw: string): boolean {
   try {
-    normalizeKsaPhone(raw);
+    normalizeMaPhone(raw);
     return true;
   } catch {
     return false;
   }
 }
+
+/** @deprecated */
+export const normalizeKsaPhone = normalizeMaPhone;
+/** @deprecated */
+export const isValidKsaPhone = isValidMaPhone;

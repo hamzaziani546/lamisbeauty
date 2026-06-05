@@ -2,7 +2,9 @@
  * Google Apps Script webhook for Lamis Beauty COD orders.
  *
  * Sheet columns (must match exactly):
- *   date | order ID | Country | name | phone | product | SKU | quantity | total price | currency | status
+ *   date | order ID | Country | name | phone | product | SKU | quantity | total price | currency | status | confirmation_sent_at | confirmed_at
+ *
+ * Tabs: Sheet1 (all orders), confirmed, follow_up
  *
  * Deployment:
  * 1. Open your Google Sheet ("orders Lamis store").
@@ -13,6 +15,29 @@
  */
 
 var SHEET_NAME = 'Sheet1';
+var HEADER = [
+  'date',
+  'order ID',
+  'Country',
+  'name',
+  'phone',
+  'product',
+  'SKU',
+  'quantity',
+  'total price',
+  'currency',
+  'status',
+  'confirmation_sent_at',
+  'confirmed_at'
+];
+
+function setupOrderSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  ['Sheet1', 'confirmed', 'follow_up'].forEach(function(name) {
+    var sheet = ss.getSheetByName(name) || ss.insertSheet(name);
+    _ensureHeader(sheet);
+  });
+}
 
 function doPost(e) {
   try {
@@ -29,15 +54,17 @@ function doPost(e) {
     var row = [
       payload.date || '',
       payload.order_id || '',
-      payload.country || 'KSA',
+      payload.country || 'Morocco',
       payload.name || '',
       payload.phone || '',
       payload.product || '',
       payload.sku || '',
       payload.quantity || '',
       payload.total_price || '',
-      payload.currency || 'SAR',
-      payload.status || ''
+      payload.currency || 'MAD',
+      payload.status || 'new',
+      '',
+      ''
     ];
 
     sheet.appendRow(row);
@@ -50,20 +77,7 @@ function doPost(e) {
 
 function _ensureHeader(sheet) {
   if (sheet.getLastRow() > 0) return;
-
-  sheet.appendRow([
-    'date',
-    'order ID',
-    'Country',
-    'name',
-    'phone',
-    'product',
-    'SKU',
-    'quantity',
-    'total price',
-    'currency',
-    'status'
-  ]);
+  sheet.appendRow(HEADER);
 }
 
 function _jsonResponse(body, statusCode) {

@@ -1,7 +1,14 @@
-export function formatSar(amount: number): string {
-  return `${amount.toLocaleString("ar-SA")} ريال`;
+import { MARKET } from "@/config/market";
+
+export function formatMad(amount: number): string {
+  return `${amount.toLocaleString("ar-MA")} ${MARKET.currencyLabelAr}`;
 }
 
-export function formatSarShort(amount: number): string {
-  return `${amount} ريال`;
+export function formatMadShort(amount: number): string {
+  return `${amount} ${MARKET.currencyLabelAr}`;
 }
+
+/** @deprecated use formatMad */
+export const formatSar = formatMad;
+/** @deprecated use formatMadShort */
+export const formatSarShort = formatMadShort;

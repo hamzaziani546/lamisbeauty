@@ -41,7 +41,7 @@ export function OfferSelector({
             )}
             {isMiddle && (
               <span className="absolute -top-2.5 right-4 bg-[#2D8B6F] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-sm whitespace-nowrap">
-                وفّري {offer.savingsSar} ر.س
+                وفّري {offer.savingsMad} د.م
               </span>
             )}
 
@@ -75,11 +75,11 @@ export function OfferSelector({
                   isSelected ? "text-[#0B6B5C]" : "text-[#1A2332]"
                 }`}
               >
-                {offer.priceSar}
-                <span className="text-[11px] font-medium mr-0.5">ر.س</span>
+                {offer.priceMad}
+                <span className="text-[11px] font-medium mr-0.5">د.م</span>
               </p>
               <p className="text-[10px] text-[#2D8B6F] font-bold mt-1 whitespace-nowrap">
-                ≈ {offer.perDaySar} ر.س/اليوم
+                ≈ {offer.perDayMad} د.م/اليوم
               </p>
             </div>
           </button>

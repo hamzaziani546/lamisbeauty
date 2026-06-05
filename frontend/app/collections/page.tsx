@@ -1,14 +1,16 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { Star, ShieldCheck, CreditCard, Truck, BadgeCheck } from "lucide-react";
 import { PRODUCTS } from "@/config/products";
+import { MARKET } from "@/config/market";
+import { OnssaCertificate } from "@/components/trust/OnssaCertificate";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ReviewCard, PRODUCT_REVIEWS } from "@/components/product/ReviewCard";
 
 export const metadata: Metadata = {
   title: "جميع المنتجات — لاميس",
   description:
-    "اختاري من روتين علكات لاميس: علكات اللوتين لإشراقة العين، علكات الكولاجين بفيتامين C والزنك، وعلكات الكلوروفيل للانتعاش. الدفع عند الاستلام.",
+    "جربي روتين علكات لاميس: لوتين للعين، كولاجين للبشرة، وكلوروفيل للانتعاش. الدفع عند الاستلام فالمغرب.",
 };
 
 
@@ -20,9 +22,8 @@ export default function CollectionsPage() {
       <section className="bg-gradient-to-b from-[#F7FAF9] to-white py-14 md:py-20">
         <div className="container-padded text-center">
 
-          {/* SFDA badge */}
           <span className="inline-block text-[#0B6B5C] font-bold text-xs bg-[#E8F0ED] px-3 py-1 rounded-full mb-5">
-            مكملات بمعايير صيدلانية · مصرحة من هيئة الغذاء والدواء
+            {MARKET.onssa.badgeAr} · توصيل سريع لكل المغرب
           </span>
 
           {/* H1 — pain-led */}
@@ -33,7 +34,7 @@ export default function CollectionsPage() {
 
           {/* Sub-copy */}
           <p className="text-[#5A6A72] text-lg mb-4 max-w-xl mx-auto leading-relaxed">
-            كل علبة فيها <strong className="text-[#1A2332]">٦٠ علكة</strong> · شهر كامل ·
+            كل علبة فيها <strong className="text-[#1A2332]">60 علكة</strong> · شهر كامل ·
             علكتين يومياً فقط. لا حبوب، لا روتين معقد.
           </p>
 
@@ -48,12 +49,12 @@ export default function CollectionsPage() {
             <div>
               <h2 className="text-2xl font-bold text-[#1A2332]">جميع المنتجات</h2>
               <p className="text-sm text-[#5A6A72] mt-1">
-                كل منتج بـ ٣ خيارات: شهر · شهرين · ٣ شهور — مع تخفيض على المدد الأطول
+                كل منتج بـ 3 خيارات: شهر · شهرين · 3 شهور — مع تخفيض على المدد الأطول
               </p>
             </div>
             <div className="flex items-center gap-1.5">
               <Truck size={14} className="text-[#2D8B6F]" aria-hidden />
-              <span className="text-xs text-[#5A6A72] font-medium">شحن خلال ٢–٤ أيام</span>
+              <span className="text-xs text-[#5A6A72] font-medium">الدار البيضاء نفس اليوم · 1–2 يوم</span>
             </div>
           </div>
 
@@ -61,6 +62,18 @@ export default function CollectionsPage() {
             {PRODUCTS.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="py-10 bg-white border-y border-[#D5E0DC]">
+        <div className="container-padded flex flex-col md:flex-row items-center gap-8 justify-center">
+          <OnssaCertificate variant="thumb" />
+          <div className="text-center md:text-right max-w-md">
+            <h2 className="text-lg font-bold text-[#1A2332] mb-2">{MARKET.onssa.badgeFullAr}</h2>
+            <p className="text-sm text-[#5A6A72] leading-relaxed">
+              شهادتنا معروضة للتحقق — اضغطي على الصورة للتكبير.
+            </p>
           </div>
         </div>
       </section>
@@ -109,19 +122,19 @@ export default function CollectionsPage() {
             </div>
 
             <span className="inline-block text-[#C9A45C] font-bold text-sm bg-white/10 px-3 py-1 rounded-full mb-5 backdrop-blur-sm border border-white/10">
-              روتين ٣ شهور
+              روتين 3 شهور
             </span>
 
             <h2 className="text-2xl md:text-3xl font-bold mb-3 leading-tight">
-              ١٨٠ علكة · ٣ شهور كاملة · ٥ ريال فقط في اليوم
+              180 علكة · 3 شهور كاملة · 5 درهم فقط في اليوم
             </h2>
 
             <p className="text-[#E8F0ED] mb-1 max-w-xl mx-auto text-base">
-              اختاري عرض ٣ علب من أي منتج، ادفعي ٤٤٩ ريال بدل ٥٩٧ —
-              <strong className="text-[#C9A45C]"> ووفّري ١٤٨ ريال</strong>.
+              خذي عرض 3 علب من أي منتج، 449 درهم بدل 597 —
+              <strong className="text-[#C9A45C]"> ووفّري 148 درهم</strong>.
             </p>
             <p className="text-[#E8F0ED]/70 text-sm mb-8 max-w-xl mx-auto">
-              المدة الكافية لتشوفي النتائج الكاملة على بشرتك، شعرك، وانتعاشك.
+              المدة الكافية باش تشوفي النتائج الكاملة على البشرة، الشعر، والانتعاش.
             </p>
 
             {/* 3 product CTAs */}
@@ -130,19 +143,19 @@ export default function CollectionsPage() {
                 href="/products/collagen-glow-gummies"
                 className="inline-block bg-[#C9A45C] text-white font-bold px-6 py-3 rounded-full hover:bg-[#a8843e] hover:-translate-y-0.5 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                ٣ شهور كولاجين الإشراقة
+                3 شهور كولاجين الإشراقة
               </Link>
               <Link
                 href="/products/lutein-eye-glow-gummies"
                 className="inline-block bg-white text-[#0B6B5C] font-bold px-6 py-3 rounded-full hover:bg-[#F7FAF9] hover:-translate-y-0.5 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
-                ٣ شهور شوت العين
+                3 شهور شوت العين
               </Link>
               <Link
                 href="/products/chlorophyll-gummies"
                 className="inline-block bg-white/20 text-white font-bold px-6 py-3 rounded-full hover:bg-white/30 hover:-translate-y-0.5 transition-all duration-300 border border-white/30 hover:shadow-lg"
               >
-                ٣ شهور الكلوروفيل
+                3 شهور الكلوروفيل
               </Link>
             </div>
 
@@ -150,8 +163,8 @@ export default function CollectionsPage() {
             <div className="flex flex-wrap items-center justify-center gap-3">
               {[
                 { icon: CreditCard,  text: "الدفع عند الاستلام" },
-                { icon: ShieldCheck, text: "ضمان ٣٠ يوم" },
-                { icon: Truck,       text: "شحن لكل المملكة" },
+                { icon: ShieldCheck, text: "ضمان 30 يوم" },
+                { icon: Truck,       text: "توصيل لكل المغرب" },
               ].map(({ icon: Icon, text }) => (
                 <div
                   key={text}

@@ -24,7 +24,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-bold text-[#1A2332] mb-3">المنتجات والأسعار</h2>
             <p className="text-[#5A6A72] text-sm leading-relaxed">
-              الأسعار المعروضة بالريال السعودي وقد تتغير دون إشعار مسبق. يُعتمد
+              الأسعار المعروضة بالدرهم المغربي (MAD) وقد تتغير دون إشعار مسبق. يُعتمد
               السعر المُؤكَّد عند إتمام الطلب.
             </p>
           </section>
@@ -49,8 +49,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-lg font-bold text-[#1A2332] mb-3">القانون المطبَّق</h2>
             <p className="text-[#5A6A72] text-sm leading-relaxed">
-              تخضع هذه الشروط لأنظمة المملكة العربية السعودية وأي نزاع يُحسم
-              وفقاً للأنظمة السعودية.
+              تخضع هذه الشروط للقانون المغربي وأي نزاع يُحسم وفقاً للأنظمة المعمول بها في المغرب.
             </p>
           </section>
         </div>

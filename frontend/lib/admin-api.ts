@@ -174,6 +174,28 @@ export type OrdersListResponse = {
   items: OrderSummary[];
 };
 
+export type CapiLog = {
+  id: string;
+  order_id: string | null;
+  platform: string;
+  event_name: string;
+  event_id: string;
+  status_code: number | null;
+  success: boolean;
+  payload: unknown;
+  response: unknown;
+  created_at: string;
+};
+
+export type CapiLogsResponse = {
+  total: number;
+  success_count: number;
+  fail_count: number;
+  page: number;
+  page_size: number;
+  items: CapiLog[];
+};
+
 export type OrderDetail = {
   id: string;
   order_number: string;

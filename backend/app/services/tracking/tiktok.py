@@ -63,7 +63,7 @@ async def send_purchase_event(
             "contents": contents,
             "content_type": "product",
             "value": round(total_sar, 2),
-            "currency": "SAR",
+            "currency": "MAD",
             "order_id": order_number,
         },
     }

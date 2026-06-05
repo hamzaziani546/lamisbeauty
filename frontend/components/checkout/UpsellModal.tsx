@@ -63,7 +63,7 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
       </h2>
 
       <p className="text-[#5A6A72] mb-4">
-        بما أنك ثبتي طلبك، تقدري تضيفي هذا المنتج لروتينك اليوم بسعر {OFFER_UPSELL_PRICE} ريال.
+        حيت ثبتّي الطلب، تقدري تزيدي هاد المنتج لروتينك اليوم بـ {OFFER_UPSELL_PRICE} درهم.
       </p>
 
       {/* Product card */}
@@ -92,10 +92,10 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
             </p>
             <div className="flex items-center gap-2 mt-2">
               <span className="text-[#0B6B5C] font-bold text-lg">
-                {OFFER_UPSELL_PRICE} ريال
+                {OFFER_UPSELL_PRICE} درهم
               </span>
               <span className="text-[#5A6A72] text-sm line-through">
-                {product.offers[0].priceSar} ريال
+                {product.offers[0].priceMad} درهم
               </span>
             </div>
           </div>
@@ -109,14 +109,14 @@ export function UpsellModal({ product, onAccept, onDecline }: UpsellModalProps) 
           fullWidth
           onClick={onAccept}
         >
-          أضيفيه لطلبي بـ {OFFER_UPSELL_PRICE} ريال
+          زيديه لطلبي بـ {OFFER_UPSELL_PRICE} درهم
         </Button>
         <button
           ref={declineRef}
           onClick={onDecline}
           className="w-full text-center text-sm text-[#5A6A72] hover:text-[#1A2332] py-2 transition-colors"
         >
-          لا شكراً، كملي طلبي
+          لا شكراً، كملي الطلب
         </button>
       </div>
     </div>

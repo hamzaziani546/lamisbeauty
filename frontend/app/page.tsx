@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -19,48 +19,50 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { PRODUCTS } from "@/config/products";
+import { MARKET } from "@/config/market";
+import { OnssaCertificate } from "@/components/trust/OnssaCertificate";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ReviewCard, SAMPLE_REVIEWS } from "@/components/product/ReviewCard";
 
 export const metadata: Metadata = {
-  title: "لاميس | مكملات جمال سعودية مصرحة من SFDA",
+  title: `لاميس | ${MARKET.onssa.metaLineAr}`,
   description:
-    "مكملات جمال سعودية بمعايير صيدلانية: علكات اللوتين للهالات، علكات الكولاجين البحري للبشرة، وعلكات الكلوروفيل للانتعاش. مصرحة SFDA، دفع عند الاستلام، ضمان 30 يوم.",
+    "مكملات جمال مغربية مصرحة من ONSSA: علكات اللوتين للهالات، الكولاجين البحري للبشرة، والكلوروفيل للانتعاش. الدفع عند الاستلام، توصيل سريع لكل المغرب، ضمان 30 يوم.",
 };
 
 const painPoints = [
   {
     emoji: "😩",
-    title: "هالات سوداء ما تروح بالكونسيلر",
-    desc: "تصحين متعبة، تطلين على المرآة، وتحسين إن وجهك يقول قصة ما هي قصتك. مهما حطيتي مكياج يبان التعب من تحت.",
+    title: "هالات سوداء ما كتمشي بالكونسيلر",
+    desc: "كتصحى متعبة وكتشوفي فالمرايا تعب فعينيك، حتى مع الماكياج. كيبان التعب من تحت.",
   },
   {
     emoji: "😔",
-    title: "بشرة فقدت لمعتها وشعر يتساقط",
-    desc: "شعرك ما عاد له نفس الكثافة، أظافرك تتكسر بسرعة، وبشرتك ما فيها التوهج اللي كنتي تعرفينه. حسيتي إن الـ 'glow' راح؟",
+    title: "بشرة بلا لمعة وشعر كيتساقط",
+    desc: "الشعر ما بقاش كثيف، الأظافر كتتكسر، والبشرة بلا ذلك التوهج اللي كنتي كاعرفيه.",
   },
   {
     emoji: "🥵",
-    title: "حر السعودية + دوام طويل = إحراج",
-    desc: "تخافين ترفعين يدك، تتجنبين القرب من الناس بعد ساعات الدوام، وحتى أقوى مزيل عرق ما يصمد مع الجو والضغط.",
+    title: "الحر والدوام الطويل = إحراج",
+    desc: "كتخافي ترفعي يدك، وكتتجنبي القرب من الناس بعد الدوام، وحتى مزيل العرق ما كيكفي مع الجو.",
   },
 ];
 
 const howItWorks = [
   {
-    step: "١",
-    title: "اختاري احتياجك",
-    desc: "ثلاث علكات، كل واحدة تحل مشكلة محددة. اختاري المنتج اللي يكلمك، أو خذي الروتين كامل لنتائج أقوى.",
+    step: "1",
+    title: "اختاري حاجتك",
+    desc: "3 علكات، كل وحدة كتحل مشكل محدد. جربي المنتج اللي كيعجبك، أو خذي الروتين كامل لنتيجة أقوى.",
   },
   {
-    step: "٢",
-    title: "علكتين في اليوم",
-    desc: "بدون حبوب كبيرة ولا طعم مر. علكتين بطعم لذيذ بعد الإفطار، وانسي الموضوع باقي اليوم.",
+    step: "2",
+    title: "جوج علكات فالنهار",
+    desc: "بلا حبوب كبيرة ولا طعم مر. جوج علكات بنكهة زوينة من بعد الفطور، ونسي الموضوع.",
   },
   {
-    step: "٣",
-    title: "النتائج تبان من الداخل",
-    desc: "أول أسبوعين تحسين بفرق، وخلال 4–8 أسابيع النتائج الكاملة تظهر في المرآة، في صورك، وفي ثقتك بنفسك.",
+    step: "3",
+    title: "النتيجة كتبان من الداخل",
+    desc: "من بعد أسبوعين كتحسي بفرق، ومن 4 ل 8 أسابيع النتيجة كاملة كتبان فالمرايا وفي ثقتك.",
   },
 ];
 
@@ -74,13 +76,13 @@ const ingredients = [
   {
     icon: "🌊",
     name: "كولاجين بحري حلال (Type I)",
-    desc: "نوع الكولاجين الأكثر دراسة لمرونة البشرة. متحلل بالإنزيمات لامتصاص أسرع 90%+، من مصدر بحري حلال ١٠٠٪، وليس بقري.",
+    desc: "نوع الكولاجين الأكثر دراسة لمرونة البشرة. متحلل بالإنزيمات لامتصاص أسرع 90%+، من مصدر بحري حلال 100٪، وليس بقري.",
     tag: "Type I Marine",
   },
   {
     icon: "🍋",
     name: "فيتامين C + الزنك",
-    desc: "الثنائي اللي ما يقدر جسمك يصنع كولاجين بدونه. فيتامين C يحفّز الإنتاج الطبيعي، والزنك يقفل الفرق بشد البشرة وتقوية الأظافر.",
+    desc: "الثنائي اللي ما يقدرش الجسم يصنع كولاجين بلاها. فيتامين C كيحفّز الإنتاج الطبيعي، والزنك كيشد البشرة ويقوي الأظافر.",
     tag: "Co-Factor Essential",
   },
   {
@@ -106,7 +108,7 @@ const comparisons = [
   },
   {
     them: "منتجات مستوردة بدون تصريح محلي",
-    us: "مصرحة من SFDA ومدروسة لأجواء السعودية",
+    us: "مصرح من ONSSA ومناسب لأجواء المغرب",
   },
   {
     them: "تدفعين قبل، وإذا ما عجبك، خسرتي",
@@ -114,7 +116,7 @@ const comparisons = [
   },
   {
     them: "دعم بإيميل بطيء أو لغة أجنبية",
-    us: "دعم سعودي 100% عبر واتساب بالعربي",
+    us: "دعم مغربي عبر واتساب بالعربية",
   },
 ];
 
@@ -122,19 +124,19 @@ const timeline = [
   {
     week: "الأسبوع 1–2",
     title: "بدايات التحسن",
-    desc: "تحسين انتعاش أكثر مع الكلوروفيل، وعينك ترتاح من إجهاد الشاشات. الجسم يبدأ يستجيب من الداخل.",
+    desc: "كتزيد الانتعاش مع الكلوروفيل، وعينيك كترتاح من الشاشات. الجسم كيبدا يستجيب من الداخل.",
     icon: Sparkles,
   },
   {
     week: "الأسبوع 3–4",
-    title: "النتائج تبان",
-    desc: "بشرتك أنضر، الهالات تخف بشكل ملحوظ، وأظافرك تطول بدون تكسر. أول كومنت من صديقاتك: 'وش سويتي بوجهك؟'",
+    title: "النتيجة كتبان",
+    desc: "بشرتك أنقى، الهالات كتخف، والأظافر ما كتتكسرش. أول تعليق من صاحباتك: «شنو درتي فوشك؟»",
     icon: TrendingUp,
   },
   {
     week: "الأسبوع 6–8",
     title: "النتائج الكاملة",
-    desc: "شعر أكثر كثافة، إشراقة طبيعية بدون مكياج، وثقة جديدة في نفسك. الروتين صار جزء من حياتك، مو رفاهية.",
+    desc: "شعر أكثر كثافة، إشراقة بلا ماكياج، وثقة جديدة. الروتين ولى جزء من حياتك، ماشي رفاهية.",
     icon: Award,
   },
 ];
@@ -143,45 +145,45 @@ const stats = [
   { value: "60", label: "علكة في كل علبة" },
   { value: "30", label: "يوم استخدام كامل" },
   { value: "30", label: "يوم ضمان استرجاع" },
-  { value: "SFDA", label: "مصرحة رسمياً" },
+  { value: MARKET.onssa.statValue, label: MARKET.onssa.statLabelAr },
 ];
 
 const faqs = [
   {
     q: "هل العلكات حلال وآمنة؟",
-    a: "نعم 100%. الكولاجين بحري حلال (مو بقري)، علكات الكلوروفيل نباتية (Vegan)، وكل المنتجات مصرحة من هيئة الغذاء والدواء السعودية (SFDA) بأرقام تسجيل رسمية.",
+    a: MARKET.onssa.faqSafetyAr,
   },
   {
-    q: "هل الدفع عند الاستلام فعلاً؟ ما تطلبون فيزا؟",
-    a: "نعم، الدفع عند الاستلام (COD) لكل الطلبات داخل المملكة. ما يحتاج بطاقة، ما يحتاج تحويل. فريقنا يتواصل معك لتأكيد الطلب قبل الشحن، وأنتي تستلمين وتدفعين عند الباب.",
+    q: "الدفع عند الاستلام فعلاً؟ بلا فيزا؟",
+    a: "نعم، الدفع عند الاستلام (COD) لكل الطلبات داخل المغرب. ما كاينش دفع مسبق. فريقنا يتواصل معك على واتساب لتأكيد الطلب والعنوان، وكتستلمي وكتخلّصي عند الباب.",
   },
   {
-    q: "متى تبدأ النتائج تبان؟",
-    a: "أغلب العميلات يحسّن فرق في الانتعاش والطاقة خلال أول أسبوعين. نتائج البشرة والهالات تبدأ من 3 إلى 4 أسابيع، ونتائج الشعر والأظافر الكاملة تحتاج 6 إلى 8 أسابيع من الاستخدام اليومي المنتظم.",
+    q: "متى كتبدا النتيجة تبان؟",
+    a: "أغلب الكليانصات كيحسّو بفرق فالانتعاش من بعد أسبوعين. البشرة والهالات من 3 ل 4 أسابيع، والشعر والأظافر كاملين من 6 ل 8 أسابيع بالاستعمال اليومي.",
   },
   {
     q: "هل تنفع لو عندي حساسية أو حامل؟",
-    a: "المنتجات آمنة للاستخدام اليومي للبالغين، لكن لو حامل أو مرضع أو عندك حالة صحية أو تأخذين أدوية، يفضل تستشيرين طبيبك قبل أي مكمل.",
+    a: "المنتجات آمنة للبالغين فالاستعمال اليومي. إلا كنتي حاملة، مرضعة، عندك مرض، ولا كتاخدي أدوية — استشيري طبيبك قبل أي مكمل.",
   },
   {
-    q: "ليش العلكات وليش مو حبوب أو كريمات؟",
-    a: "العلكات أسهل في الاستخدام اليومي، طعمها لذيذ، ومناسبة للي ما يحبّون بلع الحبوب الكبيرة. والأهم: المكونات تشتغل من الداخل، لأن البشرة تبدأ من تحت الجلد، مو من فوق.",
+    q: "علاش العلكات وماشي حبوب أو كريمات؟",
+    a: "العلكات سهلة فالنهار، بنكهة زوينة، ومناسبة لمن ما كيعجبهمش بلع الحبوب الكبيرة. والأهم: المكونات كتخدم من الداخل، حيت البشرة كتبدا من تحت الجلد.",
   },
   {
     q: "كم يستغرق التوصيل؟",
-    a: "نشحن داخل السعودية كاملة، من الرياض إلى أبها إلى تبوك. الرياض وجدة عادةً 1–3 أيام عمل، باقي المدن 2–5 أيام. فريقنا يتواصل معك لتأكيد العنوان والموعد قبل الشحن.",
+    a: "نوصّل لكل المغرب. الدار البيضاء: توصيل في نفس اليوم بعد تأكيد الطلب. باقي المدن: 1 إلى 2 أيام عمل كحد أقصى. فريقنا يتواصل معك لتأكيد العنوان والموعد.",
   },
   {
     q: "كيف يتم تأكيد الطلب؟",
-    a: "خلال ساعة من طلبك، يكلمك فريقنا السعودي على واتساب أو الجوال بالعربي للتأكد من العنوان وموعد التوصيل المناسب لك. الطلب ما يطلع للشحن إلا بعد تأكيدك. لو رقم جوالك موش متاح، حاولي الرد على رسائل واتساب أو راسلينا أنتي.",
+    a: "خلال ساعة من طلبك، كيتواصل معاك فريقنا على واتساب بالعربية للتأكد من العنوان وموعد التوصيل. الطلب ما كيتصيفطش للتوصيل إلا بعد تأكيدك. إلا ما جاوبتي، ردو على واتساب أو راسلونا.",
   },
   {
-    q: "وش يصير لو ما حبيت المنتج؟",
-    a: "نرجع لك فلوسك خلال 30 يوم بدون أسئلة معقدة. هذا 'ضمان لاميس الذهبي'. واثقين من جودتنا، فالمخاطرة كلها علينا، مو عليك.",
+    q: "شنو غادي يوقع إلا ما عجبنيش المنتج؟",
+    a: "كنرجعو ليك الفلوس خلال 30 يوم بلا أسئلة معقدة. هادا «ضمان لاميس الذهبي». الثقة على جودتنا — المخاطرة علينا، ماشي عليك.",
   },
   {
     q: "كيف أتواصل مع الدعم؟",
-    a: "واتساب بالعربي، فريق سعودي يفهم احتياجك، ويرد عليك بسرعة. زوري صفحة 'تواصل معنا' للرابط المباشر.",
+    a: "واتساب بالعربية، فريق مغربي كيفهم احتياجك وكيردو بسرعة. زوري صفحة تواصل معنا للرابط المباشر.",
   },
 ];
 
@@ -198,7 +200,7 @@ export default function HomePage() {
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 mb-6">
                 <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#0B6B5C] to-[#095A4C] text-white px-3.5 py-1.5 rounded-full shadow-sm hover:shadow-md transition-shadow">
                   <CheckCircle size={14} />
-                  <span className="text-[11px] sm:text-xs font-bold">مصرحة من هيئة الغذاء والدواء</span>
+                  <span className="text-[11px] sm:text-xs font-bold">{MARKET.onssa.heroAr}</span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 bg-white px-3.5 py-1.5 rounded-full border border-[#D5E0DC] shadow-sm text-[#1A2332] hover:border-[#0B6B5C]/30 transition-colors">
                   <Sparkles size={14} className="text-[#C9A45C]" />
@@ -224,13 +226,13 @@ export default function HomePage() {
                   </svg>
                 </span>
                 <br />
-                مو من علبة الكونسيلر.
+                ماشي من علبة الكونسيلر.
               </h1>
 
               <p className="text-[#2A3A45] text-lg md:text-xl mb-7 leading-relaxed max-w-lg font-medium">
-                ثلاث علكات يومية بمكونات بحثية تشتغل من تحت الجلد:
-                توّدع الهالات، ترجّع إشراقة بشرتك، وتعطيك انتعاش يدوم 24 ساعة —
-                بدون حبوب مرة ولا روتين عشر خطوات.
+                3 علكات فالنهار بمكونات مدروسة كتخدم من تحت الجلد:
+                كتودّعي الهالات، كترجعي إشراقة البشرة، وانتعاش كيدوم 24 ساعة —
+                بلا حبوب مرّة ولا روتين معقد.
               </p>
 
               {/* Star rating */}
@@ -249,7 +251,7 @@ export default function HomePage() {
                   4.9 / 5
                 </span>
                 <span className="text-[#5A6A72] text-sm">
-                  تقييمات حقيقية من عميلاتنا في السعودية
+                  تقييمات حقيقية من عميلاتنا في المغرب
                 </span>
               </div>
 
@@ -258,7 +260,7 @@ export default function HomePage() {
                   href="/collections"
                   className="inline-flex items-center justify-center gap-2 bg-[#0B6B5C] text-white font-bold px-8 py-4 rounded-full text-lg hover:bg-[#095A4C] transition-all shadow-xl shadow-[#0B6B5C]/25 hover:shadow-[#0B6B5C]/40 hover:-translate-y-0.5"
                 >
-                  ابدئي روتينك بـ 199 ريال
+                  بدا روتينك بـ 199 درهم
                 </Link>
                 <Link
                   href="#how"
@@ -273,7 +275,7 @@ export default function HomePage() {
                 {[
                   { icon: CreditCard, text: "دفع عند الاستلام" },
                   { icon: ShieldCheck, text: "ضمان 30 يوم" },
-                  { icon: Truck, text: "شحن لكل المملكة" },
+                  { icon: Truck, text: MARKET.trust.nationwideAr },
                   { icon: MessageCircle, text: "دعم واتساب" },
                 ].map(({ icon: Icon, text }) => (
                   <div
@@ -328,13 +330,13 @@ export default function HomePage() {
         <div className="container-padded max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-10">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
-              وش يجيك في كل علبة؟
+              شنو كاين فكل علبة؟
             </span>
             <h2 className="text-3xl sm:text-4xl font-bold text-[#1A2332] mb-4 leading-tight">
               العلبة الواحدة = شهر كامل من الروتين
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              مو 10 علكات بسعر 199 ريال. كل علبة فيها <strong className="text-[#1A2332]">60 علكة</strong> — جرعة بحثية كاملة لمدة 30 يوم بدون انقطاع.
+              ماشي 10 علكات بـ 199 درهم. كل علبة فيها <strong className="text-[#1A2332]">60 علكة</strong> — شهر كامل (30 يوم) بلا انقطاع.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -342,7 +344,7 @@ export default function HomePage() {
               { num: "60", unit: "علكة في كل علبة", icon: "💊" },
               { num: "30", unit: "يوم استخدام كامل", icon: "📅" },
               { num: "2", unit: "علكة يومياً فقط", icon: "✨" },
-              { num: "≈ 7", unit: "ريال/اليوم فقط", icon: "💰" },
+              { num: "≈ 7", unit: "درهم/اليوم فقط", icon: "💰" },
             ].map((v) => (
               <div
                 key={v.unit}
@@ -360,11 +362,11 @@ export default function HomePage() {
           </div>
           <div className="mt-8 bg-gradient-to-r from-[#0B6B5C] to-[#095A4C] rounded-3xl p-6 md:p-8 text-white text-center shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
             <p className="text-lg md:text-xl font-bold mb-2">
-              مقارنة بمكملات الصيدلية: تدفعين أقل وتاخذين تركيبة كاملة
+              مقارنة بالصيدلية: كتخلّصي أقل وكتاخدي تركيبة كاملة
             </p>
             <p className="text-[#C9A45C] text-sm font-medium">
-              لو شريتي كل مكوّن لحاله من الصيدلية، يكلفك أكثر من 400 ريال شهرياً ·
-              معانا، الروتين الكامل بأقل من 199 ريال للعلبة
+              إلا شريتي كل مكوّن بوحدو من الصيدلية، كيزيدك أكثر من 400 درهم فالشهر ·
+              عندنا الروتين كامل بأقل من 199 درهم للعلبة
             </p>
           </div>
         </div>
@@ -378,11 +380,10 @@ export default function HomePage() {
               تكلمي معنا بصراحة
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-5 leading-tight">
-              تعرفين هالشعور؟
+              كتعرفي هاد الإحساس؟
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              مو لحالك. آلاف البنات في السعودية يعيشن نفس التحدي يومياً، والحل مو في
-              منتج فوق الجلد، الحل من الداخل.
+              ماشي وحدك. آلاف النساء فالمغرب كيعيشو نفس التحدي، والحل ماشي فمنتج فوق الجلد — الحل من الداخل.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -404,7 +405,7 @@ export default function HomePage() {
             ))}
           </div>
           <p className="text-center text-[#1A2332] font-bold text-lg mt-10">
-            تنفسّي. حنا فاهمينك، وعندنا الحل ↓
+            تهنئي. حنا فاهمينك، وعندنا الحل ↓
           </p>
         </div>
       </section>
@@ -414,14 +415,13 @@ export default function HomePage() {
         <div className="container-padded">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
-              ٣ خطوات بس
+              3 خطوات بس
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-5 leading-tight">
               روتين بسيط، نتائج حقيقية
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              مو عشر خطوات معقدة، ولا منتجات تحتاج وقت ما تملكينه. لاميس صممت لتكون
-              جزء من يومك بدون ما تحسين فيه.
+              ماشي 10 خطوات معقدة. لاميس مصايبة تولّى جزء من نهارك بلا ما تحسي بها كتقل.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
@@ -540,18 +540,10 @@ export default function HomePage() {
         <div className="container-padded">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="order-1">
-              <div className="aspect-square max-h-[440px] mx-auto bg-gradient-to-br from-white to-[#E8F0ED] rounded-[2rem] flex items-center justify-center shadow-lg border border-white relative overflow-hidden group hover:shadow-xl transition-all duration-500">
-                <div className="absolute inset-0 border-2 border-[#0B6B5C]/10 rounded-[2rem] transform rotate-3 group-hover:rotate-6 transition-transform duration-500"></div>
-                <div className="text-center z-10 px-6">
-                  <FlaskConical size={72} className="text-[#0B6B5C] mx-auto mb-4 group-hover:scale-110 transition-transform duration-500" />
-                  <p className="text-[#1A2332] text-xl font-bold mb-2">
-                    مدروسة، مصرّحة، آمنة
-                  </p>
-                  <p className="text-[#5A6A72] text-sm">
-                    شهادات SFDA + تحاليل مختبرية معتمدة لكل دفعة
-                  </p>
-                </div>
-              </div>
+              <OnssaCertificate variant="feature" />
+              <p className="text-center text-[#5A6A72] text-sm mt-4">
+                شهادة ONSSA رسمية + تحاليل مختبرية لكل دفعة
+              </p>
             </div>
             <div className="order-2">
               <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-[#D5E0DC] mb-6 shadow-sm">
@@ -561,19 +553,18 @@ export default function HomePage() {
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-5 leading-tight">
-                مكونات تشتغل،<br />
-                مو وعود فاضية.
+                مكونات كتخدم،<br />
+                ماشي وعود فارغة.
               </h2>
               <p className="text-[#5A6A72] text-lg leading-relaxed mb-7">
-                كل علكة مبنية على دراسات علمية حقيقية، بجرعات بحثية واضحة (مو
-                نسب رمزية على الكرتون). نشتغل مع موردين موثوقين، نختبر كل دفعة، ونصرّح
-                المنتج رسمياً قبل ما يوصل لك.
+                كل علكة مبنية على دراسات حقيقية، بجرعات واضحة (ماشي أرقام ديكور على الكرتون).
+                كنتعاملو مع موردين موثوقين، كنختبرو كل دفعة، والمنتج مصرح قبل ما يوصل ليك.
               </p>
               <ul className="space-y-3">
                 {[
                   {
-                    title: "مصرّحة من هيئة الغذاء والدواء (SFDA)",
-                    desc: "أرقام تسجيل رسمية، لا تباع بدون تصريح في السعودية.",
+                    title: MARKET.onssa.scienceTitleAr,
+                    desc: MARKET.onssa.scienceDescAr,
                   },
                   {
                     title: "جرعات بحثية، لا رمزية",
@@ -584,7 +575,7 @@ export default function HomePage() {
                     desc: "تحاليل ميكروبية ومعادن ثقيلة، ضمان النقاء والسلامة.",
                   },
                   {
-                    title: "صُمّمت لأجواء السعودية",
+                    title: "صُمّمت لأجواء المغرب",
                     desc: "تركيز مدروس للحر، الجفاف، والروتين السريع.",
                   },
                 ].map((item) => (
@@ -622,8 +613,7 @@ export default function HomePage() {
               كل مكوّن، له سبب علمي
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              ما حنا من الناس اللي تكتب &#39;فيتامينات وأعشاب طبيعية&#39; وتسكت. هذي
-              الجرعات الحقيقية وليش اخترناها.
+              ماشي «فيتامينات وأعشاب» بلا تفاصيل. هادو الجرعات الحقيقية وعلاش اخترناها.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
@@ -659,14 +649,14 @@ export default function HomePage() {
         <div className="container-padded max-w-5xl">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <span className="text-[#0B6B5C] font-bold text-sm mb-3 block">
-              متى تشوفين النتائج؟
+              متى كتبان النتيجة؟
             </span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-5 leading-tight">
               رحلتك مع لاميس، أسبوع بأسبوع
             </h2>
             <p className="text-[#5A6A72] text-lg leading-relaxed">
-              مو &#39;سحر فوري&#39;، النتائج الحقيقية تحتاج وقت لأن المكونات تشتغل من تحت
-              الجلد. هذا اللي تتوقعينه.
+              ماشي «سحر فوري» — النتيجة الحقيقية كتحتاج وقت حيت المكونات كتخدم من الداخل.
+              هادا اللي تتوقعيه.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 relative">
@@ -716,7 +706,7 @@ export default function HomePage() {
               عميلاتنا قالوا كل شي
             </h2>
             <p className="text-[#5A6A72] text-lg">
-              تجارب حقيقية من كل مدن السعودية — الرياض، جدة، الدمام، الخبر، أبها.
+              تجارب حقيقية من كل مدن المغرب — الدار البيضاء، الرباط، مراكش، طنجة، فاس.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -762,17 +752,14 @@ export default function HomePage() {
               <span className="text-white font-bold text-3xl">ل</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#1A2332] mb-6 leading-tight">
-              ليش بنينا لاميس؟
+              علاش صايبنا لاميس؟
             </h2>
             <p className="text-[#2A3A45] leading-relaxed text-lg md:text-xl mb-6">
-              لأننا تعبنا من المنتجات اللي تعدنا بكل شي وما تسوي ولا شي. تعبنا
-              من علب التغليف الأجنبية اللي ما تكلمنا بلغتنا، ومن المكملات اللي
-              ما تعرف أجواءنا ولا روتيننا.
+              حيت تعبنا من منتجات كتعد بكلشي وما كتدير والو. وتعبنا من مكملات ما كتفهمش الجو ديالنا ولا روتين ديالنا.
             </p>
             <p className="text-[#1A2332] leading-relaxed text-lg md:text-xl bg-[#F7FAF9] p-6 rounded-2xl border border-[#D5E0DC] font-medium hover:border-[#0B6B5C]/30 hover:shadow-md transition-all duration-300">
-              لاميس بنت سعودية، لبنت سعودية. روتين واضح، مكونات شريفة، ودعم
-              يكلمك بلهجتك. ما نبيع لك وعود — نبيع لك نتائج تشوفينها في المرآة
-              كل صباح.
+              لاميس من المغرب، للمغرب. روتين واضح، مكونات شفافة، ودعم واتساب بالدارجة والعربية.
+              ما كنبيعوش وعود — كنبيعو نتائج كتبان فالمرايا كل صباح.
             </p>
           </div>
         </div>
@@ -788,10 +775,10 @@ export default function HomePage() {
               <span className="text-sm font-bold text-white">تجربة شراء بدون قلق</span>
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
-              من اللحظة اللي تطلبين فيها، نحنا معاكي
+              من اللحظة اللي كتطلبي، حنا معاك
             </h2>
             <p className="text-[#D5E0DC] text-lg max-w-2xl mx-auto">
-              ما تدفعين ولا ريال قبل ما تستلمين الطلب وتتأكدين منه بنفسك.
+              ما كتخلّصي حتى درهم قبل ما تستلمي الطلب وتتأكدي منو بنفسك.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
@@ -800,19 +787,19 @@ export default function HomePage() {
                 icon: MessageCircle,
                 step: "خطوة 1",
                 title: "تأكيد عبر واتساب",
-                desc: "خلال ساعة من طلبك، فريقنا السعودي يكلمك على واتساب لتأكيد العنوان والموعد المناسب لك.",
+                desc: "من بعد الطلب، الفريق كيتواصل معاك على واتساب باش يأكد العنوان والموعد.",
               },
               {
                 icon: Truck,
                 step: "خطوة 2",
-                title: "شحن سريع لباب البيت",
-                desc: "1 إلى 3 أيام للرياض وجدة، و2 إلى 5 أيام لباقي المدن. نخبرك برقم الشحنة وتتبعينها لحظة بلحظة.",
+                title: "توصيل سريع لباب الدار",
+                desc: "الدار البيضاء: نفس اليوم. باقي المدن: 1 إلى 2 أيام. كنعطيوك رقم التتبع فواتساب.",
               },
               {
                 icon: ShieldCheck,
                 step: "خطوة 3",
-                title: "تستلمين وتدفعين",
-                desc: "تشوفين العلب، تتأكدين من الكمية، وتدفعين كاش لمندوب التوصيل. ما عجبك؟ ما تستلمين، ما تدفعين.",
+                title: "كتستلمي وكتخلّصي",
+                desc: "كتشوفي العلب، كتأكدي الكمية، وكتدفعي كاش للمندوب. ما عجبكش؟ ما كتستلميش.",
               },
             ].map((s) => {
               const Icon = s.icon;
@@ -883,7 +870,7 @@ export default function HomePage() {
           <div className="text-center mt-10 bg-white border border-[#D5E0DC] rounded-2xl p-6 hover:shadow-md hover:border-[#0B6B5C]/30 transition-all duration-300">
             <p className="text-[#1A2332] font-bold mb-2">عندك سؤال ثاني؟</p>
             <p className="text-[#5A6A72] text-sm mb-4">
-              فريقنا السعودي يرد عليك بالعربي على واتساب خلال دقائق.
+              فريقنا المغربي يرد عليك بالعربي على واتساب خلال دقائق.
             </p>
             <Link
               href="/contact"
@@ -906,7 +893,7 @@ export default function HomePage() {
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-1.5 rounded-full border border-white/20 mb-6">
             <Clock size={14} className="text-[#C9A45C]" />
             <span className="text-sm font-bold text-white">
-              ابدئي اليوم، شوفي الفرق خلال 30 يوم
+              بدا اليوم، وشوفي الفرق خلال 30 يوم
             </span>
           </div>
           <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-6 leading-[1.15]">
@@ -917,14 +904,14 @@ export default function HomePage() {
           </h2>
           <p className="text-[#E8F0ED] text-lg md:text-xl mb-10 max-w-2xl mx-auto leading-relaxed">
             علكتين يومياً، 60 علكة في كل علبة، شهر كامل من الروتين بأقل من 7
-            ريال في اليوم. نتائج حقيقية، ضمان ذهبي 30 يوم، ودفع عند الاستلام.
+            درهم في اليوم. نتائج حقيقية، ضمان ذهبي 30 يوم، ودفع عند الاستلام.
             ما عندك شي تخسرينه.
           </p>
           <Link
             href="/collections"
             className="inline-flex items-center justify-center gap-2 bg-white text-[#0B6B5C] font-bold px-10 py-5 rounded-full text-xl hover:bg-[#F7FAF9] transition-all shadow-2xl hover:shadow-white/30 hover:-translate-y-1"
           >
-            ابدئي روتينك بـ 199 ريال فقط
+            بدا روتينك بـ 199 درهم فقط
           </Link>
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mt-8 text-[#E8F0ED]/90 text-sm font-medium">
             <span className="inline-flex items-center gap-1.5">
@@ -937,11 +924,11 @@ export default function HomePage() {
             </span>
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle size={16} className="text-[#C9A45C]" />
-              شحن سريع لكل المملكة
+              {MARKET.trust.nationwideAr}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <CheckCircle size={16} className="text-[#C9A45C]" />
-              مصرحة من هيئة الغذاء والدواء
+              {MARKET.onssa.badgeAr}
             </span>
           </div>
         </div>
@@ -958,7 +945,7 @@ export default function HomePage() {
             alternateName: "Lamis",
             url: "https://lamisbeauty.site",
             description:
-              "علكات جمال سعودية مصرحة من SFDA: علكات اللوتين للهالات، علكات الكولاجين البحري للبشرة والشعر، وعلكات الكلوروفيل للانتعاش والمناعة.",
+              "علكات جمال مغربية مصرحة من ONSSA: علكات اللوتين للهالات، الكولاجين البحري للبشرة والشعر، وعلكات الكلوروفيل للانتعاش والمناعة.",
             aggregateRating: {
               "@type": "AggregateRating",
               ratingValue: "4.9",

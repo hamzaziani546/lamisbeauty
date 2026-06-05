@@ -7,6 +7,8 @@ import {
   clearAdminSession,
   getAdminToken,
   getAdminUser,
+  type CapiLog,
+  type CapiLogsResponse,
   type MetricsResponse,
   type OrderDetail,
   type OrderSummary,
@@ -32,7 +34,7 @@ const STATUSES = [
   "sheet_failed",
 ];
 
-type Tab = "dashboard" | "orders";
+type Tab = "dashboard" | "orders" | "capi-logs";
 type TrafficMode = "clean" | "all";
 
 function today(offsetDays = 0) {
@@ -91,6 +93,14 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [savingOrder, setSavingOrder] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [capiLogs, setCapiLogs] = useState<CapiLog[]>([]);
+  const [capiTotal, setCapiTotal] = useState(0);
+  const [capiSuccessCount, setCapiSuccessCount] = useState(0);
+  const [capiFailCount, setCapiFailCount] = useState(0);
+  const [capiPage, setCapiPage] = useState(1);
+  const [capiPlatform, setCapiPlatform] = useState("all");
+  const [capiSuccess, setCapiSuccess] = useState("all");
+  const [expandedLog, setExpandedLog] = useState<string | null>(null);
 
   const pageSize = 25;
 
@@ -133,9 +143,36 @@ export default function AdminPage() {
     }
   }, [end, page, search, start, status, traffic]);
 
+  const loadCapiLogs = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const params = new URLSearchParams({ start, end, page: String(capiPage), page_size: "50" });
+      if (capiPlatform !== "all") params.set("platform", capiPlatform);
+      if (capiSuccess !== "all") params.set("success", capiSuccess);
+      const res = await adminFetch<CapiLogsResponse>(`/admin/capi-logs?${params.toString()}`);
+      setCapiLogs(res.items);
+      setCapiTotal(res.total);
+      setCapiSuccessCount(res.success_count);
+      setCapiFailCount(res.fail_count);
+    } catch (err) {
+      setError((err as Error).message);
+      if (!getAdminToken()) {
+        setAuthed(false);
+        setCurrentUser(null);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [start, end, capiPage, capiPlatform, capiSuccess]);
+
   useEffect(() => {
-    if (authed) load();
-  }, [authed, load]);
+    if (authed && tab !== "capi-logs") load();
+  }, [authed, load, tab]);
+
+  useEffect(() => {
+    if (authed && tab === "capi-logs") loadCapiLogs();
+  }, [authed, tab, loadCapiLogs]);
 
   const summary = metrics?.summary;
   const maxDaily = Math.max(

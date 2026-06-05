@@ -24,7 +24,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "لاميس | مكملات جمال بمعايير صيدلانية",
+    default: "لاميس | مكملات جمال مصرحة من ONSSA",
     template: "%s | لاميس",
   },
   description: siteConfig.metaDescription,
@@ -38,16 +38,16 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "ar_SA",
+    locale: "ar_MA",
     url: siteConfig.url,
     siteName: "لاميس",
-    title: "لاميس | مكملات جمال بمعايير صيدلانية",
+    title: "لاميس | مكملات جمال مصرحة من ONSSA",
     description: siteConfig.metaDescription,
     images: [{ url: siteConfig.ogImage, width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "لاميس | مكملات جمال بمعايير صيدلانية",
+    title: "لاميس | مكملات جمال مصرحة من ONSSA",
     description: siteConfig.metaDescription,
   },
   robots: { index: true, follow: true },

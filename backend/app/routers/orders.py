@@ -37,22 +37,6 @@ def _get_client_ip(request: Request) -> str:
     return host
 
 
-def _normalize_phone(phone: str) -> str:
-    """Strip to digits, remove leading +966 or 966, keep local format."""
-    digits = "".join(c for c in phone if c.isdigit())
-    if digits.startswith("966"):
-        digits = "0" + digits[3:]
-    return digits
-
-
-def _is_phone_whitelisted(phone: str) -> bool:
-    normalized = _normalize_phone(phone)
-    return any(
-        normalized == _normalize_phone(wp)
-        for wp in settings.whitelisted_phones
-    )
-
-
 @router.post("", response_model=OrderCreateResponse, status_code=201)
 async def create_order(
     payload: OrderCreateRequest,
@@ -67,31 +51,13 @@ async def create_order(
     geo_is_valid = False
     geo_block_reason: Optional[str] = None
 
-    # GeoIP fraud check — skip for whitelisted phone numbers
-    if _is_phone_whitelisted(payload.customer.phone):
-        geo_block_reason = "phone whitelist bypass"
-    else:
-        geo_result = check_ip(client_ip)
-        country_code = geo_result.country_code
-        geo_is_vpn = bool(geo_result.is_vpn)
-        geo_is_proxy = bool(geo_result.is_proxy)
-        geo_is_valid = bool(geo_result.allowed)
-        geo_block_reason = geo_result.reason
-        if not geo_result.allowed:
-            logger.warning(
-                "Order blocked | ip=%s country=%s vpn=%s proxy=%s reason=%s phone=%s",
-                client_ip,
-                geo_result.country_code,
-                geo_result.is_vpn,
-                geo_result.is_proxy,
-                geo_result.reason,
-                payload.customer.phone,
-            )
-            if geo_result.is_vpn or geo_result.is_proxy or "proxycheck" in geo_result.reason:
-                detail = "يرجى إيقاف VPN لإتمام الطلب"
-            else:
-                detail = "عذراً، الخدمة متاحة فقط داخل المملكة العربية السعودية"
-            raise HTTPException(status_code=403, detail=detail)
+    # GeoIP lookup for analytics only — orders are never blocked here
+    geo_result = check_ip(client_ip)
+    country_code = geo_result.country_code
+    geo_is_vpn = bool(geo_result.is_vpn)
+    geo_is_proxy = bool(geo_result.is_proxy)
+    geo_is_valid = True
+    geo_block_reason = geo_result.reason or None
 
     try:
         order = order_service.create_order(
@@ -104,7 +70,7 @@ async def create_order(
         raise HTTPException(status_code=422, detail=str(exc))
 
     if hasattr(order, "country_code"):
-        order.country_code = country_code or "SA"
+        order.country_code = country_code or "MA"
     if hasattr(order, "geo_is_valid"):
         order.geo_is_vpn = geo_is_vpn
         order.geo_is_proxy = geo_is_proxy
@@ -137,14 +103,16 @@ async def create_order(
     sheet_payload = {
         "date": sheet_date,
         "order_id": order.order_number,
-        "country": "KSA",
+        "country": "Morocco",
         "name": order.customer_name,
         "phone": order.phone_digits,
+        "city": getattr(payload.customer, "city", "") or "",
+        "address": getattr(payload.customer, "address", "") or "",
         "product": product_names,
         "sku": skus,
         "quantity": quantities,
         "total_price": float(order.total_sar),
-        "currency": "SAR",
+        "currency": "MAD",
         "status": "",
     }
 

@@ -31,6 +31,8 @@ export type CreateOrderPayload = {
   customer: {
     name: string;
     phone: string;
+    city: string;
+    address: string;
   };
   items: OrderItemPayload[];
   attribution?: AttributionPayload;

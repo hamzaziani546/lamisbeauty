@@ -46,7 +46,7 @@ export default function ContactPage() {
                   className="inline-flex items-center gap-2 bg-[#25D366] text-white font-bold px-6 py-3 rounded-full hover:bg-[#1ebe5d] transition-colors"
                 >
                   <MessageCircle size={16} aria-hidden />
-                  ابدئي محادثة واتساب
+                  تواصلي عبر واتساب
                 </a>
               ) : (
                 <p className="text-sm text-[#5A6A72] bg-[#F7FAF9] rounded-xl p-3">

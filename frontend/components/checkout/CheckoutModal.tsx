@@ -8,20 +8,23 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { X, ShieldCheck, CreditCard, Truck, BadgeCheck, Package, MessageCircle } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
-import { normalizeKsaPhone, isValidKsaPhone } from "@/lib/phone";
+import { normalizeMaPhone, isValidMaPhone } from "@/lib/phone";
 import { createOrder, getAttribution } from "@/lib/api";
 import { getUpsellProduct, OFFER_UPSELL_PRICE, PRODUCT_MAP } from "@/config/products";
-import { formatSarShort } from "@/lib/money";
+import { formatMadShort } from "@/lib/money";
+import { MARKET, shippingEstimateForCity } from "@/config/market";
 import { Button } from "@/components/ui/Button";
 import { UpsellModal } from "./UpsellModal";
 import { trackPurchase } from "@/lib/tracking";
 
 const schema = z.object({
-  name: z.string().min(3, "اكتبي اسمك عشان نقدر نأكد الطلب."),
+  name: z.string().min(3, "كتبي السمية الكاملة."),
   phone: z
     .string()
-    .min(1, "اكتبي رقم جوال سعودي صحيح يبدأ بـ 05.")
-    .refine(isValidKsaPhone, "اكتبي رقم جوال سعودي صحيح يبدأ بـ 05."),
+    .min(1, "رقم جوال مغربي صحيح يبدأ بـ 06 أو 07.")
+    .refine(isValidMaPhone, "رقم جوال مغربي صحيح يبدأ بـ 06 أو 07."),
+  city: z.string().min(2, "اختاري المدينة."),
+  address: z.string().min(5, "كتبي العنوان الكامل (الحي، الشارع، رقم الدار)."),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -36,8 +39,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const [step, setStep] = useState<Step>("form");
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
-  const { items, totalSar, clearCart } = useCartStore();
-  const total = totalSar();
+  const { items, totalMad, clearCart } = useCartStore();
+  const total = totalMad();
   const closeRef = useRef<HTMLButtonElement>(null);
   const formRef = useRef<FormData | null>(null);
 
@@ -47,9 +50,19 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
     reset,
-  } = useForm<FormData>({ resolver: zodResolver(schema), mode: "onTouched" });
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: "onTouched",
+    defaultValues: { city: MARKET.cities[0] },
+  });
+
+  const selectedCity = watch("city");
+  const shippingHint = selectedCity
+    ? shippingEstimateForCity(selectedCity)
+    : MARKET.shipping.shortAr;
 
   useEffect(() => {
     if (isOpen) {
@@ -59,7 +72,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
-      reset();
+      reset({ city: MARKET.cities[0] });
     }
     return () => {
       document.body.style.overflow = "";
@@ -92,7 +105,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
       quantity: 1,
       unitCount: 1,
       titleAr: upsellProduct.shortNameAr,
-      priceSar: OFFER_UPSELL_PRICE,
+      priceMad: OFFER_UPSELL_PRICE,
       source: "checkout_upsell",
     });
     void submitOrder(formRef.current!);
@@ -107,21 +120,26 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
     setError(null);
 
     try {
-      const { e164 } = normalizeKsaPhone(data.phone);
+      const { e164 } = normalizeMaPhone(data.phone);
       const currentItems = useCartStore.getState().items;
-      const currentTotal = useCartStore.getState().totalSar();
+      const currentTotal = useCartStore.getState().totalMad();
 
       const attribution = getAttribution();
 
       const resp = await createOrder({
-        customer: { name: data.name.trim(), phone: e164 },
+        customer: {
+          name: data.name.trim(),
+          phone: e164,
+          city: data.city.trim(),
+          address: data.address.trim(),
+        },
         items: currentItems.map((item) => ({
           product_id: item.productId,
           product_name_ar: item.titleAr,
           offer_id: item.offerId,
           quantity: item.quantity,
           unit_count: item.unitCount,
-          price_sar: item.priceSar,
+          price_sar: item.priceMad,
           source: item.source,
         })),
         attribution,
@@ -139,7 +157,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           })
         );
       } catch {
-        // sessionStorage unavailable — graceful degradation
+        // sessionStorage unavailable
       }
 
       clearCart();
@@ -157,14 +175,12 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/40 backdrop-blur-[2px] transition-opacity"
         onClick={step === "form" ? onClose : undefined}
         aria-hidden
       />
 
-      {/* Modal */}
       <div
         role="dialog"
         aria-modal="true"
@@ -172,7 +188,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
         dir="rtl"
         className="relative w-full sm:max-w-md bg-white rounded-3xl shadow-2xl my-auto max-h-[calc(100dvh-1.5rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto modal-pop"
       >
-        {/* Close button */}
         {step !== "submitting" && step !== "upsell" && (
           <button
             ref={closeRef}
@@ -184,11 +199,8 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           </button>
         )}
 
-        {/* ── FORM STEP ─────────────────────────────── */}
         {step === "form" && (
           <div className="p-6">
-
-            {/* Header */}
             <div className="mb-5">
               <span className="inline-flex items-center gap-1.5 bg-[#E8F0ED] text-[#0B6B5C] text-xs font-bold px-3 py-1 rounded-full mb-3">
                 <CreditCard size={12} aria-hidden />
@@ -198,11 +210,10 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 خطوة أخيرة — طلبك على وشك يكتمل ✨
               </h2>
               <p className="text-sm text-[#5A6A72] mt-1.5">
-                أكملي بياناتك وسيتصل بك فريقنا خلال دقائق لتأكيد الطلب قبل الشحن.
+                أكملي بياناتك. فريقنا يتواصل معك على واتساب لتأكيد الطلب قبل التوصيل.
               </p>
             </div>
 
-            {/* Order summary */}
             <div className="bg-[#F7FAF9] rounded-2xl p-4 mb-4 border border-[#D5E0DC]">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-bold text-[#5A6A72] uppercase tracking-wide">ملخص طلبك</p>
@@ -220,7 +231,6 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                       key={`${item.productId}-${item.offerId}`}
                       className="flex items-center gap-3"
                     >
-                      {/* Product image */}
                       <div className="relative w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
                         {prod && (
                           <Image
@@ -233,35 +243,32 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                           />
                         )}
                       </div>
-                      {/* Name + price */}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-bold text-[#1A2332] line-clamp-2 leading-snug">
                           {item.titleAr}
                         </p>
                       </div>
                       <span className="shrink-0 font-bold text-[#0B6B5C] text-sm">
-                        {formatSarShort(item.priceSar)}
+                        {formatMadShort(item.priceMad)}
                       </span>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Total */}
               <div className="mt-3 pt-3 border-t border-[#D5E0DC] flex items-center justify-between">
-                <span className="font-extrabold text-lg text-[#0B6B5C]">{formatSarShort(total)}</span>
+                <span className="font-extrabold text-lg text-[#0B6B5C]">{formatMadShort(total)}</span>
                 <span className="text-sm font-bold text-[#1A2332]">المجموع الكلي</span>
               </div>
             </div>
 
-            {/* Trust strip — 5 items */}
             <div className="flex flex-wrap gap-2 mb-5">
               {[
-                { icon: CreditCard,    text: "الدفع عند الاستلام" },
-                { icon: ShieldCheck,   text: "ضمان ٣٠ يوم" },
-                { icon: BadgeCheck,    text: "مصرح SFDA" },
-                { icon: Truck,         text: "شحن داخل السعودية" },
-                { icon: MessageCircle, text: "دعم واتساب" },
+                { icon: CreditCard, text: MARKET.trust.codAr },
+                { icon: ShieldCheck, text: MARKET.trust.guaranteeAr },
+                { icon: BadgeCheck, text: MARKET.trust.qualityBadgeAr },
+                { icon: Truck, text: MARKET.trust.nationwideAr },
+                { icon: MessageCircle, text: MARKET.trust.whatsappAr },
               ].map(({ icon: Icon, text }) => (
                 <div
                   key={text}
@@ -273,24 +280,15 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
               ))}
             </div>
 
-            {/* Error */}
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-4">
                 <p className="text-sm text-red-600 text-right">{error}</p>
               </div>
             )}
 
-            {/* Form */}
-            <form
-              onSubmit={handleSubmit(onFormSubmit)}
-              noValidate
-              className="space-y-4"
-            >
+            <form onSubmit={handleSubmit(onFormSubmit)} noValidate className="space-y-4">
               <div>
-                <label
-                  htmlFor="checkout-name"
-                  className="block text-sm font-bold text-[#1A2332] mb-1.5"
-                >
+                <label htmlFor="checkout-name" className="block text-sm font-bold text-[#1A2332] mb-1.5">
                   الاسم الكامل
                 </label>
                 <input
@@ -300,39 +298,67 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                   placeholder="اسمك الكريم"
                   dir="rtl"
                   {...register("name")}
-                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all duration-300 bg-white"
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all bg-white"
                 />
                 {errors.name && (
-                  <p className="text-red-500 text-xs mt-1" role="alert">
-                    {errors.name.message}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1" role="alert">{errors.name.message}</p>
                 )}
               </div>
 
               <div>
-                <label
-                  htmlFor="checkout-phone"
-                  className="block text-sm font-bold text-[#1A2332] mb-1.5"
-                >
-                  رقم الجوال السعودي
+                <label htmlFor="checkout-phone" className="block text-sm font-bold text-[#1A2332] mb-1.5">
+                  رقم الجوال
                 </label>
                 <input
                   id="checkout-phone"
                   type="tel"
+                  inputMode="numeric"
                   autoComplete="tel"
-                  placeholder="05xxxxxxxx"
+                  placeholder={MARKET.phonePlaceholder}
                   dir="ltr"
                   {...register("phone")}
-                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all duration-300 bg-white"
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 transition-all bg-white"
                 />
                 {errors.phone && (
-                  <p className="text-red-500 text-xs mt-1" role="alert">
-                    {errors.phone.message}
-                  </p>
+                  <p className="text-red-500 text-xs mt-1" role="alert">{errors.phone.message}</p>
                 )}
-                <p className="text-[11px] text-[#5A6A72] mt-1.5">
-                  سيتصل بك فريقنا على هذا الرقم لتأكيد طلبك قبل الشحن
-                </p>
+              </div>
+
+              <div>
+                <label htmlFor="checkout-city" className="block text-sm font-bold text-[#1A2332] mb-1.5">
+                  المدينة
+                </label>
+                <select
+                  id="checkout-city"
+                  {...register("city")}
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 bg-white"
+                >
+                  {MARKET.cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+                {errors.city && (
+                  <p className="text-red-500 text-xs mt-1" role="alert">{errors.city.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="checkout-address" className="block text-sm font-bold text-[#1A2332] mb-1.5">
+                  العنوان الكامل
+                </label>
+                <textarea
+                  id="checkout-address"
+                  rows={2}
+                  placeholder="الحي، الشارع، رقم المنزل أو العمارة"
+                  dir="rtl"
+                  {...register("address")}
+                  className="w-full border-2 border-[#D5E0DC] rounded-xl px-4 py-3 text-right text-[#1A2332] placeholder:text-[#5A6A72]/50 focus:outline-none focus:border-[#0B6B5C] focus:ring-4 focus:ring-[#0B6B5C]/10 resize-none bg-white"
+                />
+                {errors.address && (
+                  <p className="text-red-500 text-xs mt-1" role="alert">{errors.address.message}</p>
+                )}
               </div>
 
               <Button
@@ -341,34 +367,30 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
                 size="lg"
                 fullWidth
                 disabled={!isValid}
-                className="text-base shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 hover:-translate-y-0.5 transition-all duration-300"
+                className="text-base shadow-lg shadow-[#0B6B5C]/30 hover:shadow-[#0B6B5C]/50 hover:-translate-y-0.5 transition-all"
               >
-                أكملي الطلب — {formatSarShort(total)}
+                أكملي الطلب — {formatMadShort(total)}
               </Button>
 
-              {/* Shipping estimate + social proof */}
               <div className="flex items-center justify-center gap-4 pt-1 flex-wrap">
                 <span className="flex items-center gap-1.5 text-xs text-[#5A6A72]">
                   <Truck size={13} className="text-[#2D8B6F]" aria-hidden />
-                  توصيل خلال ٢–٤ أيام
+                  {shippingHint}
                 </span>
                 <span className="text-[#D5E0DC]">|</span>
-                <span className="text-xs text-[#5A6A72] flex items-center gap-1">
-                  📦 ٢٠٠+ طلبت هذا الشهر
-                </span>
+                <span className="text-xs text-[#5A6A72]">📦 توصيل لكل المغرب</span>
               </div>
 
               <p className="text-xs text-center text-[#5A6A72]">
                 بالمتابعة توافقين على{" "}
-                <a href="/terms" className="underline hover:text-[#0B6B5C]">الشروط والأحكام</a>
+                <a href="/terms" className="underline hover:text-[#0B6B5C]">الشروط</a>
                 {" "}و
-                <a href="/privacy" className="underline hover:text-[#0B6B5C]">سياسة الخصوصية</a>
+                <a href="/privacy" className="underline hover:text-[#0B6B5C]">الخصوصية</a>
               </p>
             </form>
           </div>
         )}
 
-        {/* ── UPSELL STEP ───────────────────────────── */}
         {step === "upsell" && upsellProduct && (
           <div className="p-6">
             <UpsellModal
@@ -379,14 +401,11 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           </div>
         )}
 
-        {/* ── SUBMITTING STEP ───────────────────────── */}
         {step === "submitting" && (
           <div className="py-20 text-center px-6">
             <div className="w-14 h-14 border-4 border-[#0B6B5C] border-t-transparent rounded-full animate-spin mx-auto mb-5" />
             <p className="font-bold text-lg text-[#1A2332]">جاري تأكيد طلبك...</p>
-            <p className="text-sm text-[#5A6A72] mt-2">
-              لحظة واحدة — نحجز لك طلبك الآن
-            </p>
+            <p className="text-sm text-[#5A6A72] mt-2">لحظة واحدة — نحجز لك طلبك الآن</p>
           </div>
         )}
       </div>

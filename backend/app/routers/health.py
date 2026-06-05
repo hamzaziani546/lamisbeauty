@@ -10,4 +10,8 @@ def root():
 
 @router.get("/health")
 def health_check():
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "geo_order_blocking": False,
+        "build": "2026-06-05-no-geo-block",
+    }
