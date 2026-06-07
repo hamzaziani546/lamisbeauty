@@ -198,7 +198,7 @@ export default function AdminPage() {
             {
               label: "Conversion",
               value: PCT(summary.conversion_rate),
-              hint: "clean KSA orders / clean KSA clicks",
+              hint: "clean Morocco orders / clean Morocco clicks",
             },
             {
               label: "Clean clicks",
@@ -313,7 +313,7 @@ export default function AdminPage() {
           </p>
           <h1 className="mt-3 text-2xl font-semibold text-slate-950">Admin dashboard</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Sign in to review COD performance, clean KSA traffic, and orders.
+            Sign in to review COD performance, clean Morocco traffic, and orders.
           </p>
 
           <div className="mt-6 space-y-4">
@@ -521,7 +521,7 @@ export default function AdminPage() {
               />
               <BreakdownCard
                 title="Top products"
-                subtitle="Revenue from clean KSA orders."
+                subtitle="Revenue from clean Morocco orders."
                 rows={(metrics?.product_breakdown || []).map((row) => ({
                   key: row.product_id,
                   label: row.product_name_ar,
@@ -531,7 +531,7 @@ export default function AdminPage() {
               />
               <BreakdownCard
                 title="Blocked traffic"
-                subtitle="Invalid, non-KSA, VPN, or proxy clicks."
+                subtitle="Invalid, non-Morocco, VPN, or proxy clicks."
                 rows={(metrics?.invalid_reasons || []).map((row) => ({
                   key: row.reason,
                   label: row.reason,
@@ -586,7 +586,7 @@ export default function AdminPage() {
                     }}
                     className="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm"
                   >
-                    <option value="clean">Clean KSA only</option>
+                    <option value="clean">Clean Morocco only</option>
                     <option value="all">All orders</option>
                   </select>
                 </div>
@@ -887,7 +887,7 @@ function OrderDrawer({
                 title="Geo and fraud"
                 rows={[
                   ["Country", order.geo.country_code || "unknown"],
-                  ["Clean KSA", order.geo.is_valid ? "yes" : "no"],
+                  ["Clean Morocco", order.geo.is_valid ? "yes" : "no"],
                   ["VPN", order.geo.is_vpn ? "yes" : "no"],
                   ["Proxy", order.geo.is_proxy ? "yes" : "no"],
                   ["Reason", order.geo.block_reason || "-"],
