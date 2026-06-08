@@ -21,7 +21,6 @@ import { Button } from "@/components/ui/Button";
 import { trackAddToCart, trackViewContent } from "@/lib/tracking";
 import { PRODUCTS } from "@/config/products";
 import { MARKET } from "@/config/market";
-import { OnssaCertificate } from "@/components/trust/OnssaCertificate";
 
 interface Props {
   product: Product;
@@ -480,12 +479,6 @@ export function ProductPageClient({ product }: Props) {
                   </li>
                 ))}
               </ul>
-              <div className="mt-6 flex flex-col sm:flex-row items-center gap-4">
-                <OnssaCertificate variant="thumb" />
-                <p className="text-xs text-[#5A6A72] leading-relaxed text-center sm:text-right">
-                  شهادة ONSSA — اضغطي للتكبير والتحقق من الاعتماد الرسمي.
-                </p>
-              </div>
             </div>
 
           </div>
