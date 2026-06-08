@@ -139,7 +139,7 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
           offer_id: item.offerId,
           quantity: item.quantity,
           unit_count: item.unitCount,
-          price_sar: item.priceMad,
+          price_mad: item.priceMad,
           source: item.source,
         })),
         attribution,

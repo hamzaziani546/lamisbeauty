@@ -7,8 +7,3 @@ export function formatMad(amount: number): string {
 export function formatMadShort(amount: number): string {
   return `${amount} ${MARKET.currencyLabelAr}`;
 }
-
-/** @deprecated use formatMad */
-export const formatSar = formatMad;
-/** @deprecated use formatMadShort */
-export const formatSarShort = formatMadShort;

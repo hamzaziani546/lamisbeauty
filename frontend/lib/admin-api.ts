@@ -113,9 +113,9 @@ export type MetricsResponse = {
     confirmed_orders: number;
     delivered_orders: number;
     cancelled_orders: number;
-    revenue_sar: number;
-    aov_sar: number;
-    revenue_per_visitor_sar: number;
+    revenue_mad: number;
+    aov_mad: number;
+    revenue_per_visitor_mad: number;
     conversion_rate: number;
     confirm_rate: number;
     delivery_rate: number;
@@ -153,7 +153,7 @@ export type OrderSummary = {
   phone_digits: string;
   phone_e164: string;
   status: string;
-  total_sar: number;
+  total_mad: number;
   currency: string;
   items_count: number;
   utm_source: string | null;
@@ -207,13 +207,13 @@ export type OrderDetail = {
     offer_id: string;
     quantity: number;
     unit_count: number;
-    price_sar: number;
+    price_mad: number;
     source: string;
   }[];
   totals: {
-    subtotal_sar: number;
-    discount_sar: number;
-    total_sar: number;
+    subtotal_mad: number;
+    discount_mad: number;
+    total_mad: number;
     currency: string;
   };
   payment_method: string;

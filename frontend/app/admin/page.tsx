@@ -14,11 +14,12 @@ import {
   type OrderSummary,
   type OrdersListResponse,
 } from "@/lib/admin-api";
+import { MARKET } from "@/config/market";
 
 const asNumber = (n: number | null | undefined) =>
   Number.isFinite(n) ? Number(n) : 0;
-const SAR = (n: number | null | undefined) =>
-  `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(asNumber(n))} SAR`;
+const MAD = (n: number | null | undefined) =>
+  `${new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(asNumber(n))} ${MARKET.currency}`;
 const PCT = (n: number | null | undefined) => `${asNumber(n).toFixed(2)}%`;
 
 const STATUSES = [
@@ -187,8 +188,8 @@ export default function AdminPage() {
         ? [
             {
               label: "Revenue",
-              value: SAR(summary.revenue_sar),
-              hint: `AOV ${SAR(summary.aov_sar)} · RPV ${SAR(summary.revenue_per_visitor_sar)}`,
+              value: MAD(summary.revenue_mad),
+              hint: `AOV ${MAD(summary.aov_mad)} · RPV ${MAD(summary.revenue_per_visitor_mad)}`,
             },
             {
               label: "Orders",
@@ -516,7 +517,7 @@ export default function AdminPage() {
                   key: row.source,
                   label: row.source || "direct",
                   value: `${row.clicks} clicks`,
-                  hint: `${row.orders} orders · ${SAR(row.revenue)} · ${PCT(row.cvr)}`,
+                  hint: `${row.orders} orders · ${MAD(row.revenue)} · ${PCT(row.cvr)}`,
                 }))}
               />
               <BreakdownCard
@@ -525,7 +526,7 @@ export default function AdminPage() {
                 rows={(metrics?.product_breakdown || []).map((row) => ({
                   key: row.product_id,
                   label: row.product_name_ar,
-                  value: SAR(row.revenue),
+                  value: MAD(row.revenue),
                   hint: `${row.orders} orders · ${row.units_sold} units`,
                 }))}
               />
@@ -628,7 +629,7 @@ export default function AdminPage() {
                           {order.phone_e164 || order.phone_digits}
                         </td>
                         <td className="px-4 py-3 text-right font-medium tabular-nums">
-                          {SAR(order.total_sar)}
+                          {MAD(order.total_mad)}
                         </td>
                         <td className="px-4 py-3 text-slate-600">
                           <div>{order.utm_source || "direct"}</div>
@@ -804,7 +805,7 @@ function OrderDrawer({
                 label="Phone"
                 value={order.customer.phone_e164 || order.customer.phone_digits}
               />
-              <InfoTile label="Total" value={SAR(order.totals.total_sar)} />
+              <InfoTile label="Total" value={MAD(order.totals.total_mad)} />
             </div>
 
             <div className="rounded-3xl border border-slate-200 p-4">
@@ -864,7 +865,7 @@ function OrderDrawer({
                           Offer {item.offer_id} · Qty {item.quantity} · Units {item.unit_count}
                         </p>
                       </div>
-                      <p className="font-semibold tabular-nums">{SAR(item.price_sar)}</p>
+                      <p className="font-semibold tabular-nums">{MAD(item.price_mad)}</p>
                     </div>
                   </div>
                 ))}

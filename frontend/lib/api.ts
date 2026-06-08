@@ -7,7 +7,7 @@ export type OrderItemPayload = {
   offer_id: string;
   quantity: number;
   unit_count: number;
-  price_sar: number;
+  price_mad: number;
   source: string;
 };
 
@@ -42,7 +42,7 @@ export type CreateOrderResponse = {
   order_id: string;
   order_number: string;
   event_id: string;
-  total_sar: number;
+  total_mad: number;
   currency: string;
 };
 
@@ -51,7 +51,7 @@ export type OrderDetails = {
   order_number: string;
   status: string;
   customer_name: string;
-  total_sar: number;
+  total_mad: number;
   currency: string;
   payment_method: string;
   items: OrderItemPayload[];
