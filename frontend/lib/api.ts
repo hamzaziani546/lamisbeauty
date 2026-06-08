@@ -58,6 +58,22 @@ export type OrderDetails = {
   created_at: string;
 };
 
+function formatApiError(body: unknown, fallback: string): string {
+  if (!body || typeof body !== "object") return fallback;
+  const detail = (body as { detail?: unknown }).detail;
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) {
+    const messages = detail
+      .map((item) => {
+        if (!item || typeof item !== "object" || !("msg" in item)) return null;
+        return String((item as { msg: string }).msg).replace(/^Value error,\s*/i, "");
+      })
+      .filter(Boolean);
+    if (messages.length) return messages.join(" ");
+  }
+  return fallback;
+}
+
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<CreateOrderResponse> {
@@ -69,7 +85,7 @@ export async function createOrder(
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
-    throw new Error(err?.detail || "حدث خطأ أثناء إنشاء الطلب");
+    throw new Error(formatApiError(err, "حدث خطأ أثناء إنشاء الطلب"));
   }
 
   return res.json();
