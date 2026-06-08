@@ -15,6 +15,8 @@ import {
   type OrdersListResponse,
 } from "@/lib/admin-api";
 import { MARKET } from "@/config/market";
+import { LandingPagesPanel } from "@/components/admin/LandingPagesPanel";
+import { WhatsAppPanel } from "@/components/admin/WhatsAppPanel";
 
 const asNumber = (n: number | null | undefined) =>
   Number.isFinite(n) ? Number(n) : 0;
@@ -25,6 +27,7 @@ const PCT = (n: number | null | undefined) => `${asNumber(n).toFixed(2)}%`;
 const STATUSES = [
   "new",
   "sent_to_sheet",
+  "confirmation_sent",
   "contacted",
   "confirmed",
   "shipped",
@@ -35,7 +38,7 @@ const STATUSES = [
   "sheet_failed",
 ];
 
-type Tab = "dashboard" | "orders" | "capi-logs";
+type Tab = "dashboard" | "orders" | "whatsapp" | "capi-logs" | "landing-pages";
 type TrafficMode = "clean" | "all";
 
 function today(offsetDays = 0) {
@@ -168,7 +171,7 @@ export default function AdminPage() {
   }, [start, end, capiPage, capiPlatform, capiSuccess]);
 
   useEffect(() => {
-    if (authed && tab !== "capi-logs") load();
+    if (authed && tab !== "capi-logs" && tab !== "landing-pages" && tab !== "whatsapp") load();
   }, [authed, load, tab]);
 
   useEffect(() => {
@@ -418,7 +421,7 @@ export default function AdminPage() {
             </div>
           </div>
           <nav className="flex border-t border-white/10 bg-white/5 px-3">
-            {(["dashboard", "orders"] as Tab[]).map((item) => (
+            {(["dashboard", "orders", "whatsapp", "landing-pages"] as Tab[]).map((item) => (
               <button
                 key={item}
                 onClick={() => setTab(item)}
@@ -703,6 +706,10 @@ export default function AdminPage() {
             </div>
           </section>
         )}
+
+        {tab === "whatsapp" && <WhatsAppPanel />}
+
+        {tab === "landing-pages" && <LandingPagesPanel />}
       </div>
 
       {(selectedOrder || detailLoading) && (

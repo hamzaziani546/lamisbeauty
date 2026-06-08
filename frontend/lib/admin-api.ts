@@ -1,6 +1,6 @@
 "use client";
 
-function getApiBase() {
+export function getApiBase() {
   const configured = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   if (typeof window !== "undefined") {
     const isLocalPage = ["localhost", "127.0.0.1"].includes(window.location.hostname);
@@ -76,6 +76,30 @@ export async function adminFetch<T = unknown>(
   }
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
+}
+
+export async function uploadAdminImage(file: File): Promise<string> {
+  const token = getAdminToken();
+  const form = new FormData();
+  form.append("file", file);
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  const res = await fetch(`${getApiBase()}/admin/uploads`, {
+    method: "POST",
+    headers,
+    body: form,
+  });
+  if (!res.ok) {
+    let detail = res.statusText;
+    try {
+      const j = await res.json();
+      detail = j.detail || JSON.stringify(j);
+    } catch {}
+    if (res.status === 401) clearAdminSession();
+    throw new AdminApiError(res.status, detail);
+  }
+  const data = (await res.json()) as { url: string };
+  return data.url;
 }
 
 export async function adminLogin(username: string, password: string) {
@@ -242,4 +266,38 @@ export type OrderDetail = {
   tracking_response: unknown;
   created_at: string;
   updated_at: string;
+};
+
+export type WhatsAppConversation = {
+  id: number;
+  inbox_id?: number;
+  status?: string;
+  contact_name: string;
+  contact_phone?: string | null;
+  last_message: string;
+  last_message_at?: number | string | null;
+  unread_count: number;
+  messages_count: number;
+};
+
+export type WhatsAppConversationsResponse = {
+  items: WhatsAppConversation[];
+  meta: Record<string, unknown>;
+  configured?: boolean;
+  error?: unknown;
+};
+
+export type WhatsAppMessage = {
+  id: number;
+  content: string;
+  message_type?: number;
+  created_at?: number | string;
+  sender_type?: string;
+  sender_name?: string;
+};
+
+export type WhatsAppMessagesResponse = {
+  items: WhatsAppMessage[];
+  configured?: boolean;
+  error?: unknown;
 };
