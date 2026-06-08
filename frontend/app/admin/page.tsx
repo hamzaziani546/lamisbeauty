@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import {
   adminFetch,
   adminLogin,
@@ -28,6 +29,7 @@ const STATUSES = [
   "new",
   "sent_to_sheet",
   "confirmation_sent",
+  "edit_requested",
   "contacted",
   "confirmed",
   "shipped",
@@ -75,7 +77,8 @@ function EmptyState({ label }: { label: string }) {
   );
 }
 
-export default function AdminPage() {
+function AdminPageInner() {
+  const searchParams = useSearchParams();
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
   const [username, setUsername] = useState("");
@@ -112,8 +115,24 @@ export default function AdminPage() {
     const hasToken = !!getAdminToken();
     setAuthed(hasToken);
     setCurrentUser(getAdminUser());
+    const tabParam = searchParams.get("tab");
+    if (
+      tabParam === "landing-pages" ||
+      tabParam === "whatsapp" ||
+      tabParam === "orders" ||
+      tabParam === "dashboard" ||
+      tabParam === "capi-logs"
+    ) {
+      setTab(tabParam);
+    }
     setReady(true);
-  }, []);
+  }, [searchParams]);
+
+  function switchTab(next: Tab) {
+    setTab(next);
+    setSelectedOrder(null);
+    setDetailLoading(false);
+  }
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -424,7 +443,7 @@ export default function AdminPage() {
             {(["dashboard", "orders", "whatsapp", "landing-pages"] as Tab[]).map((item) => (
               <button
                 key={item}
-                onClick={() => setTab(item)}
+                onClick={() => switchTab(item)}
                 className={`px-4 py-3 text-sm font-semibold capitalize ${
                   tab === item
                     ? "border-b-2 border-emerald-300 text-white"
@@ -974,5 +993,15 @@ function DetailBlock({
         ))}
       </div>
     </div>
+  );
+}
+
+export default function AdminPage() {
+  return (
+    <Suspense
+      fallback={<main className="p-6 text-sm text-slate-500">Loading admin...</main>}
+    >
+      <AdminPageInner />
+    </Suspense>
   );
 }
