@@ -1,16 +1,14 @@
 "use client";
 
+const REMOTE_API =
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "https://api.lamisbeauty.site";
+
+/** Browser always uses same-origin proxy — avoids CORS on localhost, LAN, and production. */
 export function getApiBase() {
-  const configured = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "");
   if (typeof window !== "undefined") {
-    const isLocalPage = ["localhost", "127.0.0.1"].includes(window.location.hostname);
-    const configuredIsLocal =
-      configured?.includes("localhost") || configured?.includes("127.0.0.1");
-    if (!isLocalPage && configuredIsLocal) {
-      return "https://api.lamisbeauty.site";
-    }
+    return "/api/backend";
   }
-  return configured || "https://api.lamisbeauty.site";
+  return REMOTE_API;
 }
 
 const TOKEN_KEY = "lamis_admin_token";
@@ -54,6 +52,58 @@ export class AdminApiError extends Error {
   }
 }
 
+async function fetchWithTimeout(
+  url: string,
+  init: RequestInit,
+  timeoutMs = 45000
+): Promise<Response> {
+  const controller = new AbortController();
+  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timer);
+  }
+}
+
+function adminUrls(path: string): string[] {
+  if (typeof window === "undefined") return [`${REMOTE_API}${path}`];
+  const host = window.location.hostname;
+  const preferDirect =
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith("lamisbeauty.site");
+  if (preferDirect) {
+    return [`${REMOTE_API}${path}`, `/api/backend${path}`];
+  }
+  return [`/api/backend${path}`, `${REMOTE_API}${path}`];
+}
+
+/** Try proxy first; on 502/network error fall back to direct API (CORS allowed). */
+async function requestAdmin(
+  path: string,
+  init: RequestInit,
+  timeoutMs = 45000
+): Promise<Response> {
+  let lastErr: unknown;
+
+  for (const url of adminUrls(path)) {
+    try {
+      const res = await fetchWithTimeout(url, init, timeoutMs);
+      if (res.status === 502 && url.startsWith("/api/")) {
+        continue;
+      }
+      return res;
+    } catch (err) {
+      lastErr = err;
+      if (url.startsWith("/api/")) continue;
+      wrapNetworkError(err);
+    }
+  }
+
+  wrapNetworkError(lastErr);
+}
+
 export async function adminFetch<T = unknown>(
   path: string,
   init: RequestInit = {}
@@ -64,7 +114,8 @@ export async function adminFetch<T = unknown>(
   if (init.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
-  const res = await fetch(`${getApiBase()}${path}`, { ...init, headers });
+
+  const res = await requestAdmin(path, { ...init, headers });
   if (!res.ok) {
     let detail = res.statusText;
     try {
@@ -78,51 +129,80 @@ export async function adminFetch<T = unknown>(
   return res.json() as Promise<T>;
 }
 
+function wrapNetworkError(err: unknown): never {
+  if (err instanceof AdminApiError) throw err;
+  const msg = err instanceof Error ? err.message : "Network error";
+  if (msg === "Failed to fetch" || msg.includes("abort") || msg.includes("AbortError")) {
+    throw new Error(
+      "تعذّر الاتصال بالـ API — سجّلي الدخول من جديد أو أعيدي تحميل الصفحة"
+    );
+  }
+  throw err instanceof Error ? err : new Error(msg);
+}
+
 export async function uploadAdminImage(file: File): Promise<string> {
   const token = getAdminToken();
   const form = new FormData();
   form.append("file", file);
   const headers = new Headers();
   if (token) headers.set("Authorization", `Bearer ${token}`);
-  const res = await fetch(`${getApiBase()}/admin/uploads`, {
-    method: "POST",
-    headers,
-    body: form,
-  });
-  if (!res.ok) {
-    let detail = res.statusText;
-    try {
-      const j = await res.json();
-      detail = j.detail || JSON.stringify(j);
-    } catch {}
-    if (res.status === 401) clearAdminSession();
-    throw new AdminApiError(res.status, detail);
+  try {
+    const res = await requestAdmin(
+      "/admin/uploads",
+      { method: "POST", headers, body: form },
+      60000
+    );
+    if (!res.ok) {
+      let detail = res.statusText;
+      try {
+        const j = await res.json();
+        detail = j.detail || JSON.stringify(j);
+      } catch {}
+      if (res.status === 401) clearAdminSession();
+      throw new AdminApiError(res.status, detail);
+    }
+    const data = (await res.json()) as { url: string };
+    return data.url;
+  } catch (err) {
+    wrapNetworkError(err);
   }
-  const data = (await res.json()) as { url: string };
-  return data.url;
 }
 
 export async function adminLogin(username: string, password: string) {
-  const res = await fetch(`${getApiBase()}/admin/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-  });
-  if (!res.ok) {
-    let detail = "Login failed";
-    try {
-      const j = await res.json();
-      detail = j.detail || detail;
-    } catch {}
-    throw new AdminApiError(res.status, detail);
+  try {
+    const res = await requestAdmin(
+      "/admin/login",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      },
+      60000
+    );
+    if (!res.ok) {
+      let detail = "Login failed";
+      try {
+        const j = await res.json();
+        detail = j.detail || detail;
+      } catch {}
+      if (res.status === 401) {
+        throw new AdminApiError(
+          401,
+          "اسم المستخدم أو كلمة المرور غير صحيحة — تحققي من ADMIN_PASSWORD فـ Easypanel"
+        );
+      }
+      throw new AdminApiError(res.status, detail);
+    }
+    const data = (await res.json()) as {
+      token: string;
+      expires_at: number;
+      username: string;
+    };
+    setAdminSession(data.token, data.username, data.expires_at);
+    return data;
+  } catch (err) {
+    wrapNetworkError(err);
   }
-  const data = (await res.json()) as {
-    token: string;
-    expires_at: number;
-    username: string;
-  };
-  setAdminSession(data.token, data.username, data.expires_at);
-  return data;
 }
 
 // ---- Types ----
@@ -224,7 +304,13 @@ export type OrderDetail = {
   id: string;
   order_number: string;
   status: string;
-  customer: { name: string; phone_e164: string; phone_digits: string };
+  customer: {
+    name: string;
+    phone_e164: string;
+    phone_digits: string;
+    city?: string;
+    address?: string;
+  };
   items: {
     product_id: string;
     product_name_ar: string;

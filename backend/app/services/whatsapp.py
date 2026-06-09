@@ -15,11 +15,61 @@ def _digits_only(phone: str) -> str:
     return re.sub(r"\D", "", phone or "")
 
 
-def _template_value(value: str, *, on_new_line: bool = False, max_len: int = 60) -> str:
-    """Meta template labels omit spaces before {{n}} — break values onto a new line."""
+def is_configured() -> bool:
+    return bool(settings.WHATSAPP_PHONE_NUMBER_ID and settings.WHATSAPP_ACCESS_TOKEN)
+
+
+async def send_text_message(*, phone_digits: str, text: str) -> dict:
+    if not is_configured():
+        return {"skipped": True, "reason": "WhatsApp credentials not configured"}
+
+    to_phone = _digits_only(phone_digits)
+    if not to_phone:
+        return {"success": False, "error": "Invalid phone number"}
+
+    url = f"{META_GRAPH}/{settings.WHATSAPP_PHONE_NUMBER_ID}/messages"
+    payload = {
+        "messaging_product": "whatsapp",
+        "to": to_phone,
+        "type": "text",
+        "text": {"preview_url": False, "body": text[:4096]},
+    }
+
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            response = await client.post(
+                url,
+                headers={
+                    "Authorization": f"Bearer {settings.WHATSAPP_ACCESS_TOKEN}",
+                    "Content-Type": "application/json",
+                },
+                json=payload,
+            )
+            data = response.json()
+            if response.is_success:
+                message_id = (data.get("messages") or [{}])[0].get("id")
+                return {
+                    "success": True,
+                    "status_code": response.status_code,
+                    "message_id": message_id,
+                    "response": data,
+                }
+            return {
+                "success": False,
+                "status_code": response.status_code,
+                "error": data.get("error", data),
+                "response": data,
+            }
+    except Exception as exc:
+        logger.exception("WhatsApp text message error to=%s", to_phone)
+        return {"success": False, "error": str(exc)}
+
+
+def _template_value(value: str, *, prefix_space: bool = False, max_len: int = 60) -> str:
+    """Meta template labels omit spaces before {{n}} — prefix a space (newlines are rejected)."""
     text = (value or "").strip()
-    if on_new_line and text:
-        text = f"\n{text}"
+    if prefix_space and text:
+        text = f" {text}"
     return text[:max_len]
 
 
@@ -85,23 +135,23 @@ async def send_order_confirmation(
                         {"type": "text", "text": customer_name[:60]},
                         {
                             "type": "text",
-                            "text": _template_value(order_number, on_new_line=True, max_len=60),
+                            "text": _template_value(order_number, prefix_space=True, max_len=60),
                         },
                         {
                             "type": "text",
                             "text": _template_value(
-                                delivery_address, on_new_line=True, max_len=200
+                                delivery_address, prefix_space=True, max_len=200
                             ),
                         },
                         {
                             "type": "text",
                             "text": _template_value(
-                                product_label, on_new_line=True, max_len=120
+                                product_label, prefix_space=True, max_len=120
                             ),
                         },
                         {
                             "type": "text",
-                            "text": _template_value(total_label, on_new_line=True, max_len=40),
+                            "text": _template_value(total_label, prefix_space=True, max_len=40),
                         },
                     ],
                 }

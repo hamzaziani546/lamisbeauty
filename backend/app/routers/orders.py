@@ -1,21 +1,16 @@
-import json
 import logging
 from datetime import datetime, timezone
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.schemas import OrderCreateRequest, OrderCreateResponse, OrderOut
 from app.services import orders as order_service
 from app.services.orders import PRODUCT_CATALOG
-from app.services import sheets as sheet_service
-from app.services.tracking import meta as meta_capi
-from app.services.tracking import tiktok as tiktok_capi
-from app.services.tracking import snapchat as snap_capi
 from app.services.geoip import check_ip
-from app.services.whatsapp import format_delivery_address, send_order_confirmation
-from app.config import settings
+from app.services.order_followups import process_order_followups
+from app.services.order_lookup import order_lookup_filter
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +37,7 @@ def _get_client_ip(request: Request) -> str:
 async def create_order(
     payload: OrderCreateRequest,
     request: Request,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
 ):
     client_ip = _get_client_ip(request)
@@ -79,19 +75,6 @@ async def create_order(
         order.geo_block_reason = geo_block_reason[:255] if geo_block_reason else None
         db.commit()
 
-    items_for_tracking = [
-        {
-            "product_id": item.product_id,
-            "unit_count": item.unit_count,
-            "price_mad": float(item.price_mad),
-        }
-        for item in order.items
-    ]
-
-    event_source_url = (
-        f"{settings.PUBLIC_SITE_URL}/thank-you/{order.order_number}"
-    )
-
     items_list = list(order.items)
 
     product_names = "/".join(i.product_name_ar for i in items_list)
@@ -117,100 +100,15 @@ async def create_order(
         "status": "",
     }
 
-    sheet_resp = await sheet_service.send_order_to_sheet(sheet_payload)
-    order.sheet_response = json.dumps(sheet_resp, ensure_ascii=False, default=str)
-    if not sheet_resp.get("success"):
-        order.status = "sheet_failed"
-    else:
-        order.status = "sent_to_sheet"
-    db.commit()
-
-    if settings.WHATSAPP_AUTO_CONFIRM and order.status == "sent_to_sheet":
-        product_label = " / ".join(i.product_name_ar for i in items_list)
-        delivery_address = format_delivery_address(
-            city=payload.customer.city,
-            address=payload.customer.address,
-            admin_notes=order.admin_notes,
-        )
-        wa_resp = await send_order_confirmation(
-            phone_e164=order.phone_e164,
-            customer_name=order.customer_name,
-            order_number=order.order_number,
-            delivery_address=delivery_address,
-            product_label=product_label,
-            total_mad=float(order.total_mad),
-        )
-        order_service.log_tracking_event(
-            db,
-            order,
-            "whatsapp",
-            "order_confirmation",
-            {
-                "order_number": order.order_number,
-                "template": settings.WHATSAPP_ORDER_TEMPLATE,
-            },
-            wa_resp,
-        )
-        if wa_resp.get("success"):
-            order.status = "confirmation_sent"
-        db.commit()
-
-    # CAPI events - fire and forget; failures logged
-    tracking_results: dict = {}
-
-    capi_context = {
-        "order_number": order.order_number,
-        "total_mad": float(order.total_mad),
-        "item_count": len(items_for_tracking),
-        "event_source_url": event_source_url,
-    }
-
-    meta_resp = await meta_capi.send_purchase_event(
-        order_number=order.order_number,
-        phone_digits=order.phone_digits,
-        total_mad=float(order.total_mad),
-        items=items_for_tracking,
-        event_source_url=event_source_url,
-        fbp=order.fbp,
-        fbc=order.fbc,
-        client_ip=order.client_ip,
-        user_agent=order.user_agent,
-    )
-    tracking_results["meta"] = meta_resp
-    order_service.log_tracking_event(db, order, "meta", "Purchase", capi_context, meta_resp)
-
-    tt_resp = await tiktok_capi.send_purchase_event(
-        order_number=order.order_number,
-        phone_digits=order.phone_digits,
-        total_mad=float(order.total_mad),
-        items=items_for_tracking,
-        event_source_url=event_source_url,
-        ttp=order.ttp,
-        ttclid=order.ttclid,
-        client_ip=order.client_ip,
-        user_agent=order.user_agent,
-    )
-    tracking_results["tiktok"] = tt_resp
-    order_service.log_tracking_event(db, order, "tiktok", "CompletePayment", capi_context, tt_resp)
-
     sc_cookie1 = payload.attribution.sc_cookie1 if payload.attribution else None
-
-    snap_resp = await snap_capi.send_purchase_event(
-        order_number=order.order_number,
-        phone_digits=order.phone_digits,
-        total_mad=float(order.total_mad),
-        items=items_for_tracking,
-        event_source_url=event_source_url,
-        sc_click_id=order.sc_click_id,
+    background_tasks.add_task(
+        process_order_followups,
+        str(order.id),
+        city=payload.customer.city,
+        address=payload.customer.address,
         sc_cookie1=sc_cookie1,
-        client_ip=order.client_ip,
-        user_agent=order.user_agent,
+        sheet_payload=sheet_payload,
     )
-    tracking_results["snapchat"] = snap_resp
-    order_service.log_tracking_event(db, order, "snapchat", "PURCHASE", capi_context, snap_resp)
-
-    order.tracking_response = json.dumps(tracking_results, ensure_ascii=False, default=str)
-    db.commit()
 
     return OrderCreateResponse(
         order_id=str(order.id),
@@ -224,9 +122,7 @@ async def create_order(
 @router.get("/{order_id}", response_model=OrderOut)
 def get_order(order_id: str, db: Session = Depends(get_db)):
     from app.models import Order
-    order = db.query(Order).filter(
-        (Order.id == order_id) | (Order.order_number == order_id)
-    ).first()
+    order = db.query(Order).filter(order_lookup_filter(order_id)).first()
     if not order:
         raise HTTPException(status_code=404, detail="الطلب غير موجود")
 

@@ -3,7 +3,8 @@
 import Image from "next/image";
 import { X, ShoppingBag } from "lucide-react";
 import { useCartStore } from "@/store/cart-store";
-import { getCrossSells, PRODUCT_MAP } from "@/config/products";
+import { getCrossSells } from "@/config/products";
+import { getCartItemImage } from "@/lib/cart-image";
 import { formatMadShort } from "@/lib/money";
 import { TrustChips } from "@/components/product/TrustChips";
 import { CrossSellCard } from "./CrossSellCard";
@@ -98,17 +99,19 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
             <>
               {/* Items */}
               <div className="space-y-3">
-                {items.map((item) => (
+                {items.map((item) => {
+                  const img = getCartItemImage(item);
+                  return (
                   <div
                     key={`${item.productId}-${item.offerId}`}
                     className="bg-white rounded-2xl p-4 border border-[#D5E0DC] flex items-start justify-between gap-3 hover:border-[#0B6B5C]/30 hover:shadow-sm transition-all duration-300"
                   >
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className="relative w-16 h-16 rounded-xl bg-[#F7FAF9] border border-[#D5E0DC] overflow-hidden shrink-0">
-                        {PRODUCT_MAP[item.productId] ? (
+                        {img ? (
                           <Image
-                            src={PRODUCT_MAP[item.productId].images.main}
-                            alt={PRODUCT_MAP[item.productId].shortNameAr}
+                            src={img.src}
+                            alt={img.alt}
                             fill
                             loading="lazy"
                             sizes="64px"
@@ -138,7 +141,8 @@ export function CartDrawer({ onCheckout }: CartDrawerProps) {
                       </button>
                     </div>
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Progress bar upsell hint */}

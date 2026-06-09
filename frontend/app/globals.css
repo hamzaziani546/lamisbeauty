@@ -19,6 +19,31 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body.lp-page > header,
+body.lp-page > footer {
+  display: none;
+}
+
+body.lp-page > main {
+  padding: 0;
+}
+
+@media (max-width: 767px) {
+  .lp-hide-mobile {
+    display: none !important;
+  }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .lp-hide-tablet {
+    display: none !important;
+  }
+}
+@media (min-width: 1024px) {
+  .lp-hide-desktop {
+    display: none !important;
+  }
+}
+
 ::selection {
   background-color: #0b6b5c;
   color: #ffffff;

@@ -1,5 +1,32 @@
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "https://api.lamisbeauty.site";
+  process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") ||
+  "https://api.lamisbeauty.site";
+
+function publicApiUrls(path: string): string[] {
+  if (typeof window === "undefined") return [`${API_URL}${path}`];
+  return [`/api/backend${path}`, `${API_URL}${path}`];
+}
+
+async function publicFetch(path: string, init?: RequestInit): Promise<Response> {
+  let lastErr: unknown;
+
+  for (const url of publicApiUrls(path)) {
+    try {
+      const res = await fetch(url, init);
+      if (res.status === 502 && url.startsWith("/api/")) continue;
+      return res;
+    } catch (err) {
+      lastErr = err;
+      if (url.startsWith("/api/")) continue;
+    }
+  }
+
+  const msg = lastErr instanceof Error ? lastErr.message : "";
+  if (msg === "Failed to fetch" || msg.includes("abort")) {
+    throw new Error("تعذّر الاتصال بالخادم. تحققي من الإنترنت وحاولي مجدداً.");
+  }
+  throw lastErr instanceof Error ? lastErr : new Error("تعذّر الاتصال بالخادم");
+}
 
 export type OrderItemPayload = {
   product_id: string;
@@ -77,7 +104,7 @@ function formatApiError(body: unknown, fallback: string): string {
 export async function createOrder(
   payload: CreateOrderPayload
 ): Promise<CreateOrderResponse> {
-  const res = await fetch(`${API_URL}/orders`, {
+  const res = await publicFetch("/orders", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -92,7 +119,7 @@ export async function createOrder(
 }
 
 export async function getOrder(orderId: string): Promise<OrderDetails> {
-  const res = await fetch(`${API_URL}/orders/${orderId}`);
+  const res = await publicFetch(`/orders/${orderId}`);
   if (!res.ok) throw new Error("الطلب غير موجود");
   return res.json();
 }

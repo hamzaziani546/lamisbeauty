@@ -32,6 +32,7 @@ const STATUSES = [
   "edit_requested",
   "contacted",
   "confirmed",
+  "sent_to_carrier",
   "shipped",
   "delivered",
   "cancelled",
@@ -59,7 +60,7 @@ function formatDate(value: string) {
 }
 
 function statusClass(status: string) {
-  if (["confirmed", "shipped", "delivered"].includes(status)) {
+  if (["confirmed", "sent_to_carrier", "shipped", "delivered"].includes(status)) {
     return "bg-emerald-50 text-emerald-700 ring-emerald-200";
   }
   if (["cancelled", "returned", "no_answer", "sheet_failed"].includes(status)) {
@@ -95,7 +96,9 @@ function AdminPageInner() {
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [ordersTotal, setOrdersTotal] = useState(0);
   const [selectedOrder, setSelectedOrder] = useState<OrderDetail | null>(null);
+  const [orderDrawerId, setOrderDrawerId] = useState<string | null>(null);
   const [detailLoading, setDetailLoading] = useState(false);
+  const [detailError, setDetailError] = useState<string | null>(null);
   const [notesDraft, setNotesDraft] = useState("");
   const [loading, setLoading] = useState(false);
   const [savingOrder, setSavingOrder] = useState<string | null>(null);
@@ -266,6 +269,8 @@ function AdminPageInner() {
     setMetrics(null);
     setOrders([]);
     setSelectedOrder(null);
+    setOrderDrawerId(null);
+    setDetailError(null);
   };
 
   const applyPreset = (days: number) => {
@@ -275,17 +280,29 @@ function AdminPageInner() {
   };
 
   const openOrder = async (orderNumber: string) => {
+    setOrderDrawerId(orderNumber);
+    setSelectedOrder(null);
     setDetailLoading(true);
+    setDetailError(null);
     setError(null);
     try {
       const detail = await adminFetch<OrderDetail>(`/admin/orders/${orderNumber}`);
       setSelectedOrder(detail);
       setNotesDraft(detail.admin_notes || "");
     } catch (err) {
-      setError((err as Error).message);
+      const message = (err as Error).message;
+      setDetailError(message);
+      setError(message);
     } finally {
       setDetailLoading(false);
     }
+  };
+
+  const closeOrderDrawer = () => {
+    setOrderDrawerId(null);
+    setSelectedOrder(null);
+    setDetailError(null);
+    setDetailLoading(false);
   };
 
   const updateStatus = async (
@@ -731,14 +748,16 @@ function AdminPageInner() {
         {tab === "landing-pages" && <LandingPagesPanel />}
       </div>
 
-      {(selectedOrder || detailLoading) && (
+      {orderDrawerId && (
         <OrderDrawer
           order={selectedOrder}
+          orderNumber={orderDrawerId}
           loading={detailLoading}
+          error={detailError}
           notesDraft={notesDraft}
           setNotesDraft={setNotesDraft}
           saving={savingOrder === selectedOrder?.order_number}
-          onClose={() => setSelectedOrder(null)}
+          onClose={closeOrderDrawer}
           onStatus={(nextStatus) =>
             selectedOrder && updateStatus(selectedOrder.order_number, nextStatus, notesDraft)
           }
@@ -786,7 +805,9 @@ function BreakdownCard({
 
 function OrderDrawer({
   order,
+  orderNumber,
   loading,
+  error,
   notesDraft,
   setNotesDraft,
   saving,
@@ -794,7 +815,9 @@ function OrderDrawer({
   onStatus,
 }: {
   order: OrderDetail | null;
+  orderNumber: string;
   loading: boolean;
+  error: string | null;
   notesDraft: string;
   setNotesDraft: (value: string) => void;
   saving: boolean;
@@ -810,7 +833,7 @@ function OrderDrawer({
               Order preview
             </p>
             <h2 className="mt-1 text-xl font-semibold text-slate-950">
-              {order?.order_number || "Loading..."}
+              {order?.order_number || orderNumber}
             </h2>
           </div>
           <button
@@ -821,17 +844,55 @@ function OrderDrawer({
           </button>
         </div>
 
-        {loading || !order ? (
+        {loading ? (
           <div className="p-6 text-sm text-slate-500">Loading order details...</div>
+        ) : error && !order ? (
+          <div className="p-6">
+            <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {error}
+            </div>
+          </div>
+        ) : !order ? (
+          <div className="p-6 text-sm text-slate-500">Order not found.</div>
         ) : (
           <div className="space-y-5 p-5">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <InfoTile label="Customer" value={order.customer.name} />
-              <InfoTile
-                label="Phone"
-                value={order.customer.phone_e164 || order.customer.phone_digits}
-              />
-              <InfoTile label="Total" value={MAD(order.totals.total_mad)} />
+            <div className="rounded-3xl border border-slate-200 bg-slate-50/50 p-4">
+              <h3 className="font-semibold text-slate-950">تفاصيل الطلب</h3>
+              <dl className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <PreviewField label="Order date" value={formatDate(order.created_at)} />
+                <PreviewField label="Order ID" value={order.order_number} />
+                <PreviewField label="Name" value={order.customer.name} dir="auto" />
+                <PreviewField
+                  label="Phone"
+                  value={order.customer.phone_e164 || order.customer.phone_digits}
+                />
+                <PreviewField
+                  label="City"
+                  value={order.customer.city || "—"}
+                  dir="auto"
+                />
+                <PreviewField
+                  label="Address"
+                  value={order.customer.address || "—"}
+                  dir="auto"
+                  className="sm:col-span-2"
+                />
+                <PreviewField
+                  label="Product"
+                  value={order.items.map((i) => i.product_name_ar).join(" / ")}
+                  dir="auto"
+                  className="sm:col-span-2"
+                />
+                <PreviewField
+                  label="Quantity"
+                  value={order.items.map((i) => String(i.unit_count)).join(" / ")}
+                />
+                <PreviewField
+                  label="Total price"
+                  value={MAD(order.totals.total_mad)}
+                  emphasize
+                />
+              </dl>
             </div>
 
             <div className="rounded-3xl border border-slate-200 p-4">
@@ -961,13 +1022,30 @@ function OrderDrawer({
   );
 }
 
-function InfoTile({ label, value }: { label: string; value: string }) {
+function PreviewField({
+  label,
+  value,
+  dir,
+  className,
+  emphasize,
+}: {
+  label: string;
+  value: string;
+  dir?: "auto";
+  className?: string;
+  emphasize?: boolean;
+}) {
   return (
-    <div className="rounded-2xl bg-slate-50 p-4">
-      <p className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</p>
-      <p className="mt-2 font-semibold text-slate-950" dir="auto">
+    <div className={className}>
+      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
+      <dd
+        className={`mt-1 text-sm break-words ${
+          emphasize ? "font-bold text-emerald-700 tabular-nums" : "font-semibold text-slate-900"
+        }`}
+        dir={dir}
+      >
         {value}
-      </p>
+      </dd>
     </div>
   );
 }

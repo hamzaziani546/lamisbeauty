@@ -10,7 +10,8 @@ import { X, ShieldCheck, CreditCard, Truck, BadgeCheck, Package, MessageCircle }
 import { useCartStore } from "@/store/cart-store";
 import { normalizeMaPhone, isValidMaPhone } from "@/lib/phone";
 import { createOrder, getAttribution } from "@/lib/api";
-import { getUpsellProduct, OFFER_UPSELL_PRICE, PRODUCT_MAP } from "@/config/products";
+import { getUpsellProduct, OFFER_UPSELL_PRICE } from "@/config/products";
+import { getCartItemImage } from "@/lib/cart-image";
 import { formatMadShort } from "@/lib/money";
 import { MARKET, shippingEstimateForCity } from "@/config/market";
 import { Button } from "@/components/ui/Button";
@@ -225,17 +226,17 @@ export function CheckoutModal({ isOpen, onClose }: CheckoutModalProps) {
 
               <div className="space-y-3">
                 {items.map((item) => {
-                  const prod = PRODUCT_MAP[item.productId];
+                  const img = getCartItemImage(item);
                   return (
                     <div
                       key={`${item.productId}-${item.offerId}`}
                       className="flex items-center gap-3"
                     >
                       <div className="relative w-14 h-14 rounded-xl bg-white border border-[#D5E0DC] overflow-hidden shrink-0">
-                        {prod && (
+                        {img && (
                           <Image
-                            src={prod.images.main}
-                            alt={prod.shortNameAr}
+                            src={img.src}
+                            alt={img.alt}
                             fill
                             loading="lazy"
                             sizes="56px"

@@ -4,23 +4,29 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import type { OfferId } from "@/config/products";
 
-export type CartItemSource = "pdp" | "cart_cross_sell" | "checkout_upsell";
+export type CartItemSource =
+  | "pdp"
+  | "cart_cross_sell"
+  | "checkout_upsell"
+  | `lp:${string}`;
 
 export interface CartItem {
   productId: string;
-  offerId: OfferId;
+  offerId: OfferId | string;
   quantity: number;
   unitCount: number;
   titleAr: string;
   priceMad: number;
   source: CartItemSource;
+  /** LP / custom products — not in PRODUCT_MAP */
+  imageUrl?: string;
 }
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
   addItem: (item: CartItem) => void;
-  removeItem: (productId: string, offerId: OfferId) => void;
+  removeItem: (productId: string, offerId: OfferId | string) => void;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
